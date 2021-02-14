@@ -121,6 +121,9 @@ Route::get('/getappnumber/{lang}/{v}' , 'SettingController@getappnumber')->middl
 // get whats app number
 Route::get('/getwhatsappnumber/{lang}/{v}' , 'SettingController@getwhatsapp')->middleware('checkguest');
 
+// get social media
+Route::get('/getsocialmedia/{lang}/{v}' , 'SettingController@social_media')->middleware('checkguest');
+
 
 // get products 
 // Route::get('/products/{lang}/{v}' , 'ProductController@getproducts')->middleware('checkguest');

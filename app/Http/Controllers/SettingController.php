@@ -12,7 +12,7 @@ class SettingController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api' , ['except' => ['joinRequest', 'getwhatsapp']]);
+        $this->middleware('auth:api' , ['except' => ['joinRequest', 'getwhatsapp', 'social_media']]);
     }
 
     public function getappnumber(Request $request){
