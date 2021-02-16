@@ -61,11 +61,22 @@ class HomeController extends Controller
                 $data['categories'] = Category::where('deleted', 0)->whereHas('products', function($q) use($stores) {
                     $q->whereIn('store_id', $stores);
                 })->select('title_en as title', 'id', 'image')->get();
+                $data['categories'][0] = (object)[
+                    "id" => 0,
+                    "title" => "All",
+                    "image" => "all_liwbsi_nkti8l.png"
+                ];
             }else {
                 $data['area'] = $current_area['title_ar'];
                 $data['categories'] = Category::where('deleted', 0)->whereHas('products', function($q) use($stores) {
                     $q->whereIn('store_id', $stores);
                 })->select('title_ar as title', 'id', 'image')->get();
+                $data['categories'][0] = (object)[
+                    "id" => 0,
+                    "title" => "الكل",
+                    "image" => "all_liwbsi_nkti8l.png"
+                ];
+                
             }
             
             if ($request->category_id == "all") {
