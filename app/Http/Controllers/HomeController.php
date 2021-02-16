@@ -64,7 +64,8 @@ class HomeController extends Controller
                 $data['categories'][0] = (object)[
                     "id" => 0,
                     "title" => "All",
-                    "image" => "all_liwbsi_nkti8l.png"
+                    "image" => "all_liwbsi_nkti8l.png",
+                    "selected" => false
                 ];
             }else {
                 $data['area'] = $current_area['title_ar'];
@@ -74,7 +75,8 @@ class HomeController extends Controller
                 $data['categories'][0] = (object)[
                     "id" => 0,
                     "title" => "الكل",
-                    "image" => "all_liwbsi_nkti8l.png"
+                    "image" => "all_liwbsi_nkti8l.png",
+                    "selected" => false
                 ];
                 
             }
@@ -175,17 +177,18 @@ class HomeController extends Controller
                         $data['stores'][$i]['min_order_cost'] = $data['stores'][$i]['min_order_cost'];
                         $data['stores'][$i]['estimated_arrival_time'] = $deliveryArea['estimated_arrival_time'];
                         $data['stores'][$i]['delivery_cost'] = $deliveryArea['delivery_cost'];
-
-                        for ($n = 0; $n < count($data['categories']); $n ++) {
-                            $data['categories'][$n]['selected'] = false;
-                            if ($data['categories'][$n]['id'] == $request->category_id) {
-                                $data['categories'][$n]['selected'] = true;
-                            }
-                        }
                     }
                 }
             }
-            
+            for ($n = 0; $n < count($data['categories']); $n ++) {
+                // if ($n != 0) {
+                    $data['categories'][$n]->selected = false;
+                    if ($data['categories'][$n]->id == $request->category_id) {
+                        $data['categories'][$n]->selected = true;
+                    }
+                // }
+                
+            }
 
 		$new_products = [];
         for($i =0; $i < count($data['stores']); $i++){
