@@ -79,7 +79,7 @@ class HomeController extends Controller
                 
             }
             
-            if ($request->category_id == "all") {
+            if ($request->category_id == 0) {
                 $data['stores'] = Shop::whereIn('id', $stores)->select('id', 'logo', 'name', 'min_order_cost')->get()->makeHidden('custom');
                 
                 if (count($data['stores']) > 0) {
