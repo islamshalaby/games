@@ -67,6 +67,12 @@ Route::group([
     // get products
     Route::get('{lang}/{v}' , 'ProductController@getProducts');
 
+    // add product
+    Route::post('add/{lang}/{v}' , 'ProductController@addProduct');
+
+    // upload images
+    Route::post('uploadimages/{lang}/{v}' , 'ProductController@uploadImages');
+
     // update primary image
     Route::put('primaryimage/{lang}/{v}', 'ProductController@primaryImage');
 

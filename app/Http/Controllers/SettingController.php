@@ -50,11 +50,8 @@ class SettingController extends Controller
         $image = $request->front_image;  // your base64 encoded
         $image = str_replace('data:image/png;base64,', '', $image);
         $image = str_replace(' ', '+', $image);
-        // dd($image);
         $front_image = $request->front_image;
-        // dd($front_image);
-        Cloudder::upload("data:image/jpeg;base64,".$front_image, null);
-        // $front_image_name = $front_image->getRealPath();
+        Cloudder::upload($front_image, null);
         $front_imageereturned = Cloudder::getResult();
         $front_image_id = $front_imageereturned['public_id'];
         $front_image_format = $front_imageereturned['format'];    
@@ -63,7 +60,7 @@ class SettingController extends Controller
         
 
         $back_image = $request->back_image;
-        Cloudder::upload("data:image/jpeg;base64,".$back_image, null);
+        Cloudder::upload($back_image, null);
         $iback_imagereturned = Cloudder::getResult();
         $iback_image_id = $iback_imagereturned['public_id'];
         $back_image_format = $iback_imagereturned['format'];    

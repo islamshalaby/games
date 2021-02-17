@@ -79,19 +79,25 @@ class ProductController extends Controller
         $post = $request->all();
         $validator = Validator::make($request->all(), [
             'barcode' => 'unique:products,barcode|max:255|nullable',
-            'title_en' => 'filled',
-            'description_en' => 'filled',
-            'title_ar' => 'filled',
-            'description_ar' => 'filled',
-            'category_id' => 'filled',
-            'type' => 'filled',
-            'total_quatity' => 'filled',
-            'remaining_quantity' => 'filled',
-            'final_price' => 'filled'
+            'title_en' => 'required',
+            'description_en' => 'required',
+            'title_ar' => 'required',
+            'description_ar' => 'required',
+            'category_id' => 'required',
+            'type' => 'required',
+            'total_quatity' => 'required',
+            'remaining_quantity' => 'required',
+            'final_price' => 'required',
+            'main_image' => 'required'
         ]);
 
         if ($validator->fails()) {
             $response = APIHelpers::createApiResponse(true , 406 , 'Missing Required Fields' , 'بعض الحقول مفقودة'  , null , $request->lang);
+            return response()->json($response , 406);
+        }
+
+        if ($request->total_quatity < $request->remaining_quantity) {
+            $response = APIHelpers::createApiResponse(true , 406 , 'Total Quantity Must Be >= Remaining Quantity' , 'إجمالى الكمية يجب ان يكون أكبر من أو يساوى الكمية المتبقية'  , null , $request->lang);
             return response()->json($response , 406);
         }
 
@@ -105,7 +111,19 @@ class ProductController extends Controller
             $post['offer_percentage'] = 0;
             $post['price_before_offer'] = 0;
         }
+        $post['store_id'] = Auth::guard('dashboard')->user()->id;
         $product = Product::create($post);
+
+        $mainImage = $request->main_image;
+        Cloudder::upload($mainImage, null);
+        $front_imageereturned = Cloudder::getResult();
+        $front_image_id = $front_imageereturned['public_id'];
+        $front_image_format = $front_imageereturned['format'];    
+        $front_image_new_name = $front_image_id.'.'.$front_image_format;
+        $postMainImage['image'] = $front_image_new_name;
+        $postMainImage['product_id'] = $product->id;
+        $postMainImage['main'] = 1;
+        ProductImage::create($postMainImage);
 
         if (isset($request->option_id) 
         && count($request->option_id) > 0 
@@ -122,7 +140,7 @@ class ProductController extends Controller
         }
 
 
-        $response = APIHelpers::createApiResponse(false , 200 , '' , '' , [] , $request->lang);
+        $response = APIHelpers::createApiResponse(false , 200 , '' , '' , ["product_id" => $product->id] , $request->lang);
         return response()->json($response , 200);
     }
 
@@ -361,6 +379,35 @@ class ProductController extends Controller
         }
 
         $product->update(['deleted' => 1]);
+
+        $response = APIHelpers::createApiResponse(false , 200 , '' , '' , "" , $request->lang);
+        return response()->json($response , 200);
+    }
+
+    // upload images
+    public function uploadImages(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'product_id' => 'required|exists:products,id',
+            'images' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            $response = APIHelpers::createApiResponse(true , 406 , 'Missing Required Fields' , 'بعض الحقول مفقودة'  , null , $request->lang);
+            return response()->json($response , 406);
+        }
+
+        for ($i = 0; $i < count($request->images); $i ++) {
+            $image = $request->images[$i];
+            Cloudder::upload($image, null);
+            $imagereturned = Cloudder::getResult();
+            $image_id = $imagereturned['public_id'];
+            $image_format = $imagereturned['format'];    
+            $image_new_name = $image_id.'.'.$image_format;
+            $product_image = new ProductImage();
+            $product_image->image = $image_new_name;
+            $product_image->product_id = $request->product_id;
+            $product_image->save();
+        }
 
         $response = APIHelpers::createApiResponse(false , 200 , '' , '' , "" , $request->lang);
         return response()->json($response , 200);
