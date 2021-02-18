@@ -165,11 +165,12 @@ class VisitorController extends Controller
                     $cart[$i]['favorite'] = false;
                 }
 
-                $cart[$i]['final_price'] = $product['final_price'];
-                $cart[$i]['price_before_offer'] = $product['price_before_offer'];
+                $cart[$i]['final_price'] = number_format((float)$product['final_price'], 3, '.', '');
+                $cart[$i]['price_before_offer'] = number_format((float)$product['price_before_offer'], 3, '.', '');
                 $cart[$i]['offer_percentage'] = $product['offer_percentage'];
                 $cart[$i]['offer'] = $product['offer'];
-                $data['subtotal_price'] = $data['subtotal_price'] + ($product['final_price'] * $cart[$i]['count']);
+                $sBPrice = $data['subtotal_price'] + ($product['final_price'] * $cart[$i]['count']);
+                $data['subtotal_price'] = number_format((float)$sBPrice, 3, '.', '');
                 
                 $cart[$i]['title'] = $product['title'];
                 $cart[$i]['type'] = $product['type'];

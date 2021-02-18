@@ -207,6 +207,8 @@ Route::group([
          Route::get('size/details/{item}' , 'OrderController@order_size_details')->name('orders.size.details');
     });
 
+    Route::get('pdfview/{order}',array('as'=>'pdfview','uses'=>'OrderController@getInvoice'));
+
     // Areas Route
     Route::group([
         "prefix" => "areas"

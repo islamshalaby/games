@@ -10,6 +10,7 @@ use App\Area;
 use App\Order;
 use App\UserAddress;
 use App\SizeDetail;
+use PDF;
 
 
 class OrderController extends AdminController{
@@ -311,8 +312,15 @@ class OrderController extends AdminController{
     }
 
     // get invoice
-    public function getInvoice(MainOrder $order) {
+    public function getInvoice(Request $request, MainOrder $order) {
+        // $order->getRelations();
         $data['order'] = $order;
+        if($request->has('download')){
+            // dd($data['order']->user);
+            $pdf = PDF::loadView('admin.invoice', ['data' => $data]);
+            // dd($pdf);
+            return $pdf->download('invoice.pdf');
+        }
 
         return view('admin.invoice', ['data' => $data]);
     }
@@ -322,5 +330,11 @@ class OrderController extends AdminController{
         $data['size'] = $item->size;
 
         return view('admin.size_details', ['data' => $data]);
+    }
+
+    // pdf
+    public function pdf() {
+        $pdf = PDF::loadView('licencie_structure.show', $licencie);
+        return $pdf->download('invoice.pdf');
     }
 }
