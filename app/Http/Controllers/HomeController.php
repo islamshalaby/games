@@ -116,9 +116,9 @@ class HomeController extends Controller
                         // dd($storeCats);
                         $data['stores'][$i]['categories'] = $storeCats;
                         $deliveryArea = DeliveryArea::where('store_id', $data['stores'][$i]['id'])->where('area_id', $current_area['id'])->select('min_order_cost', 'estimated_arrival_time', 'delivery_cost')->first();
-                        $data['stores'][$i]['min_order_cost'] = $data['stores'][$i]['min_order_cost'];
+                        $data['stores'][$i]['min_order_cost'] = number_format((float)$data['stores'][$i]['min_order_cost'], 3, '.', '');
                         $data['stores'][$i]['estimated_arrival_time'] = $deliveryArea['estimated_arrival_time'];
-                        $data['stores'][$i]['delivery_cost'] = $deliveryArea['delivery_cost'];
+                        $data['stores'][$i]['delivery_cost'] = number_format((float)$deliveryArea['delivery_cost'], 3, '.', '');
                     }
                 }
             }else {
@@ -174,9 +174,9 @@ class HomeController extends Controller
                             ->get()->makeHidden('custom');
                         }
                         $deliveryArea = DeliveryArea::where('store_id', $data['stores'][$i]['id'])->where('area_id', $current_area['id'])->select('min_order_cost', 'estimated_arrival_time', 'delivery_cost')->first();
-                        $data['stores'][$i]['min_order_cost'] = $data['stores'][$i]['min_order_cost'];
+                        $data['stores'][$i]['min_order_cost'] = number_format((float)$data['stores'][$i]['min_order_cost'], 3, '.', '');
                         $data['stores'][$i]['estimated_arrival_time'] = $deliveryArea['estimated_arrival_time'];
-                        $data['stores'][$i]['delivery_cost'] = $deliveryArea['delivery_cost'];
+                        $data['stores'][$i]['delivery_cost'] = number_format((float)$deliveryArea['delivery_cost'], 3, '.', '');
                     }
                 }
             }

@@ -211,7 +211,7 @@ class OfferController extends Controller
                 for($j = 0; $j < count($element['ads']) ; $j++){
                     if(auth()->user()){
                         $user_id = auth()->user()->id;
-    
+                        
                         $prevfavorite = Favorite::where('product_id' , $element['ads'][$j]['id'])->where('user_id' , $user_id)->first();
                         if($prevfavorite){
                             $element['ads'][$j]['favorite'] = true;
@@ -222,7 +222,8 @@ class OfferController extends Controller
                     }else{
                         $element['ads'][$j]['favorite'] = false;
                     }
-                    
+                    $element['ads'][$j]['final_price'] = number_format((float)$element['ads'][$j]['final_price'], 3, '.', '');
+                        $element['ads'][$j]['price_before_offer'] = number_format((float)$element['ads'][$j]['price_before_offer'], 3, '.', '');
                     $element['ads'][$j]['image'] = ProductImage::where('product_id' , $element['ads'][$j]['id'])->pluck('image')->first();
                 }
             }

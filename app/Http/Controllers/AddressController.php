@@ -175,6 +175,7 @@ class AddressController extends Controller
         $address = UserAddress::find($request->address_id);
         $area_id =  $address['area_id'];
         $area = Area::select('delivery_cost')->find($area_id);
+        $area['delivery_cost'] = number_format((float)$area['delivery_cost'], 3, '.', '');
         $response = APIHelpers::createApiResponse(false , 200 , '' , '' , $area , $request->lang);
         return response()->json($response , 200);
     }

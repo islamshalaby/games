@@ -52,8 +52,6 @@ class OrderController extends Controller
         $productIds = Cart::where('visitor_id' , $visitor_id)->pluck('product_id')->toArray();
         $sumProducts = Product::whereIn('id', $productIds)->get();
 
-        // dd($sumProducts->sum('final_price'));
-
         if(count($cart) == 0){
             $response = APIHelpers::createApiResponse(true , 406 , 'Missing Required Fields' , 'بعض الحقول مفقودة'  , null , $request->lang);
             return response()->json($response , 406);
@@ -100,10 +98,8 @@ class OrderController extends Controller
                     if (!isset($delivery['delivery_cost'])) {
                         $delivery = Setting::find(1);
                     }
-                    // dd(count($store_products));
                     if (count($store_products) > 0) {
                         $subtotal_price = 0;
-                        //dd(count($store_products));
                         for ($n = 0; $n < count($store_products); $n ++) {
                             
                             if($store_products[$n]->product->remaining_quantity < $store_products[$n]['count']){
@@ -120,23 +116,27 @@ class OrderController extends Controller
                             
                         }
                     }
-    
-                   
-                    // var_dump($delivery['delivery_cost']);
+
+                    $shop = Shop::where('id', $unrepeated_stores[$i])->select('min_order_cost', 'name')->first();
+                    if ($subtotal_price < $shop['min_order_cost']) {
+                        $response = APIHelpers::createApiResponse(true , 406 , 'Minimum Order Cost for Store ' . $shop['name'] . ' is ' . $shop['min_order_cost'] . ' KWD' , 'الحد الأدنى لقيمة الطلب من متجر ' . $shop['name'] . ' هو ' . $shop['min_order_cost'] . ' د.ك'  , null , $request->lang);
+                        return response()->json($response , 406);
+                    }
+                    
                     $total_cost = $delivery['delivery_cost'] + $subtotal_price;
-                    // dd($total_cost);
-                    // var_dump($total_cost);
+                    
                     $order = Order::create([
                         'user_id' => auth()->user()->id,
                         'address_id' => $request->address_id,
                         'payment_method' => $request->payment_method,
-                        'subtotal_price' => $subtotal_price,
-                        'delivery_cost' => $delivery['delivery_cost'],
-                        'total_price' => $total_cost,
+                        'subtotal_price' => number_format((float)$subtotal_price, 3, '.', ''),
+                        'delivery_cost' => number_format((float)$delivery['delivery_cost'], 3, '.', ''),
+                        'total_price' => number_format((float)$total_cost, 3, '.', ''),
                         'order_number' => substr(str_shuffle(uniqid() . $str) , -9),
                         'store_id' => $unrepeated_stores[$i],
                         'main_id' => $main_order['id']
                         ]);
+
                         $count = 0;
                         for($k = 0; $k < count($store_products); $k++){
                             
@@ -146,8 +146,8 @@ class OrderController extends Controller
                                 'order_id' => $order->id,
                                 'product_id' => $store_products[$k]['product_id'],
                                 'option_id' => $store_products[$k]['option_id'],
-                                'price_before_offer' => $product_data['price_before_offer'],
-                                'final_price' => $product_data['final_price'],
+                                'price_before_offer' => number_format((float)$product_data['price_before_offer'], 3, '.', ''),
+                                'final_price' => number_format((float)$product_data['final_price'], 3, '.', ''),
                                 'count' => $store_products[$k]['count']
                             ]);
                             $count ++;
@@ -165,11 +165,13 @@ class OrderController extends Controller
                 }
             }
             $u_main_order = MainOrder::find($main_order['id']);
-            // dd($main_order->orders->sum('delivery_cost'));
+            $subTPrice = number_format((float)$main_order->orders->sum('subtotal_price'), 3, '.', '');
+            $dCost = number_format((float)$main_order->orders->sum('delivery_cost'), 3, '.', '');
+            $tPrice = number_format((float)$main_order->orders->sum('total_price'), 3, '.', '');
             $u_main_order->update([
-                'subtotal_price' => $main_order->orders->sum('subtotal_price'),
-                'delivery_cost' => $main_order->orders->sum('delivery_cost'),
-                'total_price' => $main_order->orders->sum('total_price')
+                'subtotal_price' => $subTPrice,
+                'delivery_cost' => $dCost,
+                'total_price' => $tPrice
             ]);
 
             $data = [
@@ -177,7 +179,7 @@ class OrderController extends Controller
                 'count' => $count,
                 'date' => $u_main_order['created_at']->format('Y-m-d'),
                 'time' => $u_main_order['created_at']->format('g:i A'),
-                'total_cost' => $main_order->orders->sum('total_price')
+                'total_cost' => $tPrice
             ];
             
             
@@ -204,7 +206,11 @@ class OrderController extends Controller
                         }
                     }
     
-                    
+                    $shop = Shop::where('id', $unrepeated_stores[$i])->select('min_order_cost', 'name')->first();
+                    if ($subtotal_price < $shop['min_order_cost']) {
+                        $response = APIHelpers::createApiResponse(true , 406 , 'Minimum Order Cost for Store ' . $shop['name'] . ' is ' . $shop['min_order_cost'] . ' KWD' , 'الحد الأدنى لقيمة الطلب من متجر ' . $shop['name'] . ' هو ' . $shop['min_order_cost'] . ' د.ك'  , null , $request->lang);
+                        return response()->json($response , 406);
+                    }
                     $delivery = DeliveryArea::select('delivery_cost')->where('area_id', $address['area_id'])->where('store_id', $unrepeated_stores[$i])->first();
                     if (!isset($delivery['delivery_cost'])) {
                         $delivery = Setting::find(1);
@@ -285,7 +291,12 @@ class OrderController extends Controller
                         }
                     }
     
-                   
+                    $shop = Shop::where('id', $unrepeated_stores[$i])->select('min_order_cost', 'name')->first();
+                    if ($subtotal_price < $shop['min_order_cost']) {
+                        $response = APIHelpers::createApiResponse(true , 406 , 'Minimum Order Cost for Store ' . $shop['name'] . ' is ' . $shop['min_order_cost'] . ' KWD' , 'الحد الأدنى لقيمة الطلب من متجر ' . $shop['name'] . ' هو ' . $shop['min_order_cost'] . ' د.ك'  , null , $request->lang);
+                        return response()->json($response , 406);
+                    }
+                    
                     $delivery = DeliveryArea::select('delivery_cost')->where('area_id', $address['area_id'])->where('store_id', $unrepeated_stores[$i])->first();
                     if (!isset($delivery['delivery_cost'])) {
                         $delivery = Setting::find(1);
@@ -297,9 +308,9 @@ class OrderController extends Controller
                             'user_id' => auth()->user()->id,
                             'address_id' => $request->address_id,
                             'payment_method' => $request->payment_method,
-                            'subtotal_price' => $subtotal_price,
-                            'delivery_cost' => $delivery['delivery_cost'],
-                            'total_price' => $total_cost,
+                            'subtotal_price' => number_format((float)$subtotal_price, 3, '.', ''),
+                            'delivery_cost' => number_format((float)$delivery['delivery_cost'], 3, '.', ''),
+                            'total_price' => number_format((float)$total_cost, 3, '.', ''),
                             'order_number' => substr(str_shuffle(uniqid() . $str) , -9),
                             'store_id' => $unrepeated_stores[$i],
                             'main_id' => $main_order['id']
@@ -312,8 +323,8 @@ class OrderController extends Controller
                         $order_item =  OrderItem::create([
                             'order_id' => $order->id,
                             'product_id' => $store_products[$k]['product_id'],
-                            'price_before_offer' => $product_data['price_before_offer'],
-                            'final_price' => $product_data['final_price'],
+                            'price_before_offer' => number_format((float)$product_data['price_before_offer'], 3, '.', ''),
+                            'final_price' => number_format((float)$product_data['final_price'], 3, '.', ''),
                             'count' => $store_products[$k]['count']
                         ]);
                         
@@ -336,21 +347,25 @@ class OrderController extends Controller
                 $response = APIHelpers::createApiResponse(true , 406 , 'Not Enough wallet balance' , 'رصيد المحفظة لا يكفى' , null , $request->lang);
                 return response()->json($response , 406);
             }else {
-                $wallet['balance'] = $wallet['balance'] - $total_price;
+                $toPrice = number_format((float)$total_price, 3, '.', '');
+                $wallet['balance'] = $wallet['balance'] - $toPrice;
                 $wallet->save();
             }
-            
+            $subTPrice = number_format((float)$main_order->orders->sum('subtotal_price'), 3, '.', '');
+            $dCost = number_format((float)$main_order->orders->sum('delivery_cost'), 3, '.', '');
+            $tPrice = number_format((float)$main_order->orders->sum('total_price'), 3, '.', '');
             $u_main_order->update([
-                'subtotal_price' => $main_order->orders->sum('subtotal_price'),
-                'delivery_cost' => $main_order->orders->sum('delivery_cost'),
-                'total_price' => $main_order->orders->sum('total_price')
+                'subtotal_price' => $subTPrice,
+                'delivery_cost' => $dCost,
+                'total_price' => $tPrice
             ]);
+
             $data = [
                 'main_order_number' => $u_main_order['main_order_number'],
                 'count' => $count,
                 'date' => $u_main_order['created_at']->format('Y-m-d'),
                 'time' => $u_main_order['created_at']->format('g:i A'),
-                'total_cost' => $main_order->orders->sum('total_price')
+                'total_cost' => number_format((float)$main_order->orders->sum('total_price'), 3, '.', '')
             ];
 
             for ($p =0; $p < count($ordersIds); $p ++) {
@@ -442,9 +457,9 @@ class OrderController extends Controller
                         'user_id' => auth()->user()->id,
                         'address_id' => $request->address_id,
                         'payment_method' => $request->payment_method,
-                        'subtotal_price' => $subtotal_price,
-                        'delivery_cost' => $delivery['delivery_cost'],
-                        'total_price' => $total_cost,
+                        'subtotal_price' => number_format((float)$subtotal_price, 3, '.', ''),
+                        'delivery_cost' => number_format((float)$delivery['delivery_cost'], 3, '.', ''),
+                        'total_price' => number_format((float)$total_cost, 3, '.', ''),
                         'order_number' => substr(str_shuffle(uniqid() . $str) , -9),
                         'store_id' => $unrepeated_stores[$i],
                         'main_id' => $main_order['id']
@@ -457,8 +472,8 @@ class OrderController extends Controller
                     $order_item =  OrderItem::create([
                         'order_id' => $order->id,
                         'product_id' => $store_products[$k]['product_id'],
-                        'price_before_offer' => $product_data['price_before_offer'],
-                        'final_price' => $product_data['final_price'],
+                        'price_before_offer' => number_format((float)$product_data['price_before_offer'], 3, '.', ''),
+                        'final_price' => number_format((float)$product_data['final_price'], 3, '.', ''),
                         'count' => $store_products[$k]['count']
                     ]);
                     
@@ -477,10 +492,13 @@ class OrderController extends Controller
             }
         }
         $u_main_order = MainOrder::find($main_order['id']);
+        $subTPrice = number_format((float)$main_order->orders->sum('subtotal_price'), 3, '.', '');
+        $dCost = number_format((float)$main_order->orders->sum('delivery_cost'), 3, '.', '');
+        $tPrice = number_format((float)$main_order->orders->sum('total_price'), 3, '.', '');
         $u_main_order->update([
-            'subtotal_price' => $main_order->orders->sum('subtotal_price'),
-            'delivery_cost' => $main_order->orders->sum('delivery_cost'),
-            'total_price' => $main_order->orders->sum('total_price')
+            'subtotal_price' => $subTPrice,
+            'delivery_cost' => $dCost,
+            'total_price' => $tPrice
         ]);
 
         return redirect('api/pay/success'); 

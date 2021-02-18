@@ -81,7 +81,6 @@ class FavoriteController extends Controller
         }else{
             $products = Product::whereIn('id', $favorites)->where('deleted' , 0)->where('hidden' , 0)->where('remaining_quantity', '>', 0)->select('id', 'title_ar as title' , 'final_price' , 'price_before_offer' , 'offer' , 'offer_percentage' , 'category_id' )->get();
         }
- 
         
         for($i =0 ; $i < count($products); $i++){
             $products[$i]['favorite'] = true;
@@ -91,7 +90,8 @@ class FavoriteController extends Controller
                 $products[$i]['category_name'] = Category::where('id' , $products[$i]['category_id'])->pluck('title_ar as title')->first();
             }
             
-
+            $products[$i]['final_price'] = number_format((float)$products[$i]['final_price'], 3, '.', '');
+            $products[$i]['price_before_offer'] = number_format((float)$products[$i]['price_before_offer'], 3, '.', '');
             $products[$i]['image'] = ProductImage::where('product_id' , $products[$i]['id'])->pluck('image')->first();
         }
         $response = APIHelpers::createApiResponse(false , 200 , '' , '' , $products , $request->lang);

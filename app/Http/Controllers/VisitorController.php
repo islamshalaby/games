@@ -271,6 +271,8 @@ class VisitorController extends Controller
         ]);
         
 
+        // dd(auth()->user()->id);
+
         if ($validator->fails()) {
             $response = APIHelpers::createApiResponse(true , 406 , 'Missing Required Fields' , 'بعض الحقول مفقودة' , null , $request->lang);
             return response()->json($response , 406);
@@ -298,9 +300,10 @@ class VisitorController extends Controller
                 $data['shipments'][$i]['shipment_number'] = $i + 1;
                 $store = Shop::where('id', $get_stores[$i]['id'])->select('id', 'name', 'logo')->first()->makeHidden('custom');
                 $delivery_cost = DeliveryArea::select('delivery_cost', 'estimated_arrival_time')->where('area_id', $address['area_id'])->where('store_id', $get_stores[$i]['id'])->first();
-                $data['delivery_cost'] = $data['delivery_cost'] + $delivery_cost['delivery_cost'];
+                $d_cost = $data['delivery_cost'] + $delivery_cost['delivery_cost'];
+                $data['delivery_cost'] = number_format((float)$d_cost, 3, '.', '');
                 $store['estimated_arrival_time'] = $delivery_cost['estimated_arrival_time'];
-                $store['delivery_cost'] = $delivery_cost['delivery_cost'];
+                $store['delivery_cost'] = number_format((float)$delivery_cost['delivery_cost'], 3, '.', '');
                 $data['shipments'][$i]['store'] = $store;
                 $products = [];
                 $data['shipments'][$i]['store']['total_price'] = $delivery_cost['delivery_cost'];
@@ -311,21 +314,27 @@ class VisitorController extends Controller
                     }else {
                         $product = Product::select('title_en as title', 'final_price', 'price_before_offer', 'offer_percentage', 'id', 'offer', 'store_id')->where('id', $cart[$n]['product_id'])->first()->makeHidden('mainImage');
                     }
+                    $product['final_price'] = number_format((float)$product['final_price'], 3, '.', '');
+                    $product['price_before_offer'] = number_format((float)$product['price_before_offer'], 3, '.', '');
                     if ($get_stores[$i]['id'] == $product['store_id']) {
                         $product['store_name'] = $store['name'];
                         $product['main_image'] = $product->mainImage['image'];
-                        $data['shipments'][$i]['store']['total_price'] = $product['final_price'] + $data['shipments'][$i]['store']['total_price'];
-                        $data['subtotal_price'] = $data['subtotal_price'] + ($product['final_price'] * $cart[$n]['count']);
+                        $sTPrice = $product['final_price'] + $data['shipments'][$i]['store']['total_price'];
+                        $data['shipments'][$i]['store']['total_price'] = number_format((float)$sTPrice, 3, '.', '');
+                        $subTPrice = $data['subtotal_price'] + ($product['final_price'] * $cart[$n]['count']);
+                        $data['subtotal_price'] = number_format((float)$subTPrice, 3, '.', '');
 
                     
                         array_push($products, $product);
                     }
                     
                 }
-                // var_dump($data['shipments'][$i]['store']['total_price']);
+                
                 $data['shipments'][$i]['store']['products'] = $products;
             }
-            $data['total_price'] = $data['subtotal_price'] + $data['delivery_cost'];
+            $tPrice = $data['subtotal_price'] + $data['delivery_cost'];
+            $data['total_price'] = number_format((float)$tPrice, 3, '.', '');
+
             $response = APIHelpers::createApiResponse(false , 200 , '' , '' , $data , $request->lang);
             return response()->json($response , 200);
 

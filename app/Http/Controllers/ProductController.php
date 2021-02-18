@@ -57,6 +57,8 @@ class ProductController extends Controller
                 $response = APIHelpers::createApiResponse(true , 406 , 'This store is not cover your area' , 'هذا المتجر لا يغطى منطقتك' , null , $request->lang);
                 return response()->json($response , 406);
             }
+            $data['product']['final_price'] = number_format((float)$data['product']['final_price'], 3, '.', '');
+            $data['product']['price_before_offer'] = number_format((float)$data['product']['price_before_offer'], 3, '.', '');
 
             for ($i = 0; $i < count($data['product']->productProperties); $i ++) {
                 $single = [
@@ -145,6 +147,8 @@ class ProductController extends Controller
             }else {
                 $data['related_products'][$r]['image'] = "";
             }
+            $data['related_products'][$r]['final_price'] = number_format((float)$data['related_products'][$r]['final_price'], 3, '.', '');
+            $data['related_products'][$r]['price_before_offer'] = number_format((float)$data['related_products'][$r]['price_before_offer'], 3, '.', '');
             
         }
 
@@ -380,8 +384,8 @@ class ProductController extends Controller
                 $response = APIHelpers::createApiResponse(true , 406 , 'This store is not cover your area' , 'هذا المتجر لا يغطى منطقتك' , null , $request->lang);
                 return response()->json($response , 406);
             }
-            $data['store']['delivery_cost'] = $deliveryArea['delivery_cost'];
-            $data['store']['min_order_cost'] = $data['store']['min_order_cost'];
+            $data['store']['delivery_cost'] = number_format((float)$deliveryArea['delivery_cost'], 3, '.', '');
+            $data['store']['min_order_cost'] = number_format((float)$data['store']['min_order_cost'], 3, '.', '');
             $data['store']['estimated_arrival_time'] = $deliveryArea['estimated_arrival_time'];
             $proTypes = Product::where('store_id', $storeId)->where('deleted', 0)->where('hidden', 0)->pluck('type')->toArray();
             $unrepeatedTypes1 = array_unique($proTypes);
@@ -483,22 +487,7 @@ class ProductController extends Controller
                     ->get()->makeHidden('mainImage');
                 }
 
-                for ($p = 0; $p < count($data['products']); $p ++) {
-                    if(auth()->user()){
-                        $user_id = auth()->user()->id;
-        
-                        $prevfavorite = Favorite::where('product_id' , $data['products'][$p]['id'])->where('user_id' , $user_id)->first();
-                        if($prevfavorite){
-                            $data['products'][$p]['favorite'] = true;
-                        }else{
-                            $data['products'][$p]['favorite'] = false;
-                        }
-                        
-                    }else{
-                        $data['products'][$p]['favorite'] = false;
-                    }
-                    $data['products'][$p]['image'] = $data['products'][$p]->mainImage['image'];
-                }
+                
             }
 
             for ($p = 0; $p < count($data['products']); $p ++) {
@@ -515,6 +504,8 @@ class ProductController extends Controller
                 }else{
                     $data['products'][$p]['favorite'] = false;
                 }
+                $data['products'][$p]['final_price'] = number_format((float)$data['products'][$p]['final_price'], 3, '.', '');
+                $data['products'][$p]['price_before_offer'] = number_format((float)$data['products'][$p]['price_before_offer'], 3, '.', '');
                 $data['products'][$p]['image'] = $data['products'][$p]->mainImage['image'];
             }
             
