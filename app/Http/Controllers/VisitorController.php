@@ -29,6 +29,7 @@ class VisitorController extends Controller
     public function create(Request $request){
         $validator = Validator::make($request->all(), [
             'unique_id' => 'required',
+            'fcm_token' => "required",
             'type' => 'required' // 1 -> iphone ---- 2 -> android
         ]);
 
@@ -39,10 +40,13 @@ class VisitorController extends Controller
 
         $last_visitor = Visitor::where('unique_id' , $request->unique_id)->first();
         if($last_visitor){
+            $last_visitor->fcm_token = $request->fcm_token;
+            $last_visitor->save();
             $visitor = $last_visitor;
         }else{
             $visitor = new Visitor();
             $visitor->unique_id = $request->unique_id;
+            $visitor->fcm_token = $request->fcm_token;
             $visitor->type = $request->type;
             $visitor->save();
         }

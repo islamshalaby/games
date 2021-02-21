@@ -52,7 +52,7 @@ class ProductTypeController extends AdminController{
 
     public function test() {
         
-        $geocode=file_get_contents('https://maps.googleapis.com/maps/api/geocode/json?latlng=29.3417571,48.0257676&sensor=true&key=AIzaSyCMSfq40Bo2KuQvQVSQE1gmmgJdxEbDS0Y&libraries');
+        $geocode=file_get_contents('https://maps.googleapis.com/maps/api/geocode/json?latlng=29.1958852,48.0537201&sensor=true&key=AIzaSyCMSfq40Bo2KuQvQVSQE1gmmgJdxEbDS0Y&libraries');
         // dd($geocode);
         $output= json_decode($geocode);
 

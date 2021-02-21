@@ -223,6 +223,7 @@ Route::group([
          Route::post('add/deliverycost/{area}' , 'AreasController@add_deliver_cost_post');
          Route::get('edit/deliverycost/{area}/{cost}' , 'AreasController@edit_delivery_cost_get')->name('edit_delivery_cost_get');
          Route::post('edit/deliverycost/{area}/{cost}' , 'AreasController@edit_delivery_cost_post');
+         Route::get('delete/deliverycost/{cost}' , 'AreasController@deleteDeliveryCost')->name('delete_delivery_cost_get');
          Route::get('delete/{area}' , 'AreasController@delete')->name('areas.delete');
          Route::get('details/{area}' , 'AreasController@details')->name('areas.details');
     });

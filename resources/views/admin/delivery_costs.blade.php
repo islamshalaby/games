@@ -30,9 +30,9 @@
                             @if(Auth::user()->update_data) 
                                 <th class="text-center">{{ __('messages.edit') }}</th>                          
                             @endif
-                            {{-- @if(Auth::user()->delete_data) 
+                            @if(Auth::user()->delete_data) 
                                 <th class="text-center">{{ __('messages.delete') }}</th>                          
-                            @endif --}}
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -46,9 +46,9 @@
                                 @if(Auth::user()->update_data) 
                                     <td class="text-center blue-color" ><a href="{{ route('edit_delivery_cost_get', [$cost->area->id, $cost->id]) }}" ><i class="far fa-edit"></i></a></td>
                                 @endif
-                                {{-- @if(Auth::user()->delete_data) 
-                                    <td class="text-center blue-color" ><a onclick='return confirm("{{ __('messages.are_you_sure') }}");' href="{{ route('areas.delete', $area->id) }}" ><i class="far fa-trash-alt"></i></a></td>
-                                @endif                                 --}}
+                                @if(Auth::user()->delete_data) 
+                                    <td class="text-center blue-color" ><a onclick='return confirm("{{ __('messages.are_you_sure') }}");' href="{{ route('delete_delivery_cost_get', $cost->id) }}" ><i class="far fa-trash-alt"></i></a></td>
+                                @endif                               
                                 <?php $i++; ?>
                             </tr>
                         @endforeach

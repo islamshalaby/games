@@ -504,6 +504,7 @@
         "under_review" => "Under review",
         "publish" => "Publish",
         "received_refund" => "Refund Received",
-        "sellers_notifications" => "Sellers Notifications"
+        "sellers_notifications" => "Sellers Notifications",
+        "show_home" => "Show in home page"
     ];
 ?>

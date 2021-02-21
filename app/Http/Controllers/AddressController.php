@@ -153,9 +153,9 @@ class AddressController extends Controller
 
     public function getareas(Request $request){
         if($request->lang == 'en'){
-            $areas = Area::where('deleted' , 0)->select('id', 'title_en as title')->get();
+            $areas = Area::where('deleted' , 0)->orderBy('title_en', 'asc')->select('id', 'title_en as title')->get();
         }else{
-            $areas = Area::where('deleted' , 0)->select('id' , 'title_ar as title')->get();
+            $areas = Area::where('deleted' , 0)->orderBy('title_ar', 'asc')->select('id' , 'title_ar as title')->get();
         }
         
         $response = APIHelpers::createApiResponse(false , 200 , '' , '' , $areas , $request->lang);

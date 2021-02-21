@@ -8,6 +8,7 @@ use App\Helpers\APIHelpers;
 use App\Notification;
 use App\UserNotification;
 use App\User;
+use App\Visitor;
 
 class NotificationController extends AdminController{
     
@@ -56,11 +57,12 @@ class NotificationController extends AdminController{
         $notification->body = $request->body;
         $notification->save();
 
-        $users = User::select('id','fcm_token')->where('fcm_token' ,'!=' , null)->get();
+        $users = Visitor::select('id','fcm_token', 'user_id')->where('fcm_token' ,'!=' , null)->get();
         for($i =0; $i < count($users); $i++){
             $fcm_tokens[$i] = $users[$i]['fcm_token'];
             $user_notification = new UserNotification();
-            $user_notification->user_id = $users[$i]['id'];
+            $user_notification->visitor_id = $users[$i]['id'];
+            $user_notification->user_id = $users[$i]['user_id'];
             $user_notification->notification_id = $notification->id;
             $user_notification->save();            
         }
@@ -68,6 +70,7 @@ class NotificationController extends AdminController{
 		$the_image = "https://res.cloudinary.com/dezsm0sg7/image/upload/w_200,q_100/v1581928924/".$notification->image;
 
         $notificationss = APIHelpers::send_notification($notification->title , $notification->body , $the_image , null , $fcm_tokens);    
+        
         return redirect('admin-panel/notifications/show');
     }
 
@@ -78,10 +81,10 @@ class NotificationController extends AdminController{
         $notification_id = $request->id;
         $notification = Notification::find($notification_id);
 
-        $users_tokens = User::select('fcm_token')->get();
-        $array_values = array_values((array)$users_tokens);
-        $array_values = $array_values[0];
-        APIHelpers::send_notification($notification->title , $notification->body , $notification->image , null , $array_values);
+        $users_tokens = Visitor::where('fcm_token' ,'!=' , null)->select('fcm_token')->pluck('fcm_token');
+        
+        $nots = APIHelpers::send_notification($notification->title , $notification->body , $notification->image , null , $users_tokens);
+        
         return redirect()->back()->with('status', 'Sent succesfully');
     }
 

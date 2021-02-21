@@ -28,7 +28,7 @@ class HomeController extends Controller
     public function getdata(Request $request){
         $validator = Validator::make($request->all(), [
             'unique_id' => 'required',
-            'place_id' => 'required',
+            // 'place_id' => 'required',
             'formatted_address' => 'required',
             'category_id' => 'required'
         ]);
@@ -41,7 +41,7 @@ class HomeController extends Controller
         $data['slider'] = $slider->ads;
    
         $visitor = Visitor::where('unique_id' , $request->unique_id)->first();
-        $current_area = Area::where('place_id', $request->place_id)->orWhere('formatted_address', 'like', '%' . $request->formatted_address . '%')->first();
+        $current_area = Area::where('formatted_address_en', 'like', '%' .  $request->formatted_address . '%')->orWhere('formatted_address_ar', 'like', '%' . $request->formatted_address . '%')->first();
         if (isset($visitor['id'])) {
             $address = Address::where('visitor_id', $visitor['id'])->first();
             if (isset($current_area['id']) && isset($address['id'])) {

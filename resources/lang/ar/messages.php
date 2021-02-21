@@ -502,6 +502,7 @@
             "under_review" => "قيد المراجعة",
             "publish" => "نشر",
             "received_refund" => "تم إستلام المرتجع",
-            "sellers_notifications" => "تنبيهات التجار"
+            "sellers_notifications" => "تنبيهات التجار",
+            "show_home" => "عرض بالصفحة الرئيسية"
         ];
 ?>

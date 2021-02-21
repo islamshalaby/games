@@ -10,7 +10,7 @@ use App\Shop;
 class AreasController extends AdminController{
     // get all areas
     public function show(){
-        $data['areas'] = Area::where('deleted', 0)->orderBy('id' , 'desc')->get();
+        $data['areas'] = Area::where('deleted', 0)->orderBy('title_ar' , 'asc')->get();
         return view('admin.areas' , ['data' => $data]);
     }
 
@@ -116,9 +116,16 @@ class AreasController extends AdminController{
         return redirect()->route('areas.show.delivercost', $area->id);
     }
 
+    // delete delivery cost
+    public function deleteDeliveryCost(DeliveryArea $cost) {
+        $cost->delete();
+
+        return redirect()->back();
+    }
+
     public function test() {
         
-        $geocode=file_get_contents('https://maps.googleapis.com/maps/api/geocode/json?latlng=29.3417571,48.0257676&sensor=true&key=AIzaSyCMSfq40Bo2KuQvQVSQE1gmmgJdxEbDS0Y&libraries');
+        $geocode=file_get_contents('https://maps.googleapis.com/maps/api/geocode/json?latlng=29.3035363,47.8223596&sensor=true&key=AIzaSyCMSfq40Bo2KuQvQVSQE1gmmgJdxEbDS0Y&libraries');
         // dd($geocode);
         $output= json_decode($geocode);
 

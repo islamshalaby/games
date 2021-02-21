@@ -395,7 +395,7 @@ class ProductController extends Controller
                     array_push($unrepeatedTypes, $value); 
                 }
             }
-            $productCategories = Product::where('deleted', 0)->where('hidden', 0)->where('store_id', $storeId)->pluck('category_id')->toArray();
+            $productCategories = Product::where('deleted', 0)->where('hidden', 0)->where('reviewed', 1)->where('store_id', $storeId)->pluck('category_id')->toArray();
             if ($request->lang == 'en') {
                 
                 $data['categories'] = Category::whereIn('id', $productCategories)
@@ -431,7 +431,7 @@ class ProductController extends Controller
                     
                     $data['products'] = Product::where('deleted', 0)
                     ->where('hidden', 0)
-                    // ->where('reviewed', 1)
+                    ->where('reviewed', 1)
                     ->where('store_id', $storeId)
                     ->where('category_id', $productCategories[0])
                     ->where('type', $tpe)
@@ -441,7 +441,7 @@ class ProductController extends Controller
                 }else {
                     $data['products'] = Product::where('deleted', 0)
                     ->where('hidden', 0)
-                    // ->where('reviewed', 1)
+                    ->where('reviewed', 1)
                     ->where('store_id', $storeId)
                     ->where('category_id', $productCategories[0])
                     ->where('type', $tpe)
