@@ -54,8 +54,31 @@
             
             
             @foreach ($data['order']->orders as $order)
-            <h5>{{ $order->store->name }}</h5>
-            <p><b>{{ __('messages.sub_order_number') }} : </b> {{ $order->order_number }}</p>
+            <tr class="information">
+                <td colspan="7" style="padding: 5px;vertical-align: top;">
+                    <table style="width: 100%;line-height: inherit;text-align: right;">
+                        <tr>
+                            <td style="padding: 5px;padding-top:0;vertical-align: top;">
+                                <h5>{{ $order->store->name }}</h5>
+                            </td>
+                            
+                            <td style="padding: 5px;text-align: right;">
+                                
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 5px;padding-top:0;padding-bottom: 20px;">
+                                <h6>{{ __('messages.sub_order_number') }}</h6>
+                            </td>
+                            
+                            <td style="padding: 5px;vertical-align: top;text-align: right;padding-bottom: 20px;">
+                                {{ $order->order_number }}
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            
             <tr class="heading">
                 <td style="padding: 5px;vertical-align: top;text-align:center;background: #eee;border-bottom: 1px solid #ddd;font-weight: bold;">
                     S.No

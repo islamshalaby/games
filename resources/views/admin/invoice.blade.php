@@ -79,7 +79,6 @@
                                     </div>
 
                                     <div class="row inv--detail-section">
-                                         <a href="{{ route('pdfview', $data['order']['id']) }}?download=>pdf">Download PDF</a> 
                                         <div class="col-sm-7 align-self-center">
                                             <p class="inv-to">{{ __('messages.customer_data') }}</p>
                                         </div>

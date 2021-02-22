@@ -432,7 +432,7 @@ Route::group([
     Route::get('termsandconditions/{lang}' , 'WebViewController@gettermsandconditions' );
     Route::get('returnpolicy/{lang}' , 'WebViewController@returnpolicy');
     Route::get('deliveryinformation/{lang}' , 'WebViewController@deliveryinformation');
-    Route::get('pdfview/{order}','WebViewController@getInvoice');
+    Route::get('pdfview/{order}','WebViewController@getInvoice')->name('webview.invoice');
 
 });
 
