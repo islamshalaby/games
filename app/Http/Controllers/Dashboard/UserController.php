@@ -101,8 +101,10 @@ class UserController extends Controller
             
         }
 
+        
+
         for($i = 0; $i < count($data['areas']); $i ++) {
-            $deliveryArea = DeliveryArea::where('area_id', $data['areas'][$i]['id'])
+            $deliveryArea = DeliveryArea::where('area_id', $data['areas'][$i]['area_id'])
             ->where('store_id', Auth::guard('dashboard')->user()->id)
             ->select('delivery_cost', 'estimated_arrival_time', 'id')
             ->first();
