@@ -31,11 +31,11 @@ class HomeController extends AdminController{
         ->leftjoin('product_multi_options', function($join) {
             $join->on('product_multi_options.id', '=', 'order_items.option_id');
         })
-        ->where('main_orders.status', 2)
+        ->where('main_orders.status', 3)
         ->leftjoin('main_orders', function($join) {
             $join->on('main_orders.id', '=', 'orders.main_id');
         })
-        ->select('products.id', 'products.multi_options', 'products.remaining_quantity', 'products.title_en','products.title_ar', DB::raw('SUM(count) as cnt'))
+        ->select('products.id', 'products.multi_options', 'products.price_before_offer', 'products.final_price', 'products.remaining_quantity', 'products.title_en','products.title_ar', DB::raw('SUM(count) as cnt'))
         ->addSelect('orders.status')
         ->groupBy('orders.status')
         ->groupBy('order_items.product_id')

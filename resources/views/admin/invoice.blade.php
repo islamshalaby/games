@@ -79,7 +79,7 @@
                                     </div>
 
                                     <div class="row inv--detail-section">
-                                        {{--  <a href="{{ route('pdfview', $data['order']['id']) }}?download=>pdf">Download PDF</a>  --}}
+                                         <a href="{{ route('pdfview', $data['order']['id']) }}?download=>pdf">Download PDF</a> 
                                         <div class="col-sm-7 align-self-center">
                                             <p class="inv-to">{{ __('messages.customer_data') }}</p>
                                         </div>
@@ -89,7 +89,7 @@
                                         
                                         <div class="col-sm-7 align-self-center">
                                             <p style="font-size: 18px;" class="inv-customer-name">{{ $data['order']->user->name }}</p>
-                                            <p style="font-size: 18px;" class="inv-street-addr"><a style="text-decoration: none" href="https://www.google.com/maps/?q={{ $data['order']->address->latitude }},{{ $data['order']->address->longitude }}" target="_blank"> {{ $data['order']->address->area->title_en . ", " . __('messages.st') . " " . $data['order']->address->street . ", " . __('messages.piece') . " " . $data['order']->address->piece . ", " . __('messages.gaddah') . " " . $data['order']->address->gaddah  }} <br/> {{ __('messages.home') . " " . $data['order']->address->building . ', ' . __('messages.floor') . " "  . $data['order']->address->floor . ', ' . __('messages.apartment') . " " . $data['order']->address->apartment_number }}</a></p>
+                                            <p style="font-size: 18px;" class="inv-street-addr"><a style="text-decoration: none" href="https://www.google.com/maps/?q={{ $data['order']->address ? $data['order']->address->latitude : '' }},{{ $data['order']->address ? $data['order']->address->longitude : '' }}" target="_blank"> {{ $data['order']->address->area ? $data['order']->address->area->title_en . ", " . __('messages.st') . " " . $data['order']->address->street . ", " . __('messages.piece') . " " . $data['order']->address->piece . ", " . __('messages.gaddah') . " " . $data['order']->address->gaddah : '' }} <br/> {{ __('messages.home') . " " . $data['order']->address->building . ', ' . __('messages.floor') . " "  . $data['order']->address->floor . ', ' . __('messages.apartment') . " " . $data['order']->address->apartment_number }}</a></p>
                                             <p class="inv-email-address">{{ $data['order']->user->phone }}</p>
                                             <p class="inv-email-address">{{ $data['order']->user->email }}</p>
                                             <p class="inv-email-address">{{ __('messages.additional_details') }} :</p>

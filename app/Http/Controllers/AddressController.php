@@ -201,7 +201,7 @@ class AddressController extends Controller
             $address = Address::where('visitor_id', $visitor['id'])->first();
         
             $userAddress = UserAddress::where('user_id', $user->id)->where('area_id', $address['address_id'])->get();
-    
+            
             if (count($userAddress) > 0) {
                 for($i = 0; $i < count($userAddress); $i++){
                     if($request->lang == 'en'){

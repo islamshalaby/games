@@ -119,6 +119,8 @@ class OrderController extends Controller
 
                     $shop = Shop::where('id', $unrepeated_stores[$i])->select('min_order_cost', 'name')->first();
                     if ($subtotal_price < $shop['min_order_cost']) {
+                        $d_main_order = MainOrder::find($main_order['id']);
+                        $d_main_order->delete();
                         $response = APIHelpers::createApiResponse(true , 406 , 'Minimum Order Cost for Store ' . $shop['name'] . ' is ' . $shop['min_order_cost'] . ' KWD' , 'الحد الأدنى لقيمة الطلب من متجر ' . $shop['name'] . ' هو ' . $shop['min_order_cost'] . ' د.ك'  , null , $request->lang);
                         return response()->json($response , 406);
                     }
@@ -293,6 +295,8 @@ class OrderController extends Controller
     
                     $shop = Shop::where('id', $unrepeated_stores[$i])->select('min_order_cost', 'name')->first();
                     if ($subtotal_price < $shop['min_order_cost']) {
+                        $d_main_order = MainOrder::find($main_order['id']);
+                        $d_main_order->delete();
                         $response = APIHelpers::createApiResponse(true , 406 , 'Minimum Order Cost for Store ' . $shop['name'] . ' is ' . $shop['min_order_cost'] . ' KWD' , 'الحد الأدنى لقيمة الطلب من متجر ' . $shop['name'] . ' هو ' . $shop['min_order_cost'] . ' د.ك'  , null , $request->lang);
                         return response()->json($response , 406);
                     }

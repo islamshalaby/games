@@ -82,4 +82,10 @@
     '600' => $fontDir . '/nunito_600_ed034f13f5440897c711d2e4f402a5db',
     'bold' => $fontDir . '/nunito_bold_3ba31529b86edd4ded07fcea8f11665d',
   ),
+  'noto sans' => array(
+    'normal' => $fontDir . '/noto_sans_normal_37622858c7c5f96ea4b2c3df53b146ce',
+  ),
+  'amiri' => array(
+    'normal' => $fontDir . '/amiri_normal_f88f8fc90e3a243acdc03caf3a489cc7',
+  ),
 ) ?>

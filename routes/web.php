@@ -207,7 +207,7 @@ Route::group([
          Route::get('size/details/{item}' , 'OrderController@order_size_details')->name('orders.size.details');
     });
 
-    Route::get('pdfview/{order}',array('as'=>'pdfview','uses'=>'OrderController@getInvoice'));
+    
 
     // Areas Route
     Route::group([
@@ -432,6 +432,8 @@ Route::group([
     Route::get('termsandconditions/{lang}' , 'WebViewController@gettermsandconditions' );
     Route::get('returnpolicy/{lang}' , 'WebViewController@returnpolicy');
     Route::get('deliveryinformation/{lang}' , 'WebViewController@deliveryinformation');
+    Route::get('pdfview/{order}','WebViewController@getInvoice');
+
 });
 
 // Shop Dashboard Routes
