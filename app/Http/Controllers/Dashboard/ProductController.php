@@ -439,7 +439,7 @@ class ProductController extends Controller
 
         for ($i = 0; $i < count($data['properties']); $i ++) {
             $data['properties'][$i]['value_id'] = 0;
-            $data['properties'][$i]['values'] = OptionValue::where('option_id', $data['properties'][$i]['option_id'])->select('id as value_id', 'value_ar as value')->get();
+            $data['properties'][$i]['values'] = OptionValue::where('option_id', $data['properties'][$i]['option_id'])->select('id as value_id', 'value_' . $request->lang . ' as value')->get();
             for ($n = 0; $n < count($data['properties'][$i]['values']); $n ++) {
                 $data['properties'][$i]['values'][$n]['selected'] = false;
             }
