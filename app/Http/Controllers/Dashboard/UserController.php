@@ -145,7 +145,7 @@ class UserController extends Controller
             DeliveryArea::create($post);
         }
 
-        $response = APIHelpers::createApiResponse(false , 200 , '' , '', '' , $request->lang);
+        $response = APIHelpers::createApiResponse(false , 200 , '' , '', (object)[] , $request->lang);
         return response()->json($response , 200);
     }
 
