@@ -26,6 +26,14 @@ class Category extends Model
         return $this->belongsToMany('App\Option', 'options_categories', 'category_id', 'option_id');
     }
 
+    public function optionsAr() {
+        return $this->belongsToMany('App\Option', 'options_categories', 'category_id', 'option_id')->select('options.id as option_id', 'options.title_ar as title');
+    }
+
+    public function optionsEn() {
+        return $this->belongsToMany('App\Option', 'options_categories', 'category_id', 'option_id')->select('options.id as option_id', 'options.title_en as title');
+    }
+
     public function multiOptions() {
         return $this->belongsToMany('App\MultiOption', 'multi_options_categories', 'category_id', 'multi_option_id');
     }

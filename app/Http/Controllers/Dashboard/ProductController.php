@@ -413,5 +413,43 @@ class ProductController extends Controller
         return response()->json($response , 200);
     }
 
+    // get categories
+    public function getCategories(Request $request) {
+        $data = Category::where('deleted', 0)->select('id', 'title_' . $request->lang . ' as title')->orderBy('id', 'desc')->get();
+
+        $response = APIHelpers::createApiResponse(false , 200 , '' , '' , $data , $request->lang);
+        return response()->json($response , 200);
+    }
+
+    // get types
+    public function getTypes(Request $request) {
+        $data = ProductType::orderBy('id', 'desc')->select('id', 'type_' . $request->lang . ' as title')->get();
+
+        $response = APIHelpers::createApiResponse(false , 200 , '' , '' , $data , $request->lang);
+        return response()->json($response , 200);
+    }
+
+    // get options
+    public function getOptions(Request $request, Category $category) {
+        if ($request->lang == 'en') {
+            $data['properties'] = $category->optionsAr;
+        }else {
+            $data['properties'] = $category->optionsAr;
+        }
+
+        for ($i = 0; $i < count($data['properties']); $i ++) {
+            $data['properties'][$i]['value_id'] = 0;
+            $data['properties'][$i]['values'] = OptionValue::where('option_id', $data['properties'][$i]['option_id'])->select('id as value_id', 'value_ar as value')->get();
+            for ($n = 0; $n < count($data['properties'][$i]['values']); $n ++) {
+                $data['properties'][$i]['values'][$n]['selected'] = false;
+            }
+        }
+        
+
+        $response = APIHelpers::createApiResponse(false , 200 , '' , '' , $data , $request->lang);
+        return response()->json($response , 200);
+
+    }
+
     
 }

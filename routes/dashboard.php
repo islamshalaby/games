@@ -92,6 +92,15 @@ Route::group([
     Route::get('{product}/{lang}/{v}', 'ProductController@getProduct');
 });
 
+// get categories
+Route::get('categories/{lang}/{v}' , 'ProductController@getCategories');
+
+// get types
+Route::get('types/{lang}/{v}' , 'ProductController@getTypes');
+
+// get properties
+Route::get('properties/{category}/{lang}/{v}' , 'ProductController@getOptions');
+
 // orders
 Route::group([
     'middleware' => 'dashboard',
