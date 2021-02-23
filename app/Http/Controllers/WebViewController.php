@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Setting;
 use App\MainOrder;
+use App\Order;
 use PDF;
 
 class WebViewController extends Controller
@@ -73,6 +74,15 @@ class WebViewController extends Controller
         $data['order'] = $order;
         $data['setting'] = Setting::where('id', 1)->first();
         $pdf = PDF::loadView('admin.invoice_pdf', ['data' => $data]);
+            
+        return $pdf->stream('download.pdf');
+    }
+
+    // get store invoice
+    public function getStoreInvoice(Request $request, Order $order) {
+        $data['order'] = $order;
+        $data['setting'] = Setting::where('id', 1)->first();
+        $pdf = PDF::loadView('admin.invoice_store_pdf', ['data' => $data]);
             
         return $pdf->stream('download.pdf');
     }
