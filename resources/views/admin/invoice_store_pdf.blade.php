@@ -20,7 +20,7 @@
                             </td>
                             
                             <td style="padding: 5px;vertical-align: top;text-align: left;padding-bottom: 20px;">
-                                {{ __('messages.invoice') }} : {{ $data['order']['order_number']  }}<br>
+                                {{ __('messages.invoice') }} : {{ $data['order']->main->main_order_number  }}<br>
                                 {{ __('messages.date') }}: {{ $data['order']['created_at']->format("d-m-y") }}<br>
                             </td>
                         </tr>
