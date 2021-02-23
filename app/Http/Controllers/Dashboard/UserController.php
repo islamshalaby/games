@@ -108,6 +108,7 @@ class UserController extends Controller
             ->where('store_id', Auth::guard('dashboard')->user()->id)
             ->select('delivery_cost', 'estimated_arrival_time', 'id')
             ->first();
+
             if (isset($deliveryArea['id'])) {
                 $data['areas'][$i]['delivery_cost'] = $deliveryArea['delivery_cost'];
                 $data['areas'][$i]['estimated_arrival_time'] = $deliveryArea['estimated_arrival_time'];
@@ -115,7 +116,6 @@ class UserController extends Controller
                 $data['areas'][$i]['delivery_cost'] = "not set";
                 $data['areas'][$i]['estimated_arrival_time'] = "not set";
             }
-            
         }
         
 

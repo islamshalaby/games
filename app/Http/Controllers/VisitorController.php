@@ -323,7 +323,13 @@ class VisitorController extends Controller
                     $product['price_before_offer'] = number_format((float)$product['price_before_offer'], 3, '.', '');
                     if ($get_stores[$i]['id'] == $product['store_id']) {
                         $product['store_name'] = $store['name'];
-                        $product['main_image'] = $product->mainImage['image'];
+                        if (isset($product->mainImage['image'])) {
+                            $product['main_image'] = $product->mainImage['image'];
+                        }else if(count($product->images) > 0) {
+                            $product['main_image'] = $product->images[0]['image'];
+                        }else {
+                            $product['main_image'] = '';
+                        }
                         $sTPrice = $product['final_price'] + $data['shipments'][$i]['store']['total_price'];
                         $data['shipments'][$i]['store']['total_price'] = number_format((float)$sTPrice, 3, '.', '');
                         $subTPrice = $data['subtotal_price'] + ($product['final_price'] * $cart[$n]['count']);
