@@ -134,9 +134,9 @@
                     @elseif($item->status == 4)
                     {{ __('messages.order_canceled') }}
                     @elseif($item->status == 5)
-                    <a href="{{ route('refund.details', $item->refund->id) }}" target="_blank">
+                    {{-- <a href="{{ route('refund.details', $item->refund->id) }}" target="_blank"> --}}
                         {{ __('messages.refund_request') }}
-                    </a>
+                    {{-- </a> --}}
                     @elseif($item->status == 6)
                     {{ __('messages.refund_accepted') }}
                     @elseif($item->status == 7)
