@@ -38,14 +38,14 @@ class ProductController extends Controller
             ->where('hidden', 0)
             ->where('store_id', Auth::guard('dashboard')->user()->id)
             ->where('type', $request->type)
-            ->select('id', 'remaining_quantity', 'title_en as title', 'final_price', 'price_before_offer', 'offer')->with('mainImage');
+            ->select('id', 'remaining_quantity', 'title_en as title', 'final_price', 'price_before_offer', 'offer', 'barcode', 'stored_number')->with('mainImage');
         }else {
             $data['types'] = ProductType::select('id', 'type_ar as title')->get();
             $query = Product::where('deleted', 0)
             ->where('hidden', 0)
             ->where('store_id', Auth::guard('dashboard')->user()->id)
             ->where('type', $request->type)
-            ->select('id', 'remaining_quantity', 'title_ar as title', 'final_price', 'price_before_offer', 'offer')->with('mainImage');
+            ->select('id', 'remaining_quantity', 'title_ar as title', 'final_price', 'price_before_offer', 'offer', 'barcode', 'stored_number')->with('mainImage');
         }
 
         for($i = 0; $i < count($data['types']); $i ++) {
