@@ -29,6 +29,19 @@ class RefundController extends AdminController{
         $order_status = 0;
         $main_order_cancel = 0;
 
+        if ($refund->item->order->main['payment_method'] == 3 || $refund->item->order->main['payment_method'] == 1) {
+            $walletUser = Wallet::where('user_id', $refund->item->order->main['user_id'])->first();
+            if ($walletUser) {
+                $walletUser['balance'] = $walletUser['balance'] + ($refund->item['count'] * $refund->item['final_price']);
+                $walletUser->save();
+            }else {
+                Wallet::create([
+                    'user_id' => $refund->item->order->main['user_id'],
+                    'balance' => $refund->item['count'] * $refund->item['final_price']
+                ]);
+            }
+        }
+
         for ($i = 0; $i < count($refund->item->order->oItems); $i ++) {
             if ( $refund->item->order->oItems[$i]->status == 6 ) {
                 $order_status ++;

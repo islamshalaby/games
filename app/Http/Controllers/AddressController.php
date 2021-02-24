@@ -152,14 +152,24 @@ class AddressController extends Controller
     }
 
     public function getareas(Request $request){
-        if($request->lang == 'en'){
-            $areas = Area::where('deleted' , 0)->orderBy('title_en', 'asc')->select('id', 'title_en as title')->get();
-        }else{
-            $areas = Area::where('deleted' , 0)->orderBy('title_ar', 'asc')->select('id' , 'title_ar as title')->get();
+        $user = auth()->user();
+        // dd($user->id);
+        $visitor = Visitor::where('user_id', $user->id)->first();
+        if (isset($visitor['id'])) {
+            $address = Address::where('visitor_id', $visitor['id'])->first();
+
+            if($request->lang == 'en'){
+                $areas = Area::where('id' , $address['address_id'])->select('id', 'title_en as title')->get();
+            }else{
+                $areas = Area::where('id' , $address['address_id'])->select('id' , 'title_ar as title')->get();
+            }
+            
+            $response = APIHelpers::createApiResponse(false , 200 , '' , '' , $areas , $request->lang);
+            return response()->json($response , 200);
+        }else {
+            $response = APIHelpers::createApiResponse(true , 406 , 'visitor is not exist' , 'زائر غير موجود'  , null , $request->lang);
+            return response()->json($response , 406);
         }
-        
-        $response = APIHelpers::createApiResponse(false , 200 , '' , '' , $areas , $request->lang);
-        return response()->json($response , 200);
     }
 
     public function getdeliveryprice(Request $request){

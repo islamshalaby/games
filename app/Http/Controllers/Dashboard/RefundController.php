@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use App\MainOrder;
 use App\OrderItem;
 use App\Product;
+use App\Wallet;
 
 class RefundController extends Controller
 {
@@ -100,6 +101,18 @@ class RefundController extends Controller
         for ($i = 0; $i < count($order->orders); $i ++) {
             for ($n = 0; $n < count($order->orders[$i]->oItemsRefunded); $n ++) {
                 $order->orders[$i]->oItemsRefunded[$n]->update(['status' => 6]);
+                if ($order['payment_method'] == 3 || $order['payment_method'] == 1) {
+                    $walletUser = Wallet::where('user_id', $order['user_id'])->first();
+                    if ($walletUser) {
+                        $walletUser['balance'] = $walletUser['balance'] + ($order->orders[$i]->oItemsRefunded[$n]['count'] * $order->orders[$i]->oItemsRefunded[$n]['final_price']);
+                        $walletUser->save();
+                    }else {
+                        Wallet::create([
+                            'user_id' => $order['user_id'],
+                            'balance' => $order->orders[$i]->oItemsRefunded[$n]['count'] * $order->orders[$i]->oItemsRefunded[$n]['final_price']
+                        ]);
+                    }
+                }
             }
         }
         

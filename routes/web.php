@@ -272,7 +272,7 @@ Route::group([
          Route::get('delete/{type}' , 'ProductTypeController@delete')->name('product_type.delete');
     });
 
-    Route::get('test', 'ProductTypeController@test');
+    
 
     // Sub Categories Route
     Route::group([
@@ -434,6 +434,7 @@ Route::group([
     Route::get('deliveryinformation/{lang}' , 'WebViewController@deliveryinformation');
     Route::get('pdfview/{order}','WebViewController@getStoreInvoice');
     Route::get('pdfview/main/{order}','WebViewController@getInvoice')->name('webview.invoice');
+    Route::get('test', 'WebViewController@test');
 
 });
 
