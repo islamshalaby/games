@@ -17,10 +17,11 @@ class WalletController extends Controller
     public function getMyWalletBalance(Request $request) {
         $user = auth()->user();
         $data['wallet'] = Wallet::where('user_id', $user->id)->first();
-        $data['wallet']['balance'] = number_format((float)$data['wallet']['balance'], 3, '.', '');
-        if (! isset($data['wallet']['id'])) {
-            $data['wallet']['balance'] = "0";
-        }
+		if (isset($data['wallet']['balance'])) {
+			$data['wallet']['balance'] = number_format((float)$data['wallet']['balance'], 3, '.', '');
+		}else {
+			$data['wallet']['balance'] = "0";
+		}
 
         $response = APIHelpers::createApiResponse(false , 200 , '' , '' , $data['wallet'] , $request->lang);
             return response()->json($response , 200);

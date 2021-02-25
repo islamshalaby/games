@@ -617,11 +617,16 @@ class OrderController extends Controller
         }
         $orderStatus = $item->order->status;
         if ($canceled == count($order->oItems)) {
-            $orderStatus = 3;
+            $orderStatus = 4;
         }
+        $subTP = $item->order->subtotal_price - $item->product->final_price;
+        $subTP = number_format((float)$subTP, 3, '.', '');
+        $totalP = $item->order->total_price - $item->product->final_price;
+        $totalP = number_format((float)$totalP, 3, '.', '');
         $item->order->update([
-            'subtotal_price' => $item->order->subtotal_price - $item->product->final_price,
-            'total_price' => $item->order->total_price - $item->product->final_price,
+            'subtotal_price' => $subTP,
+            'total_price' => $totalP,
+            'delivery_cost' => 0,
             'status' => $orderStatus
         ]);
         $mainCanceled = 0;
@@ -631,14 +636,18 @@ class OrderController extends Controller
             }
         }
         $cancelStatus = $item->order->main->status;
+        // dd(count($item->order->main->orders));
         if ($mainCanceled == count($item->order->main->orders)) {
-            $cancelStatus = 3;
+            $cancelStatus = 4;
         }
         $subTotal = $item->order->main->subtotal_price - $item->product->final_price;
+        $subTotal = number_format((float)$subTotal, 3, '.', '');
         $totalPrice = $item->order->main->total_price - $item->product->final_price;
+        $totalPrice = number_format((float)$totalPrice, 3, '.', '');
         $item->order->main->update([
             'subtotal_price' => $subTotal,
             'total_price' => $totalPrice,
+            'delivery_cost' => 0,
             'status' => $cancelStatus
         ]);
 
@@ -647,12 +656,12 @@ class OrderController extends Controller
         if ($item->order->main['payment_method'] == 3 || $item->order->main['payment_method'] == 1) {
             $walletUser = Wallet::where('user_id', $item->order->main['user_id'])->first();
             if ($walletUser) {
-                $walletUser['balance'] = $walletUser['balance'] + ($item['count'] * $item['final_price']);
+                $walletUser['balance'] = $walletUser['balance'] + ($item['count'] * $item['final_price']) + $item->order['delivery_cost'];
                 $walletUser->save();
             }else {
                 Wallet::create([
                     'user_id' => $item->order->main['user_id'],
-                    'balance' => $item['count'] * $item['final_price']
+                    'balance' => ($item['count'] * $item['final_price']) + $item->order['delivery_cost']
                 ]);
             }
         }

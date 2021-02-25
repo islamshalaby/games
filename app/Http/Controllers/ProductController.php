@@ -44,6 +44,7 @@ class ProductController extends Controller
         
         $address = Address::where('visitor_id', $visitor['id'])->first();
         $areaStores = DeliveryArea::where('area_id', $address['address_id'])->pluck('store_id')->toArray();
+		
 
         if ($request->lang == 'en') {
             $data['product'] = Product::where('id', $id)
@@ -73,9 +74,11 @@ class ProductController extends Controller
             ->where('reviewed', 1)
             ->where('remaining_quantity', '>', 0)
             ->where('category_id', $data['product']['category_id'])
+			->whereIn('store_id', $areaStores)
             ->orWhere('type', $data['product']['type'])
             ->select('id', 'title_en as title', 'final_price', 'price_before_offer', 'offer_percentage')
             ->orderBy('id', 'desc')
+			->inRandomOrder()->limit(5)
             ->get()->makeHidden('mainImage');
         }else {
             $data['product'] = Product::where('id', $id)
@@ -83,6 +86,7 @@ class ProductController extends Controller
             ->where('hidden', 0)
             ->where('reviewed', 1)
             ->where('remaining_quantity', '>', 0)
+			->whereIn('store_id', $areaStores)
             ->select('id', 'title_ar as title', 'description_ar as description', 'offer', 'final_price', 'price_before_offer', 'offer_percentage', 'remaining_quantity', 'store_id', 'category_id', 'type')
             ->first()->makeHidden(['store_id', 'store', 'productProperties', 'category_id', 'type']);
 
@@ -107,6 +111,7 @@ class ProductController extends Controller
             ->orWhere('type', $data['product']['type'])
             ->select('id', 'title_ar as title', 'final_price', 'price_before_offer', 'offer_percentage')
             ->orderBy('id', 'desc')
+			->inRandomOrder()->limit(5)
             ->get()->makeHidden('mainImage');
         }
 

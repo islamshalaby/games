@@ -59,7 +59,7 @@ class RefundController extends AdminController{
         }
 
         if ($main_order_cancel == count($refund->item->order->main->orders)) {
-            $refund->item->order->main->update(['status' => 1]);
+            $refund->item->order->main->update(['status' => 4]);
         }
 
         return redirect()->back();
