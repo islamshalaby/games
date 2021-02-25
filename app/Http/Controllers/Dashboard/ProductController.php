@@ -124,7 +124,7 @@ class ProductController extends Controller
         $postMainImage['product_id'] = $product->id;
         $postMainImage['main'] = 1;
         ProductImage::create($postMainImage);
-
+        // dd($request->option_id);
         if (isset($request->option_id) 
         && count($request->option_id) > 0 
         && isset($request->property_value_id) 
@@ -249,8 +249,9 @@ class ProductController extends Controller
             $response = APIHelpers::createApiResponse(true , 406 , 'this user has no access to this product' , 'هذا المستخدم ليس له صلة بهذا المنتج'  , null , $request->lang);
             return response()->json($response , 406);
         }
+        
+        $data['product'] = $product->select('id', 'title_en', 'title_ar', 'category_id', 'description_en', 'description_ar', 'offer_percentage', 'price_before_offer', 'final_price', 'offer', 'total_quatity', 'remaining_quantity', 'type', 'stored_number', 'barcode')->first();
         if ($request->lang == 'en') {
-            $data['product'] = $product->select('id', 'title_en as title', 'category_id', 'description_en as description', 'offer_percentage', 'price_before_offer', 'final_price', 'offer', 'total_quatity', 'remaining_quantity', 'type', 'stored_number', 'barcode')->first();
             $data['product']['types'] = ProductType::orderBy('id', 'desc')->select('id', 'type_en as type')->get();
             $data['product']['categories'] = Category::where('deleted', 0)->select('id', 'title_en as title')->get();
             for ($k = 0; $k < count($data['product']['types']); $k ++) {
@@ -276,7 +277,6 @@ class ProductController extends Controller
                 }
             }
         }else {
-            $data['product'] = $product->select('id', 'title_ar as title', 'category_id', 'description_ar as description', 'offer_percentage', 'price_before_offer', 'final_price', 'offer', 'total_quatity', 'remaining_quantity', 'type', 'stored_number', 'barcode')->first();
             $data['product']['types'] = ProductType::orderBy('id', 'desc')->select('id', 'type_ar as type')->get();
             $data['product']['categories'] = Category::where('deleted', 0)->select('id', 'title_ar as title')->get();
             for ($k = 0; $k < count($data['product']['types']); $k ++) {
@@ -291,7 +291,7 @@ class ProductController extends Controller
                     $data['product']['categories'][$m]['selected'] = true;
                 }
             }
-            $data['product']['properties'] = $product->propertiesAr;
+            $data['product']['properties'] = $product->propertiesEn;
             for ($i = 0; $i < count($data['product']['properties']); $i ++) {
                 $data['product']['properties'][$i]['values'] = OptionValue::where('option_id', $data['product']['properties'][$i]['option_id'])->select('id as value_id', 'value_ar as value')->get();
                 for ($n = 0; $n < count($data['product']['properties'][$i]['values']); $n ++) {
@@ -302,6 +302,8 @@ class ProductController extends Controller
                 }
             }
         }
+        
+        
         $data['product']['images'] = $product->images->makeVisible('id');
         
 

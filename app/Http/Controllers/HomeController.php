@@ -190,26 +190,26 @@ class HomeController extends Controller
                 
             }
 
-		$new_products = [];
-        for($i =0; $i < count($data['stores']); $i++){
-            array_push($new_products , $data['stores'][$i]);
-            if(count($data['stores']) > $i+1 ){
-                if ((($i+1) % 1) == 0) {
-                    $ad = Ad::select('id', 'image', 'type', 'content', 'content_type', 'store_id')->where('place', 2)->inRandomOrder()->first();
-					$ad->logo = "";
-					$ad->name = "";
-					$ad->categories = [];
-					$ad->min_order_cost = "";
-					$ad->estimated_arrival_time = "";
-					$ad->delivery_cost = "";
-					$ad->isAd = true;
-                    if($ad){
-                        array_push($new_products , $ad);
+            $new_products = [];
+            for($i =0; $i < count($data['stores']); $i++){
+                array_push($new_products , $data['stores'][$i]);
+                if(count($data['stores']) > $i+1 ){
+                    if ((($i+1) % 1) == 0) {
+                        $ad = Ad::select('id', 'image', 'type', 'content', 'content_type', 'store_id')->where('place', 2)->inRandomOrder()->first();
+                        $ad->logo = "";
+                        $ad->name = "";
+                        $ad->categories = [];
+                        $ad->min_order_cost = "";
+                        $ad->estimated_arrival_time = "";
+                        $ad->delivery_cost = "";
+                        $ad->isAd = true;
+                        if($ad){
+                            array_push($new_products , $ad);
+                        }
+                    
                     }
-                   
                 }
             }
-        }
             $data['stores'] = $new_products;
             
             $response = APIHelpers::createApiResponse(false , 200 , '' , '' , $data , $request->lang);
