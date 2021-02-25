@@ -58,21 +58,22 @@ class HomeController extends Controller
             // dd($stores);
             if ($request->lang == 'en') {
                 $data['area'] = $current_area['title_en'];
-                $data['categories'] = Category::where('deleted', 0)->whereHas('products', function($q) use($stores) {
+                $cats = Category::where('deleted', 0)->whereHas('products', function($q) use($stores) {
                     $q->whereIn('store_id', $stores);
                 })->select('title_en as title', 'id', 'image')->get();
-                $data['categories'][0] = (object)[
+                $cat = (object)[
                     "id" => 0,
                     "title" => "All",
                     "image" => "all_liwbsi_nkti8l.png",
                     "selected" => false
                 ];
+                
             }else {
                 $data['area'] = $current_area['title_ar'];
-                $data['categories'] = Category::where('deleted', 0)->whereHas('products', function($q) use($stores) {
+                $cats = Category::where('deleted', 0)->whereHas('products', function($q) use($stores) {
                     $q->whereIn('store_id', $stores);
                 })->select('title_ar as title', 'id', 'image')->get();
-                $data['categories'][0] = (object)[
+                $cat = (object)[
                     "id" => 0,
                     "title" => "الكل",
                     "image" => "all_liwbsi_nkti8l.png",
@@ -80,7 +81,14 @@ class HomeController extends Controller
                 ];
                 
             }
+            $data['categories'] = [$cat];
+            if (count($data['categories']) > 0) {
+                for ($p = 0; $p < count($cats); $p ++) {
+                    array_push($data['categories'], $cats[$p]);
+                }
+            }
             
+            // dd($data['categories']);
             if ($request->category_id == 0) {
                 $data['stores'] = Shop::whereIn('id', $stores)->select('id', 'logo', 'name', 'min_order_cost')->get()->makeHidden('custom');
                 
