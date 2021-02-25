@@ -92,7 +92,7 @@ class ProductController extends Controller
         ]);
 
         if ($validator->fails()) {
-            $response = APIHelpers::createApiResponse(true , 406 , 'Missing Required Fields' , 'بعض الحقول مفقودة'  , null , $request->lang);
+            $response = APIHelpers::createApiResponse(true , 406 , 'title_en & description_en & title_ar & description_ar & title_ar & category_id & type & total_quatity & remaining_quantity & final_price & main_image Required Fields' , 'title_en & description_en & title_ar & description_ar & title_ar & category_id & type & total_quatity & remaining_quantity & final_price & main_image Required Fields'  , null , $request->lang);
             return response()->json($response , 406);
         }
 
