@@ -88,7 +88,7 @@ class HomeController extends Controller
                 }
             }
             
-            // dd($data['categories']);
+            
             if ($request->category_id == 0) {
                 $data['stores'] = Shop::whereIn('id', $stores)->select('id', 'logo', 'name', 'min_order_cost')->get()->makeHidden('custom');
                 
