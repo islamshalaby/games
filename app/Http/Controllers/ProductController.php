@@ -427,10 +427,12 @@ class ProductController extends Controller
 
             if ($request->category_id == 0) {
                 $data['categories'][0]['selected'] = true;
-                $data['types'][0]['selected'] = true;
+                
                 $tpe = $data['types'][0]['id'];
                 if($request->type_id) {
                     $tpe = $request->type_id;
+                }else {
+                    $data['types'][0]['selected'] = true;
                 }
                 if ($request->lang == 'en') {
                     
@@ -461,10 +463,12 @@ class ProductController extends Controller
                         $data['categories'][$k]['selected'] = true;
                     }
                 }
-                $data['types'][0]['selected'] = true;
+                
                 $tpe = $data['types'][0]['id'];
                 if($request->type_id) {
                     $tpe = $request->type_id;
+                }else {
+                    $data['types'][0]['selected'] = true;
                 }
                 for ($f = 0; $f < count($data['types']); $f ++) {
                     if ($request->type_id == $data['types'][$f]['id']) {
