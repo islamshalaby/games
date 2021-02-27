@@ -519,7 +519,12 @@ class ProductController extends Controller
                 }
                 $data['products'][$p]['final_price'] = number_format((float)$data['products'][$p]['final_price'], 3, '.', '');
                 $data['products'][$p]['price_before_offer'] = number_format((float)$data['products'][$p]['price_before_offer'], 3, '.', '');
-                $data['products'][$p]['image'] = $data['products'][$p]->mainImage['image'];
+                if (isset($data['products'][$p]->mainImage)) {
+                    $data['products'][$p]['image'] = $data['products'][$p]->mainImage['image'];
+                }else {
+                    $data['products'][$p]['image'] = "";
+                }
+                
             }
             
 
