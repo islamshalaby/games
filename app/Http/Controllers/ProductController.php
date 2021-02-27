@@ -424,10 +424,10 @@ class ProductController extends Controller
             for ($m = 0; $m < count($data['types']); $m ++) {
                 $data['types'][$m]['selected'] = false;
             }
-
+            $data['types'][0]['selected'] = true;
             if ($request->category_id == 0) {
                 $data['categories'][0]['selected'] = true;
-                $data['types'][0]['selected'] = true;
+                
                 $tpe = $data['types'][0]['id'];
                 if($request->type_id) {
                     $tpe = $request->type_id;
