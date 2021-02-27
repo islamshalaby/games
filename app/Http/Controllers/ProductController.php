@@ -424,10 +424,10 @@ class ProductController extends Controller
             for ($m = 0; $m < count($data['types']); $m ++) {
                 $data['types'][$m]['selected'] = false;
             }
-            $data['types'][0]['selected'] = true;
+
             if ($request->category_id == 0) {
                 $data['categories'][0]['selected'] = true;
-                
+                $data['types'][0]['selected'] = true;
                 $tpe = $data['types'][0]['id'];
                 if($request->type_id) {
                     $tpe = $request->type_id;
@@ -461,7 +461,11 @@ class ProductController extends Controller
                         $data['categories'][$k]['selected'] = true;
                     }
                 }
-
+                $data['types'][0]['selected'] = true;
+                $tpe = $data['types'][0]['id'];
+                if($request->type_id) {
+                    $tpe = $request->type_id;
+                }
                 for ($f = 0; $f < count($data['types']); $f ++) {
                     if ($request->type_id == $data['types'][$f]['id']) {
                         $data['types'][$f]['selected'] = true;
@@ -474,7 +478,7 @@ class ProductController extends Controller
                     ->where('reviewed', 1)
                     ->where('store_id', $storeId)
                     ->where('category_id', $request->category_id)
-                    ->where('type', $request->type_id)
+                    ->where('type', $tpe)
                     ->where('remaining_quantity', '>', 0)
                     ->select('id', 'title_en as title', 'offer', 'final_price', 'price_before_offer', 'offer_percentage')
                     ->orderBy('id', 'desc')
@@ -485,7 +489,7 @@ class ProductController extends Controller
                     ->where('reviewed', 1)
                     ->where('store_id', $storeId)
                     ->where('category_id', $request->category_id)
-                    ->where('type', $request->type_id)
+                    ->where('type', $tpe)
                     ->where('remaining_quantity', '>', 0)
                     ->select('id', 'title_ar as title', 'offer', 'final_price', 'price_before_offer', 'offer_percentage')
                     ->orderBy('id', 'desc')
