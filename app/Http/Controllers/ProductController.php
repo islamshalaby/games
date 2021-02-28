@@ -108,6 +108,7 @@ class ProductController extends Controller
             ->where('reviewed', 1)
             ->where('remaining_quantity', '>', 0)
             ->where('category_id', $data['product']['category_id'])
+            ->whereIn('store_id', $areaStores)
             ->orWhere('type', $data['product']['type'])
             ->select('id', 'title_ar as title', 'final_price', 'price_before_offer', 'offer_percentage')
             ->orderBy('id', 'desc')

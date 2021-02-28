@@ -12,6 +12,10 @@ use App\ProductImage;
 use App\Favorite;
 use App\ControlOffer;
 use App\Slider;
+use App\Visitor;
+use App\Address;
+use App\DeliveryArea;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Helpers\APIHelpers;
@@ -179,6 +183,20 @@ class OfferController extends Controller
     }
 
     public function get_offers(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'unique_id' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            $response = APIHelpers::createApiResponse(true , 406 , 'unique_id Required Field' , 'unique_id Required Field' , null , $request->lang);
+            return response()->json($response , 406);
+        }
+
+        $visitor = Visitor::where('unique_id' , $request->unique_id)->first();
+
+        $address = Address::where('visitor_id', $visitor['id'])->first();
+        $areaStores = DeliveryArea::where('area_id', $address['address_id'])->pluck('store_id')->toArray();
+
         $offers_sections = OffersSection::orderBy('sort', 'asc')->get();
         $offers = [];
         $data = [];
@@ -196,14 +214,14 @@ class OfferController extends Controller
                 if ($offers_sections[$i]['type'] == 1) {
                     $element['ads'] = Ad::whereIn('id' , $ids)->get()->makeHidden(['store_id']);
                 }else {
-                    $element['ads'] = Product::select('id', 'title_en as title' , 'offer' , 'offer_percentage' , 'multi_options', 'final_price', 'price_before_offer', 'type')->where('deleted' , 0)->where('hidden' , 0)->where('remaining_quantity', '>', 0)->whereIn('id' , $ids)->get()->makeHidden(['multiOptions']);
+                    $element['ads'] = Product::select('id', 'title_en as title' , 'offer' , 'offer_percentage' , 'multi_options', 'final_price', 'price_before_offer', 'type')->where('deleted' , 0)->where('hidden' , 0)->where('remaining_quantity', '>', 0)->whereIn('store_id', $areaStores)->whereIn('id' , $ids)->get()->makeHidden(['multiOptions']);
                 }
                 
             }else{
                 if ($offers_sections[$i]['type'] == 1) {
                     $element['ads'] = Ad::whereIn('id' , $ids)->get()->makeHidden(['store_id']);
                 }else {
-                    $element['ads'] = Product::select('id', 'title_ar as title' , 'offer' , 'offer_percentage' , 'multi_options', 'final_price', 'price_before_offer', 'type')->where('deleted' , 0)->where('hidden' , 0)->where('remaining_quantity', '>', 0)->whereIn('id' , $ids)->get()->makeHidden(['multiOptions']);
+                    $element['ads'] = Product::select('id', 'title_ar as title' , 'offer' , 'offer_percentage' , 'multi_options', 'final_price', 'price_before_offer', 'type')->where('deleted' , 0)->where('hidden' , 0)->where('remaining_quantity', '>', 0)->whereIn('store_id', $areaStores)->whereIn('id' , $ids)->get()->makeHidden(['multiOptions']);
                 }
             }
             
