@@ -28,9 +28,9 @@ class OrderController extends Controller
 
         $query = Order::where('store_id', Auth::guard('dashboard')->user()->id)->select('id', 'status', 'order_number', 'created_at');
         if ($request->status == 0) {
-            $data['orders'] = $query->get();
+            $data['orders'] = $query->orderBy('id', 'desc')->get();
         }else {
-            $data['orders'] = $query->where('status', $request->status)->get();
+            $data['orders'] = $query->where('status', $request->status)->orderBy('id', 'desc')->get();
         }
 
         for ($i = 0; $i < count($data['orders']); $i ++) {
@@ -49,7 +49,7 @@ class OrderController extends Controller
             $response = APIHelpers::createApiResponse(true , 406 , 'this user has no access to this order' , 'هذا المستخدم ليس له صلة بهذا الطلب'  , null , $request->lang);
             return response()->json($response , 406);
         }
-        $data['order'] = $order->select('id', 'order_number', 'created_at', 'total_price', 'subtotal_price', 'delivery_cost', 'payment_method', 'status')->first();
+        $data['order'] = $order->where('id', $order->id)->select('id', 'order_number', 'created_at', 'total_price', 'subtotal_price', 'delivery_cost', 'payment_method', 'status')->first();
         // dd($data['order']);
         $data['order']['date'] = $data['order']['created_at']->format('Y-m-d'); 
         $data['order']['time'] = $data['order']['created_at']->format('g:i A');

@@ -669,7 +669,7 @@ class OrderController extends Controller
             if ($canceled == count($order->oItems)) {
                 $dcost = $item->order['delivery_cost'];
             }
-            dd($order->oItems);
+            
             if ($walletUser) {
                 $walletUser['balance'] = $walletUser['balance'] + ($item['count'] * $item['final_price']) + $dcost;
                 $walletUser->save();

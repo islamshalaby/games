@@ -16,7 +16,7 @@ class AddressController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api' , ['except' => ['getdeliveryprice' , 'getareas']]);
+        $this->middleware('auth:api' , ['except' => ['getdeliveryprice' , 'getareas', 'getAllAreas']]);
     }
 
     public function getaddress(Request $request){
@@ -170,6 +170,19 @@ class AddressController extends Controller
             $response = APIHelpers::createApiResponse(true , 406 , 'visitor is not exist' , 'زائر غير موجود'  , null , $request->lang);
             return response()->json($response , 406);
         }
+    }
+
+    public function getAllAreas(Request $request){
+
+        if($request->lang == 'en'){
+            $areas = Area::select('id', 'title_en as title')->get();
+        }else{
+            $areas = Area::select('id' , 'title_ar as title')->get();
+        }
+        
+        $response = APIHelpers::createApiResponse(false , 200 , '' , '' , $areas , $request->lang);
+        return response()->json($response , 200);
+        
     }
 
     public function getdeliveryprice(Request $request){

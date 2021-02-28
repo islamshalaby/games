@@ -29,7 +29,7 @@ class HomeController extends Controller
         $validator = Validator::make($request->all(), [
             'unique_id' => 'required',
             // 'place_id' => 'required',
-            'formatted_address' => 'required',
+            'area_id' => 'required',
             'category_id' => 'required'
         ]);
 
@@ -41,7 +41,7 @@ class HomeController extends Controller
         $data['slider'] = $slider->ads;
    
         $visitor = Visitor::where('unique_id' , $request->unique_id)->first();
-        $current_area = Area::where('formatted_address_en', 'like', '%' .  $request->formatted_address . '%')->orWhere('formatted_address_ar', 'like', '%' . $request->formatted_address . '%')->first();
+        $current_area = Area::where('id', $request->area_id)->first();
         if (isset($visitor['id'])) {
             $address = Address::where('visitor_id', $visitor['id'])->first();
             if (isset($current_area['id']) && isset($address['id'])) {

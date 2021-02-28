@@ -297,8 +297,8 @@ class VisitorController extends Controller
             $data['address'] = $address;
             $data['shipments'] = [];
             $get_stores = Shop::select('name', 'id')->whereIn('id', $stores)->get();
-            $data['subtotal_price'] = 0;
-            $data['delivery_cost'] = 0;
+            $data['subtotal_price'] = "0";
+            $data['delivery_cost'] = "0";
             // dd($address['area_id']);
             for ($i = 0; $i < count($get_stores); $i ++) {
                 
