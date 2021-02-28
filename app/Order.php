@@ -49,6 +49,10 @@ class Order extends Model
         return $this->hasMany('App\OrderItem', 'order_id');
     }
 
+    public function canceledItems() {
+        return $this->hasMany('App\OrderItem', 'order_id')->where('status', 4);
+    }
+
     public function oItemsRefunded() {
         return $this->hasMany('App\OrderItem', 'order_id')->whereBetween('status', [5, 8]);
     }

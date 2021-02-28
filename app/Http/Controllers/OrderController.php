@@ -600,31 +600,33 @@ class OrderController extends Controller
         //     $response = APIHelpers::createApiResponse(true , 406 , 'cant cancel this item' , 'لا يمكن الغاء هذا العنصر' , null , $request->lang);
         //     return response()->json($response , 406);
         // }
+        $dcost = $item->order['delivery_cost'];
+        
         $item->update([
-            'status' => 4 // canceled
+            'status' => 4,// canceled
+            'final_price' => '0.000',
+            'price_before_offer' => '0.000'
         ]);
 
         $item->product->remaining_quantity = $item->product->remaining_quantity + $item->count;
         $item->product->save();
-        $order = Order::where('id', $item->order_id)->first();
-        // dd(count($order->oItems));
-        $canceled = 0;
-        if (count($order->oItems) > 0) {
-            for ($i = 0; $i < count($order->oItems); $i ++) {
-                if (in_array($order->oItems[$i]->status, [4, 6])) {
-                    $canceled ++;
-                }
-            }
-        }
+        
         $orderStatus = $item->order->status;
-        $dSubCost = $item->order['delivery_cost'];
-        if ($canceled == count($order->oItems)) {
+        $dSubCostT = $item->order['delivery_cost'];
+        $dSubCost = 0;
+        
+        if (count($item->order->canceledItems) == count($item->order->oItems)) {
             $orderStatus = 4;
-            $dSubCost = 0;
+            $dSubCost = $item->order->delivery_cost;
+            $totalP = '0.000';
+        }else {
+            $totalP = $item->order->oItems->sum('final_price') + $item->order->delivery_cost;
         }
-        $subTP = $item->order->subtotal_price - ($item->product->final_price * $item['count']);
+        $dMainC = $item->order->main->delivery_cost - $dSubCost;
+        $item->order->main->update(['delivery_cost' => number_format((float)$dMainC, 3, '.', '')]);
+        // dd(count($item->order->oItems));
+        $subTP = $item->order->oItems->sum('final_price');
         $subTP = number_format((float)$subTP, 3, '.', '');
-        $totalP = $item->order->total_price - ($item->product->final_price * $item['count']) + $dSubCost;
         $totalP = number_format((float)$totalP, 3, '.', '');
         $convertedDSub = $item->order->delivery_cost - $dSubCost;
         $convertedDSub = number_format((float)$convertedDSub, 3, '.', '');
@@ -635,48 +637,40 @@ class OrderController extends Controller
             'delivery_cost' => $convertedDSub,
             'status' => $orderStatus
         ]);
-        $mainCanceled = 0;
-        for ($n = 0; $n < count($item->order->main->orders); $n ++) {
-            if (in_array($item->order->main->orders[$n]->status, [4, 6])) {
-                $mainCanceled ++;
-            }
-        }
+        
         $cancelStatus = $item->order->main->status;
-        $dMainCost = $item->order['delivery_cost'];
-        if ($mainCanceled == count($item->order->main->orders)) {
+        $dMainCost = 0;
+        if (count($item->order->main->canceledOrders) == count($item->order->main->orders)) {
             $cancelStatus = 4;
-            $dMainCost = 0;
+            $dMainCost = $item->order->main->delivery_cost;
         }
-        $subTotal = $item->order->main->subtotal_price - ($item->product->final_price * $item['count']);
+        $subTotal = $item->order->main->orders->sum('subtotal_price');
         $subTotal = number_format((float)$subTotal, 3, '.', '');
-        $totalPrice = $item->order->main->total_price - ($item->product->final_price * $item['count']) + $dSubCost;
+        $totalPrice = $item->order->main->orders->sum('total_price');
         $totalPrice = number_format((float)$totalPrice, 3, '.', '');
-        $convertedMain = $item->order->main->delivery_cost - $dMainCost;
-        $convertedMain = number_format((float)$convertedMain, 3, '.', '');
+        
         // dd($convertedMain);
         $item->order->main->update([
             'subtotal_price' => $subTotal,
             'total_price' => $totalPrice,
-            'delivery_cost' => $convertedMain,
             'status' => $cancelStatus
         ]);
-
         
 
         if ($item->order->main['payment_method'] == 3 || $item->order->main['payment_method'] == 1) {
             $walletUser = Wallet::where('user_id', $item->order->main['user_id'])->first();
-            $dcost = 0;
-            if ($canceled == count($order->oItems)) {
-                $dcost = $item->order['delivery_cost'];
+            
+            if (count($item->order->canceledItems) != count($item->order->oItems)) {
+                $dcost = 0;
             }
             
             if ($walletUser) {
-                $walletUser['balance'] = $walletUser['balance'] + ($item['count'] * $item['final_price']) + $dcost;
+                $walletUser['balance'] = $walletUser['balance'] + ($item['count'] * $item->product['final_price']) + $dcost;
                 $walletUser->save();
             }else {
                 Wallet::create([
                     'user_id' => $item->order->main['user_id'],
-                    'balance' => ($item['count'] * $item['final_price']) + $dcost
+                    'balance' => ($item['count'] * $item->product['final_price']) + $dcost
                 ]);
             }
         }

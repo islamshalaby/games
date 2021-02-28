@@ -34,4 +34,8 @@ class MainOrder extends Model
     public function address() {
         return $this->belongsTo('App\UserAddress', 'address_id');
     }
+
+    public function canceledOrders() {
+        return $this->hasMany('App\Order', 'main_id')->where('status', 4);
+    }
 }

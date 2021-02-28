@@ -20,6 +20,7 @@ class HomeController extends Controller
         ->where('remaining_quantity', '<', 10)
         ->select('id')
         ->get();
+        
         $order = Order::where('store_id', Auth::guard('dashboard')->user()->id)->select('total_price', 'id')->get();
         if ($request->lang == 'en') {
             $products = Product::where('store_id', Auth::guard('dashboard')->user()->id)->where('deleted', 0)->where('hidden', 0)->select('id', 'remaining_quantity', 'title_en as title', 'final_price', 'price_before_offer', 'offer')->with('mainImage')->get();

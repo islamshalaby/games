@@ -71,6 +71,7 @@ class OrderController extends Controller
             $item = [
                 'status' => $items[$i]->status,
                 'item_id' => $items[$i]->id,
+                'store_name' => Auth::guard('dashboard')->user()->name,
                 'main_image' => $product->mainImage->image,
                 'delivered_at' => $deliveredAt
             ];
