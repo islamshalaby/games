@@ -63,7 +63,8 @@ Route::group([
     Route::delete('/{lang}/{v}' , 'AddressController@removeaddress');
     Route::post('/setdefault/{lang}/{v}' , 'AddressController@setmain');
     Route::get('/areas/{lang}/{v}' , 'AddressController@getareas')->middleware('checkguest');
-    Route::get('/all-areas/{lang}/{v}' , 'AddressController@getAllAreas')->middleware('checkguest');
+    Route::get('/all-areas/{governorate}/{lang}/{v}' , 'AddressController@getAllAreas')->middleware('checkguest');
+    Route::get('/governorates/{lang}/{v}' , 'AddressController@getGovernorates')->middleware('checkguest');
     Route::get('/details/{id}/{lang}/{v}' , 'AddressController@getdetails');
 });
 

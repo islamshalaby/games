@@ -7,6 +7,7 @@ use App\Visitor;
 use App\UserAddress;
 use App\Area;
 use App\Address;
+use App\Governorate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Helpers\APIHelpers;
@@ -172,17 +173,20 @@ class AddressController extends Controller
         }
     }
 
-    public function getAllAreas(Request $request){
+    public function getAllAreas(Request $request, Governorate $governorate){
 
-        if($request->lang == 'en'){
-            $areas = Area::select('id', 'title_en as title')->get();
-        }else{
-            $areas = Area::select('id' , 'title_ar as title')->get();
-        }
+        $areas = Area::where('governorate_id', $governorate->id)->where('deleted', 0)->select('id', 'title_' . $request->lang . ' as title')->get();
         
         $response = APIHelpers::createApiResponse(false , 200 , '' , '' , $areas , $request->lang);
         return response()->json($response , 200);
         
+    }
+
+    public function getGovernorates(Request $request) {
+        $governorates = Governorate::where('deleted', 0)->select('id', 'title_' . $request->lang . ' as title')->orderBy('id', 'asc')->get();
+
+        $response = APIHelpers::createApiResponse(false , 200 , '' , '' , $governorates , $request->lang);
+        return response()->json($response , 200);
     }
 
     public function getdeliveryprice(Request $request){
@@ -216,6 +220,8 @@ class AddressController extends Controller
         $response = APIHelpers::createApiResponse(false , 200 , '' , '' , $address , $request->lang);
         return response()->json($response , 200);
     }
+
+    
 
     public function selectAddressBelongsToArea(Request $request) {
         $user = auth()->user();
