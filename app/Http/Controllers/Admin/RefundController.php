@@ -1,16 +1,53 @@
 <?php
 namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Admin\AdminController;
+use App\Order;
+use App\OrderItem;
+use App\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Retrieve;
+use App\Shop;
 use App\Wallet;
 
 class RefundController extends AdminController{
 
     // index
-    public function show() {
-        $data['refunds'] = Retrieve::get();
+    public function show(Request $request) {
+        $data['shops'] = Shop::where('status', 1)->orderBy('name', 'asc')->get();
+        $data['refunds'] = Retrieve::orderBy('id', 'desc');
+        if (isset($request->from)) {
+            $data['from'] = $request->from;
+            $data['to'] = $request->to;
+            $data['refunds'] = $data['refunds']->whereBetween('created_at', array($request->from, $request->to))->get();
+            $refunds = Retrieve::whereBetween('created_at', array($request->from, $request->to))->pluck('item_id');
+        }elseif(isset($request->method)) {
+            $data['method'] = $request->method;
+            $orders = Order::where('payment_method', $request->method)->pluck('id');
+            $oItems = OrderItem::whereIn('order_id', $orders)->pluck('id');
+            $data['refunds'] = $data['refunds']->whereIn('item_id', $oItems)->get();
+            $refunds = Retrieve::whereIn('item_id', $oItems)->pluck('item_id');
+        }elseif($request->shop){
+            $data['shop'] = $request->shop;
+            $data['refunds'] = $data['refunds']->where('store_id', $request->shop)->get();
+            $refunds = Retrieve::where('store_id', $request->shop)->pluck('item_id');
+        }elseif($request->status){
+            $data['status'] = $request->status;
+            $data['refunds'] = Retrieve::join('order_items', 'order_items.id', '=', 'retrieves.item_id')
+            ->where('order_items.status', $request->status)
+            ->select('retrieves.*')
+            ->orderBy('id', 'desc')
+            ->get();
+            $refunds = Retrieve::join('order_items', 'order_items.id', '=', 'retrieves.item_id')
+            ->where('order_items.status', $request->status)->pluck('item_id');
+        }else {
+            $data['refunds'] = $data['refunds']->get();
+            $refunds = Retrieve::pluck('item_id');
+        }
+        
+        $data['sum_price'] = OrderItem::whereIn('id', $refunds)->sum('final_price');
+        $data['sum_price'] = number_format((float)$data['sum_price'], 3, '.', '');
+        
         
         return view('admin.refunds', ['data' => $data]);
     }
