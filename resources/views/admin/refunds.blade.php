@@ -4,17 +4,25 @@
 
 @push('scripts')
 <script>
+    // fire date form
     $("#toDate").on("change", function() {
         $("#dateForm").submit()
     })
+    // fire payment method form
     $("#payment_select").on("change", function() {
         $("#paymentForm").submit()
     })
+    // fire shop form
     $("#shop_select").on("change", function() {
         $("#shopForm").submit()
     })
+    // fire status form
     $("#status_select").on("change", function() {
         $("#statusForm").submit()
+    })
+    // fire area form
+    $("#area_select").on("change", function() {
+        $("#areaForm").submit()
     })
 </script>
 <script>
@@ -130,6 +138,20 @@
                                 <option {{ isset($data['status']) && $data['status'] == 6 ? 'selected' : '' }} value="6">{{ __('messages.refund_accepted') }}</option>
                                 <option {{ isset($data['status']) && $data['status'] == 7 ? 'selected' : '' }} value="7">{{ __('messages.refund_rejected') }}</option>
                                 <option {{ isset($data['status']) && $data['status'] == 8 ? 'selected' : '' }} value="8">{{ __('messages.received_refund') }}</option>
+                                
+                            </select>
+                                
+                        </form>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <form id="areaForm" method="" action="">
+                            
+                            <label for="area_select">{{ __('messages.area') }}</label>
+                            <select required id="area_select" name="area" class="form-control">
+                                <option disabled selected>{{ __('messages.select') }}</option>
+                                @foreach ($data['areas'] as $area)
+                                <option {{ isset($data['area']) && $data['area'] == $area->id ? 'selected' : '' }} value="{{ $area->id }}">{{ App::isLocale('en') ? $area->title_en : $area->title_ar }}</option>
+                                @endforeach
                                 
                             </select>
                                 

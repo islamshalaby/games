@@ -503,6 +503,7 @@
             "publish" => "نشر",
             "received_refund" => "تم إستلام المرتجع",
             "sellers_notifications" => "تنبيهات التجار",
-            "show_home" => "عرض بالصفحة الرئيسية"
+            "show_home" => "عرض بالصفحة الرئيسية",
+            "main_orders" => "الطلبات الرئيسية"
         ];
 ?>

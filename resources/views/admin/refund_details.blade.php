@@ -50,6 +50,9 @@
                         <a class="btn btn-danger"  onclick='return confirm("{{ __('messages.are_you_sure') }}");' href="{{ route('refund.accept', $data['refund']->id) }}">{{ __('messages.accept_refund') }}</a>
                         <a onclick='return confirm("{{ __('messages.are_you_sure') }}");' class="btn btn-primary" href="{{ route('refund.reject', $data['refund']->id) }}">{{ __('messages.reject_refund') }}</a>
                         @endif
+                        @if($data['refund']->item->status == 6)
+                        <a onclick='return confirm("{{ __('messages.are_you_sure') }}");' class="btn btn-primary" href="{{ route('refund.received', $data['refund']->id) }}">{{ __('messages.received_refund') }}</a>
+                        @endif
                     </h4>
                 </div>
             </div>

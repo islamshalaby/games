@@ -505,6 +505,7 @@
         "publish" => "Publish",
         "received_refund" => "Refund Received",
         "sellers_notifications" => "Sellers Notifications",
-        "show_home" => "Show in home page"
+        "show_home" => "Show in home page",
+        "main_orders" => "Main Orders"
     ];
 ?>

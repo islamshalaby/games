@@ -1,5 +1,7 @@
 <?php
 namespace App\Http\Controllers\Admin;
+
+use App\Area;
 use App\Http\Controllers\Admin\AdminController;
 use App\Order;
 use App\OrderItem;
@@ -15,6 +17,7 @@ class RefundController extends AdminController{
     // index
     public function show(Request $request) {
         $data['shops'] = Shop::where('status', 1)->orderBy('name', 'asc')->get();
+        $data['areas'] = Area::where('deleted', 0)->orderBy('title_ar', 'asc')->get();
         $data['refunds'] = Retrieve::orderBy('id', 'desc');
         if (isset($request->from)) {
             $data['from'] = $request->from;
@@ -31,6 +34,29 @@ class RefundController extends AdminController{
             $data['shop'] = $request->shop;
             $data['refunds'] = $data['refunds']->where('store_id', $request->shop)->get();
             $refunds = Retrieve::where('store_id', $request->shop)->pluck('item_id');
+        }elseif($request->area){
+            $data['area'] = $request->area;
+            $data['refunds'] = Retrieve::join('order_items', 'order_items.id', '=', 'retrieves.item_id')
+            ->leftjoin('orders', function($join) {
+                $join->on('orders.id', '=', 'order_items.order_id');
+            })
+            ->leftjoin('user_addresses', function($join) {
+                $join->on('user_addresses.id', '=', 'orders.address_id');
+            })
+            ->where('user_addresses.area_id', $request->area)
+            ->select('retrieves.*', 'order_items.order_id', 'user_addresses.id as addressid', 'orders.address_id', 'user_addresses.area_id')
+            ->orderBy('id', 'desc')
+            ->get();
+            
+            $refunds = Retrieve::join('order_items', 'order_items.id', '=', 'retrieves.item_id')
+            ->leftjoin('orders', function($join) {
+                $join->on('orders.id', '=', 'order_items.order_id');
+            })
+            ->leftjoin('user_addresses', function($join) {
+                $join->on('user_addresses.id', '=', 'orders.address_id');
+            })
+            ->where('user_addresses.area_id', $request->area)
+            ->pluck('item_id');
         }elseif($request->status){
             $data['status'] = $request->status;
             $data['refunds'] = Retrieve::join('order_items', 'order_items.id', '=', 'retrieves.item_id')

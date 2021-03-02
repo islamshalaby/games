@@ -573,14 +573,25 @@
                     </li>
                     @endif
 
-                    @if(in_array(19 , Auth::user()->custom['admin_permission']))    
+                    @if(in_array(19 , Auth::user()->custom['admin_permission']))
                     <li class="menu orders">
-                        <a href="{{ route('orders.index') }}" class="dropdown-toggle first-link">
+                        <a href="#orders" data-active="true" data-toggle="collapse" aria-expanded="true" class="dropdown-toggle first-link">
                             <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-archive"><polyline points="21 8 21 21 3 21 3 8"></polyline><rect x="1" y="3" width="22" height="5"></rect><line x1="10" y1="12" x2="14" y2="12"></line></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-award"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
                                 <span>{{ __('messages.orders') }}</span>
                             </div>
+                            <div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </div>
                         </a>
+                        <ul class="collapse submenu list-unstyled show" id="orders" data-parent="#accordionExample">
+                            <li class="active show">
+                                <a href="{{ route('orders.index') }}"> {{ __('messages.main_orders') }} </a>
+                            </li>
+                            <li class="show" >
+                                <a href="{{ route('shops.index') }}"> {{ __('messages.show') }} </a>
+                            </li>
+                        </ul>
                     </li>
                     @endif 
 
