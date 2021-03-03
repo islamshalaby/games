@@ -506,6 +506,12 @@
         "received_refund" => "Refund Received",
         "sellers_notifications" => "Sellers Notifications",
         "show_home" => "Show in home page",
-        "main_orders" => "Main Orders"
+        "main_orders" => "Main Orders",
+        "open_orders" => "Open Orders",
+        "closed_orders" => "Closed Orders",
+        "canceled_from_user" => "Canceled From User",
+        "canceled_from_admin" => "Canceled From Admin",
+        "sub_orders"  => "Sub Orders",
+        "show_sub_orders" => "Show Sub Orders"
     ];
 ?>

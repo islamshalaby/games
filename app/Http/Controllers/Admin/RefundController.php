@@ -16,7 +16,7 @@ class RefundController extends AdminController{
 
     // index
     public function show(Request $request) {
-        $data['shops'] = Shop::where('status', 1)->orderBy('name', 'asc')->get();
+        $data['shops'] = Shop::orderBy('name', 'asc')->get();
         $data['areas'] = Area::where('deleted', 0)->orderBy('title_ar', 'asc')->get();
         $data['refunds'] = Retrieve::orderBy('id', 'desc');
         if (isset($request->from)) {

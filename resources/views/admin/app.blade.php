@@ -588,8 +588,8 @@
                             <li class="active show">
                                 <a href="{{ route('orders.index') }}"> {{ __('messages.main_orders') }} </a>
                             </li>
-                            <li class="show" >
-                                <a href="{{ route('shops.index') }}"> {{ __('messages.show') }} </a>
+                            <li class="sub-orders" >
+                                <a href="{{ route('orders.subOrders.index') }}"> {{ __('messages.sub_orders') }} </a>
                             </li>
                         </ul>
                     </li>

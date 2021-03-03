@@ -8,21 +8,77 @@ use App\MultiOption;
 use App\OrderItem;
 use App\Area;
 use App\Order;
+use App\Shop;
 use App\UserAddress;
 use App\SizeDetail;
+use App\Wallet;
 use PDF;
 
 
 class OrderController extends AdminController{
     // get all orders
     public function show(Request $request){
-        $data['orders'] = MainOrder::orderBy('id' , 'desc')->get();
-        $data['areas'] = Area::where('deleted', 0)->orderBy('id', 'desc')->get();
-        $data['sum_price'] = MainOrder::sum('subtotal_price');
-        $data['sum_delivery'] = MainOrder::sum('delivery_cost');
-        $data['sum_total'] = MainOrder::sum('total_price');
+        if (isset($request->order_status)) {
+            $statusArray = [1];
+            if ($request->order_status == 'closed') {
+                $statusArray = [3, 4, 9];
+            }
+            $data['order_status'] = $request->order_status;
+            $data['orders'] = MainOrder::whereIn('status', $statusArray)->orderBy('id' , 'desc');
+        }elseif(isset($request->order_status2)){
+            $data['order_status2'] = $request->order_status2;
+            $data['orders'] = MainOrder::where('status', $request->order_status2)->orderBy('id' , 'desc');
+        }else {
+            $data['orders'] = MainOrder::orderBy('id' , 'desc');
+        }
+        $data['orders'] = $data['orders']->get();
+        $data['areas'] = Area::where('deleted', 0)->orderBy('title_ar', 'asc')->get();
+        $data['sum_price'] = $data['orders']->sum('subtotal_price');
+        $data['sum_delivery'] = $data['orders']->sum('delivery_cost');
+        $data['sum_total'] = $data['orders']->sum('total_price');
         
         return view('admin.orders' , ['data' => $data]);
+    }
+
+    // get sub orders
+    public function showSubOrders(Request $request) {
+        if (isset($request->order_status)) {
+            $statusArray = [1, 2, 5];
+            if ($request->order_status == 'closed') {
+                $statusArray = [3, 4, 6, 7, 8, 9];
+            }
+            $data['order_status'] = $request->order_status;
+            $data['orders'] = Order::whereIn('status', $statusArray)->orderBy('id' , 'desc');
+        }elseif(isset($request->area_id)){
+            $data['area'] = Area::where('id', $request->area_id)->select('id', 'title_en', 'title_ar')->first();
+            $data['orders'] = Order::join('user_addresses', 'user_addresses.id', '=', 'orders.address_id')
+            ->where('area_id', $request->area_id)
+            ->select('orders.*')
+            ->orderBy('id', 'desc');
+        }elseif(isset($request->from) && isset($request->to)){
+            $data['from'] = $request->from;
+            $data['to'] = $request->to;
+            $data['orders'] = Order::whereBetween('created_at', array($request->from, $request->to))->orderBy('id', 'desc');
+        }elseif(isset($request->method)){
+            $data['method'] = $request->method;
+            $data['orders'] = Order::where('payment_method', $request->method)->orderBy('id', 'desc');
+        }elseif(isset($request->order_status2)){
+            $data['order_status2'] = $request->order_status2;
+            $data['orders'] = Order::where('status', $request->order_status2)->orderBy('id', 'desc');
+        }elseif(isset($request->shop)){
+            $data['shop'] = $request->shop;
+            $data['orders'] = Order::where('store_id', $request->shop)->orderBy('id', 'desc');
+        }else {
+            $data['orders'] = Order::orderBy('id' , 'desc');
+        }
+        $data['shops'] = Shop::orderBy('name', 'desc')->get();
+        $data['areas'] = Area::where('deleted', 0)->orderBy('title_ar', 'asc')->get();
+        $data['sum_price'] = $data['orders']->sum('subtotal_price');
+        $data['sum_delivery'] = $data['orders']->sum('delivery_cost');
+        $data['sum_total'] = $data['orders']->sum('total_price');
+        $data['orders'] = $data['orders']->get();
+
+        return view('admin.sub_orders' , ['data' => $data]);
     }
 
     // cancel | delivered order
@@ -55,6 +111,14 @@ class OrderController extends AdminController{
 
     // details
     public function details(MainOrder $order) {
+        $data['order'] = $order;
+        $data['m_option'] = MultiOption::find(8);
+
+        return view('admin.order_details', ['data' => $data]);
+    }
+
+    // details
+    public function subOrdersDetails(MainOrder $order) {
         $data['order'] = $order;
         $data['m_option'] = MultiOption::find(8);
 
@@ -330,9 +394,148 @@ class OrderController extends AdminController{
         return view('admin.size_details', ['data' => $data]);
     }
 
-    // pdf
-    // public function pdf() {
-    //     $pdf = PDF::loadView('licencie_structure.show', $licencie);
-    //     return $pdf->download('invoice.pdf');
-    // }
+    // cancel order from admin
+    public function cancelOrder($type, $orderId) {
+        if ($type == 'main') {
+            $main = MainOrder::where('id', $orderId)->first();
+
+            // send money to user
+            if (in_array($main->payment_method, [1, 3])) {
+                $walletUser = Wallet::where('user_id', $main->user_id)->first();
+
+                if ($walletUser) {
+                    $walletUser->update(['balance' => $main->total_price + $walletUser->balance]);
+                }else {
+                    Wallet::create(['balance' => $main->total_price, 'user_id' => $main->user_id]);
+                }
+            }
+
+            /**
+             * update status on main - order - order_item
+             */
+
+            // update main
+            $main->update(['subtotal_price' => '0.000',
+             'delivery_cost' => '0.000',
+            'total_price' => '0.000',
+            'status' => 9]);
+
+            // update order
+            for ($i =0; $i < count($main->orders_with_select); $i ++) {
+                $main->orders_with_select[$i]->update(['subtotal_price' => '0.000',
+                'delivery_cost' => '0.000',
+                'total_price' => '0.000',
+                'status' => 9]);
+
+                // update order_item
+                for ($n = 0; $n < count($main->orders_with_select[$i]->oItems); $n ++) {
+                    $main->orders_with_select[$i]->oItems[$n]->update(['final_price' => '0.000',
+                    'price_before_offer' => '0.000',
+                    'status' => 9]);
+                }
+            }
+        }elseif ($type == 'order') {
+            $order = Order::where('id', $orderId)->first();
+
+            // send money to user
+            if (in_array($order->payment_method, [1, 3])) {
+                $walletUser = Wallet::where('user_id', $order->user_id)->first();
+
+                if ($walletUser) {
+                    $walletUser->update(['balance' => $order->total_price + $walletUser->balance]);
+                }else {
+                    Wallet::create(['balance' => $order->total_price, 'user_id' => $order->user_id]);
+                }
+            }
+
+            /**
+             * update status on main - order - order_item
+             */
+
+            $orderSubtotal = $order->subtotal_price;
+            $orderDelivery = $order->delivery_cost;
+            $orderTotal = $order->total_price;
+            
+            // update order
+             $order->update(['subtotal_price' => '0.000',
+             'delivery_cost' => '0.000',
+             'total_price' => '0.000',
+             'status' => 9]);
+
+            // update order_item
+            for ($i = 0; $i < count($order->oItems); $i ++) {
+                $order->oItems[$i]->update(['final_price' => '0.000',
+                'price_before_offer' => '0.000',
+                'status' => 9]);
+            }
+
+            // update main
+            if (count($order->main->canceledOrders) == count($order->main->orders)) {
+                $order->main->update(['subtotal_price' => '0.000',
+                'delivery_cost' => '0.000',
+               'total_price' => '0.000',
+               'status' => 9]);
+            }else {
+                $order->main->update(['subtotal_price' => $order->main->subtotal_price - $orderSubtotal,
+                'delivery_cost' => $order->main->delivery_cost - $orderDelivery,
+               'total_price' => $order->main->total_price - $orderTotal]);
+            }
+        }else {
+            $orderItem = OrderItem::where('id', $orderId)->first();
+            $orderItemPrice = $orderItem->final_price;
+            
+            // update order_item
+            $orderItem->update(['final_price' => '0.000',
+            'price_before_offer' => '0.000',
+            'status' => 9]);
+
+            // send money to user
+            if (in_array($orderItem->order->payment_method, [1, 3])) {
+                $walletUser = Wallet::where('user_id', $orderItem->order->user_id)->first();
+
+                if (count($orderItem->order->canceledItems) == count($orderItem->order->oItems)) {
+                    if ($walletUser) {
+                        $walletUser->update(['balance' => $orderItem->order->total_price + $walletUser->balance]);
+                    }else {
+                        Wallet::create(['balance' => $orderItem->order->total_price, 'user_id' => $orderItem->order->user_id]);
+                    }
+                }else {
+                    if ($walletUser) {
+                        $walletUser->update(['balance' => $orderItemPrice + $walletUser->balance]);
+                    }else {
+                        Wallet::create(['balance' => $orderItemPrice, 'user_id' => $orderItem->order->user_id]);
+                    }
+                }
+            }
+            $orderSubtotal = $orderItem->order->subtotal_price;
+            $orderTotal = $orderItem->order->total_price;
+            $orderDelivery = $orderItem->order->delivery_cost;
+
+            // update order
+            if (count($orderItem->order->canceledItems) == count($orderItem->order->oItems)) {
+                $orderItem->order->update(['subtotal_price' => '0.000',
+                'delivery_cost' => '0.000',
+                'total_price' => '0.000',
+                'status' => 9]);
+            }else {
+                $orderItem->order->update(['subtotal_price' => $orderItem->order->subtotal_price - $orderItemPrice,
+                'total_price' => $orderItem->order->total_price - $orderItemPrice]);
+            }
+
+            // update main
+            if (count($orderItem->order->main->canceledOrders) == count($orderItem->order->main->orders)) {
+                $orderItem->order->main->update(['subtotal_price' => '0.000',
+                'delivery_cost' => '0.000',
+               'total_price' => '0.000',
+               'status' => 9]);
+            }else {
+                $orderItem->order->main->update(['subtotal_price' => $orderItem->order->main->subtotal_price - $orderSubtotal,
+                'delivery_cost' => $orderItem->order->main->delivery_cost - $orderDelivery,
+               'total_price' => $orderItem->order->main->total_price - $orderTotal]);
+            }
+        }
+
+        return redirect()->back();
+    }
+
 }

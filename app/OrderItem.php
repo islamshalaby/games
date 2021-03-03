@@ -10,11 +10,12 @@ class OrderItem extends Model
     'status'    // 1 => in progress
                 // 2 => delivery service
                 // 3 => delivered
-                // 4 => canceled
+                // 4 => canceled from admin
                 // 5 => refund request
                 // 6 => refund accepted
                 // 7 => refund refused
                 // 8 => refunded received
+                // 9 => canceled from admin
     ];
 
     protected $dates = ['delivered_at', 'refunded_at'];

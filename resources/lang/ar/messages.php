@@ -504,6 +504,12 @@
             "received_refund" => "تم إستلام المرتجع",
             "sellers_notifications" => "تنبيهات التجار",
             "show_home" => "عرض بالصفحة الرئيسية",
-            "main_orders" => "الطلبات الرئيسية"
+            "main_orders" => "الطلبات الرئيسية",
+            "open_orders" => "طلبات مفتوحة",
+            "closed_orders" => "طلبات مغلقة",
+            "canceled_from_user" => "ملغى من قبل المستخدم",
+            "canceled_from_admin" => "ملغى من قبل المدير",
+            "sub_orders"  => "الطلبات الفرعية",
+            "show_sub_orders" => "عرض الطلبات الفرعية"
         ];
 ?>

@@ -193,10 +193,12 @@ Route::group([
         "prefix" => "orders"
     ], function($router){
          Route::get('show' , 'OrderController@show')->name('orders.index');
+         Route::get('sub-orders' , 'OrderController@showSubOrders')->name('orders.subOrders.index');
          Route::get('action/items/{item}' , 'OrderController@order_items_actions')->name('orders.items.action');
          Route::get('action/order/{item}' , 'OrderController@order_actions')->name('orders.subo.action');
          Route::get('action/sub/{order}' , 'OrderController@action_sub_order')->name('orders.sub.action');
          Route::get('action/{order}/{status}' , 'OrderController@action_order')->name('orders.action');
+         Route::get('cancel/{type}/{orderId}' , 'OrderController@cancelOrder')->name('orders.cancel');
          Route::get('details/{order}' , 'OrderController@details')->name('orders.details');
          Route::get('filter/{status}' , 'OrderController@filter_orders')->name('orders.filter');
          Route::get('fetchbyarea' , 'OrderController@fetch_orders_by_area')->name('orders.fetchbyarea');
@@ -432,7 +434,7 @@ Route::group([
     Route::get('termsandconditions/{lang}' , 'WebViewController@gettermsandconditions' );
     Route::get('returnpolicy/{lang}' , 'WebViewController@returnpolicy');
     Route::get('deliveryinformation/{lang}' , 'WebViewController@deliveryinformation');
-    Route::get('pdfview/{order}','WebViewController@getStoreInvoice');
+    Route::get('pdfview/{order}','WebViewController@getStoreInvoice')->name('webview.store.invoice');
     Route::get('pdfview/main/{order}','WebViewController@getInvoice')->name('webview.invoice');
     Route::get('test', 'WebViewController@test');
 

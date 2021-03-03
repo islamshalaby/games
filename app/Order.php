@@ -16,10 +16,11 @@ class Order extends Model
         'status',   // 1 => in progress
                     // 2 => delivery service
                     // 3 => delivered
-                    // 4 => canceled
+                    // 4 => canceled from user
                     // 5 => refund request
                     // 6 => refund accepted
                     // 7 => refund refused
+                    // 9 => canceled from admin
         'order_number',
         'store_id',
         'from_deliver_date',
@@ -50,7 +51,7 @@ class Order extends Model
     }
 
     public function canceledItems() {
-        return $this->hasMany('App\OrderItem', 'order_id')->where('status', 4);
+        return $this->hasMany('App\OrderItem', 'order_id')->whereIn('status', [4, 9]);
     }
 
     public function oItemsRefunded() {

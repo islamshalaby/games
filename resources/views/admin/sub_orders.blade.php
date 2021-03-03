@@ -42,6 +42,9 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
         $("#orderStatus").on("change", function() {
             $("#orderStatusForm").submit()
         })
+        $("#shop_select").on("change", function() {
+            $("#shopForm").submit()
+        })
     </script>
     
     
@@ -114,16 +117,15 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
         <div class="statbox widget box box-shadow">
             <div class="col-lg-12 filtered-list-search mx-auto">
                 <div class="btn-group" role="group" aria-label="Basic example">
-                    <a href="{{ route('orders.index') }}" type="button" class="btn btn-{{ ( strpos($url,'show') !== false && !isset($data['order_status']) ) || strpos($url,'fetchbydate') !== false ? 'light' : 'dark' }}">{{ __('messages.all_orders') }}</a>
+                    <a href="{{ route('orders.subOrders.index') }}" type="button" class="btn btn-{{ ( strpos($url,'sub-orders') !== false && !isset($data['order_status']) ) || strpos($url,'fetchbydate') !== false ? 'light' : 'dark' }}">{{ __('messages.all_orders') }}</a>
                     <a href="?order_status=opened" type="button" class="btn btn-{{ isset($data['order_status']) && $data['order_status'] == 'opened' ? 'light' : 'dark' }}">{{ __('messages.open_orders') }}</a>
                     <a href="?order_status=closed" type="button" class="btn btn-{{ isset($data['order_status']) && $data['order_status'] == 'closed' ? 'light' : 'dark' }}">{{ __('messages.closed_orders') }}</a>
-                    {{--  <a href="{{ route('orders.filter', 3) }}" type="button" class="btn btn-{{ request()->segment(count(request()->segments())) == 2 ? 'light' : 'dark' }}">{{ __('messages.delivered_orders') }}</a>  --}}
                 </div>
             </div>
             <div class="widget-content widget-content-area">
                 <div class="row">
                     <div class="form-group col-md-3">
-                        <form id="areaForm" method="" action="{{ strpos($url,'filter') !== false ? '' : route('orders.fetchbyarea') }}">
+                        <form id="areaForm" method="" action="">
                             
                             <label for="area">{{ __('messages.area') }}</label>
                             <select required id="area_select" name="area_id" class="form-control">
@@ -136,16 +138,16 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                         </form>
                     </div>
                     <div class="form-group col-md-6">
-                        <form id="dateForm" method="" action="{{ strpos($url,'filter') !== false ? '' : route('orders.fetchbydate') }}">
+                        <form id="dateForm" method="" action="">
                             <div class="form-group mb-4">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <label for="from">{{ __('messages.from') }}</label>
-                                        <input required type="date" name="from" class="form-control" id="from" >
+                                        <input value="{{ isset($data['from']) ? $data['from'] : '' }}" required type="date" name="from" class="form-control" id="from" >
                                     </div>
                                     <div class="col-md-6">
                                         <label for="toDate">{{ __('messages.to') }}</label>
-                                        <input required type="date" name="to" class="form-control" id="toDate" >
+                                        <input value="{{ isset($data['to']) ? $data['to'] : '' }}" required type="date" name="to" class="form-control" id="toDate" >
                                     </div>
                                 </div>
                             </div>
@@ -154,7 +156,7 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                     </div>
 
                     <div class="form-group col-md-3">
-                        <form id="paymentForm" method="" action="{{ strpos($url,'filter') !== false ? '' : route('orders.fetchbypayment') }}">
+                        <form id="paymentForm" method="" action="">
                             
                             <label for="payment_select">{{ __('messages.payment_method') }}</label>
                             <select required id="payment_select" name="method" class="form-control">
@@ -177,9 +179,29 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                                 <option disabled selected>{{ __('messages.select') }}</option>
                                 
                                 <option {{ isset($data['order_status2']) && $data['order_status2'] == 1 ? 'selected' : '' }} value="1">{{ __('messages.in_progress') }}</option>
+                                <option {{ isset($data['order_status2']) && $data['order_status2'] == 2 ? 'selected' : '' }} value="2">{{ __('messages.order_confirmed') }}</option>
                                 <option {{ isset($data['order_status2']) && $data['order_status2'] == 3 ? 'selected' : '' }} value="3">{{ __('messages.delivered') }}</option>
                                 <option {{ isset($data['order_status2']) && $data['order_status2'] == 4 ? 'selected' : '' }} value="4">{{ __('messages.canceled_from_user') }}</option>
+                                <option {{ isset($data['order_status2']) && $data['order_status2'] == 5 ? 'selected' : '' }} value="5">{{ __('messages.refund_request') }}</option>
+                                <option {{ isset($data['order_status2']) && $data['order_status2'] == 6 ? 'selected' : '' }} value="6">{{ __('messages.refund_accepted') }}</option>
+                                <option {{ isset($data['order_status2']) && $data['order_status2'] == 7 ? 'selected' : '' }} value="7">{{ __('messages.refund_rejected') }}</option>
+                                <option {{ isset($data['order_status2']) && $data['order_status2'] == 8 ? 'selected' : '' }} value="8">{{ __('messages.received_refund') }}</option>
                                 <option {{ isset($data['order_status2']) && $data['order_status2'] == 9 ? 'selected' : '' }} value="9">{{ __('messages.canceled_from_admin') }}</option>
+                            </select>
+                                
+                        </form>
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <form id="shopForm" method="" action="">
+                            
+                            <label for="payment_select">{{ __('messages.store') }}</label>
+                            <select required id="shop_select" name="shop" class="form-control">
+                                <option disabled selected>{{ __('messages.select') }}</option>
+                                @foreach ($data['shops'] as $shop)
+                                <option {{ isset($data['shop']) && $data['shop'] == $shop->id ? 'selected' : '' }} value="{{ $shop->id }}">{{ $shop->name }}</option>
+                                @endforeach
+                                
                             </select>
                                 
                         </form>
@@ -192,7 +214,7 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
             <div class="widget-header">
             <div class="row">
                 <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                    <h4>{{ __('messages.show_orders') }} 
+                    <h4>{{ __('messages.show_sub_orders') }} 
                         @if (isset($data['area']))
                             @if(App::isLocale('en'))
                                 {{ "( " . $data['area']['title_en'] . " )" }}
@@ -219,7 +241,7 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                             <th>{{ __('messages.price') }}</th>
                             <th>{{ __('messages.delivery_cost') }}</th>
                             <th>{{ __('messages.total_with_delivery') }}</th>
-                            <th class="text-center hide_col">{{ __('messages.details') }}</th>
+                            {{-- <th class="text-center hide_col">{{ __('messages.details') }}</th> --}}
                             <th class="text-center hide_col">{{ __('messages.invoice') }}</th>
                         </tr>
                     </thead>
@@ -229,7 +251,7 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                         @foreach ($data['orders'] as $order)
                             <tr>
                                 <td><?=$i;?></td>
-                                <td>{{ $order->main_order_number }}</td>
+                                <td>{{ $order->order_number }}</td>
                                 <td>{{ $order->created_at->format("d-m-y") }}</td>
                                 <td>
                                     <a target="_blank" href="{{ route('users.details', $order->user->id) }}">
@@ -246,25 +268,34 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                                     @endif
                                 </td>
                                 <td>
-                                    @if($order->status == 1)
+                                    @if ($order->status == 1)
                                     {{ __('messages.in_progress') }}
-                                    @elseif ($order->status == 3)
+                                    @elseif($order->status == 2)
+                                    {{ __('messages.order_confirmed') }}
+                                    @elseif($order->status == 3)
                                     {{ __('messages.delivered') }}
-                                    @else
-                                    {{ __('messages.canceled') }}
-                                    @endif
-                                    @if (!in_array($order->status, [4, 9]))
-                                    <a style="margin-bottom: 5px" href="{{ route('orders.cancel', ['main', $order->id]) }}" onclick='return confirm("{{ __('messages.are_you_sure') }}");' class="btn btn-sm btn-danger hide_col">
-                                        {{ __('messages.cancel_order') }}
+                                    @elseif($order->status == 4)
+                                    {{ __('messages.canceled_from_user') }}
+                                    @elseif($order->status == 5)
+                                    <a href="{{ route('refund.details', $item->refund->id) }}" target="_blank">
+                                        {{ __('messages.refund_request') }}
                                     </a>
+                                    @elseif($order->status == 6)
+                                    {{ __('messages.refund_accepted') }}
+                                    @elseif($order->status == 7)
+                                    {{ __('messages.refund_rejected') }}
+                                    @elseif($order->status == 8)
+                                    {{ __('messages.received_refund') }}
+                                    @elseif($order->status == 9)
+                                    {{ __('messages.canceled_from_admin') }}
                                     @endif
                                 </td>
                                 <td>{{ $order->subtotal_price . " " . __('messages.dinar') }}</td>
                                 <td>{{ $order->delivery_cost . " " . __('messages.dinar') }}</td>
                                 <td>{{ $order->total_price . " " . __('messages.dinar') }}</td>
                                 
-                                <td class="text-center blue-color hide_col"><a href="{{ route('orders.details', $order->id) }}" ><i class="far fa-eye"></i></a></td>
-                                <td class="text-center blue-color hide_col"><a target="_blank" href="{{ route('webview.invoice', $order->id) }}" ><i class="far fa-eye"></i></a></td>
+                                {{-- <td class="text-center blue-color hide_col"><a href="{{ route('orders.details', $order->id) }}" ><i class="far fa-eye"></i></a></td> --}}
+                                <td class="text-center blue-color hide_col"><a target="_blank" href="{{ route('webview.store.invoice', $order->id) }}" ><i class="far fa-eye"></i></a></td>
                             </tr>
                             <?php $i ++ ?>
                         @endforeach

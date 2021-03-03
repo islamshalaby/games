@@ -145,8 +145,7 @@
                 </td>
             </tr>
             
-            
-            
+            @endforeach
             <tr class="heading">
                 <td style="padding: 5px;text-align:center;vertical-align: top;background: #eee;border-bottom: 1px solid #ddd;font-weight: bold;">
                     {{ __('messages.total') }}
@@ -170,7 +169,6 @@
                     
                 </td>
             </tr>
-            
             <tr class="details">
                 <td style="padding: 5px;vertical-align: top;text-align:center;padding-bottom: 20px;">
                     {{ $data['order']->subtotal_price }} {{ __('messages.dinar') }}
@@ -198,7 +196,6 @@
                     
                 </td>
             </tr>
-            @endforeach
             <tr class="item">
                 <td style="padding: 5px;vertical-align: top;text-align:right;border-bottom: 1px solid #eee;">
                     <h5>{{ __('messages.payment_method') }}</h5>

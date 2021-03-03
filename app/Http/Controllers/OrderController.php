@@ -596,10 +596,10 @@ class OrderController extends Controller
     }
 
     public function cancel_item(Request $request, OrderItem $item) {
-        // if ($item->status != 1) {
-        //     $response = APIHelpers::createApiResponse(true , 406 , 'cant cancel this item' , 'لا يمكن الغاء هذا العنصر' , null , $request->lang);
-        //     return response()->json($response , 406);
-        // }
+        if ($item->status != 1) {
+            $response = APIHelpers::createApiResponse(true , 406 , 'cant cancel this item' , 'لا يمكن الغاء هذا العنصر' , null , $request->lang);
+            return response()->json($response , 406);
+        }
         $dcost = $item->order['delivery_cost'];
         
         $item->update([

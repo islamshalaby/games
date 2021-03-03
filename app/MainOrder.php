@@ -14,8 +14,9 @@ class MainOrder extends Model
         'delivery_cost', 
         'total_price', 
         'status',   // 1 => in progress
-                    // 4 => canceled
+                    // 4 => canceled from user
                     // 3 => delivered
+                    // 9 => canceled from admin
         'main_order_number'
     ];
     protected $dates = ['created_at'];
@@ -36,6 +37,6 @@ class MainOrder extends Model
     }
 
     public function canceledOrders() {
-        return $this->hasMany('App\Order', 'main_id')->where('status', 4);
+        return $this->hasMany('App\Order', 'main_id')->whereIn('status', [4, 9]);
     }
 }

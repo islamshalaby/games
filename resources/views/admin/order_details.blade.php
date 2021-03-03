@@ -86,6 +86,11 @@
                                 @else
                                 {{ __('messages.canceled') }}
                                 @endif
+                                @if (!in_array($data['order']->status, [4, 9]))
+                                <a style="margin-bottom: 5px" href="{{ route('orders.cancel', ['main', $data['order']->id]) }}" onclick='return confirm("{{ __('messages.are_you_sure') }}");' class="btn btn-sm btn-danger hide_col">
+                                    {{ __('messages.cancel_order') }}
+                                </a>
+                                @endif
                             </td>
                         </tr>  
                         <tr>
@@ -122,7 +127,12 @@
                     </a>
                 </h5>
                 <p><b>{{ __('messages.sub_order_number') }} :</b> {{ $order->order_number }}
-                    @if( in_array($order->status, [1, 2, 3]) ) 
+                    @if (!in_array($order->status, [4, 9]))
+                    <a style="margin-bottom: 5px" href="{{ route('orders.cancel', ['order', $order->id]) }}" onclick='return confirm("{{ __('messages.are_you_sure') }}");' class="btn btn-sm btn-danger hide_col">
+                        {{ __('messages.cancel_order') }}
+                    </a>
+                    @endif
+                    @if( in_array($order->status, [1, 2, 3]) && !in_array($order->status, [4, 9])) 
                     <form action="{{ route('orders.subo.action', $order->id) }}" >
                         <select id="statusSelect" name="status" class="form-control statusSelect">
                             <option selected>{{ __('messages.select') }}</option>
@@ -137,6 +147,7 @@
                     <thead>
                         <tr>
                             <th>{{ __('messages.product') }}</th>
+                            <th>{{ __('messages.product_price') }}</th>
                             <th>{{ __('messages.count') }}</th>
                             <th>{{ __('messages.status') }}</th>
                             <th class="text-center">{{ __('messages.actions') }}</th>
@@ -149,6 +160,9 @@
                                 <a target="_blank" href="{{ route('products.details', $item->product_id) }}">
                                 {{ App::isLocale('en') ? $item->product->title_en :  $item->product->title_ar}}
                                 </a>
+                            </td>
+                            <td>
+                                {{ $item->product->final_price . " " . __('messages.dinar') }}
                             </td>
                             <td>
                                 {{ $item->count }}
@@ -169,7 +183,7 @@
                                 @elseif($item->status == 3)
                                 {{ __('messages.delivered') }}
                                 @elseif($item->status == 4)
-                                {{ __('messages.order_canceled') }}
+                                {{ __('messages.canceled_from_user') }}
                                 @elseif($item->status == 5)
                                 <a href="{{ route('refund.details', $item->refund->id) }}" target="_blank">
                                     {{ __('messages.refund_request') }}
@@ -180,6 +194,8 @@
                                 {{ __('messages.refund_rejected') }}
                                 @elseif($item->status == 8)
                                 {{ __('messages.received_refund') }}
+                                @elseif($item->status == 9)
+                                {{ __('messages.canceled_from_admin') }}
                                 @endif
                             </td>
                             <td class="text-center">
@@ -189,6 +205,11 @@
                                 @endif
                                 @if($item->status == 6)
                                 <a onclick='return confirm("{{ __('messages.are_you_sure') }}");' class="btn btn-primary" href="{{ route('refund.received', $item->refund->id) }}">{{ __('messages.received_refund') }}</a>
+                                @endif
+                                @if (!in_array($item->status, [4, 9]))
+                                <a style="margin-bottom: 5px" href="{{ route('orders.cancel', ['item', $item->id]) }}" onclick='return confirm("{{ __('messages.are_you_sure') }}");' class="btn btn-sm btn-danger hide_col">
+                                    {{ __('messages.cancel_order') }}
+                                </a>
                                 @endif
                             </td>
                         </tr>
