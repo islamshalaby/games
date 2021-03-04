@@ -1,6 +1,6 @@
 @extends('admin.app')
 
-@section('title' , __('messages.order_details'))
+@section('title' , __('messages.sub_order_details'))
 
 @push('scripts')
     <script>
@@ -19,13 +19,7 @@
             <div class="widget-header">
             <div class="row">
                 <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                    <h4>{{ __('messages.order_details') }} 
-                        @if ($data['order']['status'] == 3)
-                            ( <a style="color: #1b55e2" target="_blank" href="{{ route('orders.invoice', $data['order']['id']) }}">
-                                {{ __('messages.invoice') }}
-                            </a> )
-                        @endif
-                    </h4>
+                    <h4>{{ __('messages.sub_order_details') }} </h4>
                 </div>
             </div>
         </div>
@@ -36,19 +30,11 @@
                         <tr>
                             <td class="label-table" > {{ __('messages.main_order_number') }}</td>
                             <td>
-                                {{ $data['order']['main_order_number'] }}
-                            </td>
-                        </tr>
-                        @if ($data['order']['status'] == 3)
-                        <tr>
-                            <td class="label-table" > {{ __('messages.invoice') }}</td>
-                            <td>
-                                <a href="{{ route('orders.invoice', $data['order']['id']) }}">
-                                    {{ __('messages.invoice') }}
+                                <a target="_blank" href="{{ route('orders.details', $data['order']->main_id) }}">
+                                    {{ $data['order']->main->main_order_number }}
                                 </a>
                             </td>
                         </tr>
-                        @endif
                         
                         <tr>
                             <td class="label-table" > {{ __('messages.order_date') }}</td>
@@ -79,17 +65,26 @@
                         <tr>
                             <td class="label-table" > {{ __('messages.status') }} </td>
                             <td>
-                                @if($data['order']->status == 1)
+                                @if ($data['order']->status == 1)
                                 {{ __('messages.in_progress') }}
-                                @elseif ($data['order']->status == 3)
+                                @elseif($data['order']->status == 2)
+                                {{ __('messages.order_confirmed') }}
+                                @elseif($data['order']->status == 3)
                                 {{ __('messages.delivered') }}
-                                @else
-                                {{ __('messages.canceled') }}
-                                @endif
-                                @if (!in_array($data['order']->status, [4, 9]))
-                                <a style="margin-bottom: 5px" href="{{ route('orders.cancel', ['main', $data['order']->id]) }}" onclick='return confirm("{{ __('messages.are_you_sure') }}");' class="btn btn-sm btn-danger hide_col">
-                                    {{ __('messages.cancel_order') }}
+                                @elseif($data['order']->status == 4)
+                                {{ __('messages.canceled_from_user') }}
+                                @elseif($data['order']->status == 5)
+                                <a href="{{ route('refund.details', $item->refund->id) }}" target="_blank">
+                                    {{ __('messages.refund_request') }}
                                 </a>
+                                @elseif($data['order']->status == 6)
+                                {{ __('messages.refund_accepted') }}
+                                @elseif($data['order']->status == 7)
+                                {{ __('messages.refund_rejected') }}
+                                @elseif($data['order']->status == 8)
+                                {{ __('messages.received_refund') }}
+                                @elseif($data['order']->status == 9)
+                                {{ __('messages.canceled_from_admin') }}
                                 @endif
                             </td>
                         </tr>  
@@ -120,25 +115,24 @@
                        
                     </tbody>
                 </table>
-                @foreach ($data['order']->orders as $order)
                 <h5 style="margin-bottom : 20px">
-                    <a target="_blank" href="{{ route('shops.details', $order->store_id) }}">
-                    {{ $order->store->name }}
+                    <a target="_blank" href="{{ route('shops.details', $data['order']->store_id) }}">
+                    {{ $data['order']->store->name }}
                     </a>
                 </h5>
-                <p><b>{{ __('messages.sub_order_number') }} :</b> {{ $order->order_number }}
-                    @if (!in_array($order->status, [4, 9]))
-                    <a style="margin-bottom: 5px" href="{{ route('orders.cancel', ['order', $order->id]) }}" onclick='return confirm("{{ __('messages.are_you_sure') }}");' class="btn btn-sm btn-danger hide_col">
+                <p><b>{{ __('messages.sub_order_number') }} :</b> {{ $data['order']->order_number }}
+                    @if (!in_array($data['order']->status, [4, 9]))
+                    <a style="margin-bottom: 5px" href="{{ route('orders.cancel', ['order', $data['order']->id]) }}" onclick='return confirm("{{ __('messages.are_you_sure') }}");' class="btn btn-sm btn-danger hide_col">
                         {{ __('messages.cancel_order') }}
                     </a>
                     @endif
-                    @if( in_array($order->status, [1, 2, 3]) && !in_array($order->status, [4, 9])) 
-                    <form action="{{ route('orders.subo.action', $order->id) }}" >
+                    @if( in_array($data['order']->status, [1, 2, 3]) && !in_array($data['order']->status, [4, 9])) 
+                    <form action="{{ route('orders.subo.action', $data['order']->id) }}" >
                         <select id="statusSelect" name="status" class="form-control statusSelect">
                             <option selected>{{ __('messages.select') }}</option>
-                            <option {{ $order->status == 1 ? 'selected' : '' }} value="1">{{ __('messages.in_progress') }}</option>
-                            <option {{ $order->status == 2 ? 'selected' : '' }} value="2">{{ __('messages.order_confirmed') }}</option>
-                            <option {{ $order->status == 3 ? 'selected' : '' }} value="3">{{ __('messages.delivered') }}</option>
+                            <option {{ $data['order']->status == 1 ? 'selected' : '' }} value="1">{{ __('messages.in_progress') }}</option>
+                            <option {{ $data['order']->status == 2 ? 'selected' : '' }} value="2">{{ __('messages.order_confirmed') }}</option>
+                            <option {{ $data['order']->status == 3 ? 'selected' : '' }} value="3">{{ __('messages.delivered') }}</option>
                         </select>
                     </form>
                     @endif
@@ -154,7 +148,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($order->oItems as $item)
+                        @foreach ($data['order']->oItems as $item)
                         <tr id="prod{{ $item->product->id }}">
                             <td>
                                 <a target="_blank" href="{{ route('products.details', $item->product_id) }}">
@@ -216,7 +210,6 @@
                         @endforeach
                     </tbody>
                 </table>
-                @endforeach
                 
             </div>
         </div>

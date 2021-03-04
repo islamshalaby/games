@@ -190,10 +190,27 @@
                             <tr class="{{$item->admin_seen == 0 ? 'unread' : '' }}" >
                                 <td><?=$i;?></td>
                                 <td>{{ $item->refund_number }}</td>
-                                <td>{{ $item->item->order->order_number }}</td>
-                                <td>{{ $item->item->order->main->main_order_number }}</td>
-                                <td>{{ $item->user->name }}</td>
-                                <td>{{ $item->store->name }}</td>
+                                <td>
+                                    <a href="{{ route('orders.details', $item->item->order->main_id) }}" target="_blank">
+                                        {{ $item->item->order->main->main_order_number }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{{ route('orders.sub_order.details', $item->item->order_id) }}" target="_blank">
+                                        {{ $item->item->order->order_number }}
+                                    </a>
+                                </td>
+                                
+                                <td>
+                                    <a href="{{ route('users.details', $item->user_id) }}" target="_blank">
+                                    {{ $item->user->name }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{{ route('shops.details', $item->store_id) }}" target="_blank">
+                                        {{ $item->store->name }}
+                                    </a>
+                                </td>
                                 <td>{{ App::isLocale('en') ? $item->item->product->title_en : $item->item->product->title_ar }}</td>
                                 <td>{{ $item->item->final_price . " " . __('messages.dinar') }}</td>
                                 <td>{{ $item->created_at }}</td>

@@ -510,6 +510,7 @@
             "canceled_from_user" => "ملغى من قبل المستخدم",
             "canceled_from_admin" => "ملغى من قبل المدير",
             "sub_orders"  => "الطلبات الفرعية",
-            "show_sub_orders" => "عرض الطلبات الفرعية"
+            "show_sub_orders" => "عرض الطلبات الفرعية",
+            "sub_order_details" => "تفاصيل الطلب الفرعى"
         ];
 ?>

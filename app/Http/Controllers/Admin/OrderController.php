@@ -118,11 +118,10 @@ class OrderController extends AdminController{
     }
 
     // details
-    public function subOrdersDetails(MainOrder $order) {
+    public function subOrdersDetails(Order $order) {
         $data['order'] = $order;
-        $data['m_option'] = MultiOption::find(8);
 
-        return view('admin.order_details', ['data' => $data]);
+        return view('admin.sub_order_details', ['data' => $data]);
     }
 
     // order items actions

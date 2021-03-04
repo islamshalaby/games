@@ -200,6 +200,7 @@ Route::group([
          Route::get('action/{order}/{status}' , 'OrderController@action_order')->name('orders.action');
          Route::get('cancel/{type}/{orderId}' , 'OrderController@cancelOrder')->name('orders.cancel');
          Route::get('details/{order}' , 'OrderController@details')->name('orders.details');
+         Route::get('details-sub-order/{order}' , 'OrderController@subOrdersDetails')->name('orders.sub_order.details');
          Route::get('filter/{status}' , 'OrderController@filter_orders')->name('orders.filter');
          Route::get('fetchbyarea' , 'OrderController@fetch_orders_by_area')->name('orders.fetchbyarea');
          Route::get('fetchbydate' , 'OrderController@fetch_orders_date')->name('orders.fetchbydate');

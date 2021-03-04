@@ -33,7 +33,6 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
             $("#areaForm").submit()
         })
         $("#toDate").on("change", function() {
-            console.log("test")
             $("#dateForm").submit()
         })
         $("#payment_select").on("change", function() {
@@ -97,17 +96,17 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
         } );
     </script>
     <script>
-        var price = dTbls.column(6).data(),
-            delivery = dTbls.column(7).data(),
-            total = dTbls.column(8).data(),
+        var price = dTbls.column(8).data(),
+            delivery = dTbls.column(9).data(),
+            total = dTbls.column(10).data(),
             dinar = "{{ __('messages.dinar') }}"
         var totalPrice = parseFloat(price.reduce(function (a, b) { return parseFloat(a) + parseFloat(b); }, 0)).toFixed(3),
             totalDelivery = parseFloat(delivery.reduce(function (a, b) { return parseFloat(a) + parseFloat(b); }, 0)).toFixed(3),
             allTotal = parseFloat(total.reduce(function (a, b) { return parseFloat(a) + parseFloat(b); }, 0)).toFixed(3)
 
-        $("#order-tbl tfoot").find('th').eq(6).text(`${totalPrice} ${dinar}`);
-        $("#order-tbl tfoot").find('th').eq(7).text(`${totalDelivery} ${dinar}`);
-        $("#order-tbl tfoot").find('th').eq(8).text(`${allTotal} ${dinar}`);
+        $("#order-tbl tfoot").find('th').eq(8).text(`${totalPrice} ${dinar}`);
+        $("#order-tbl tfoot").find('th').eq(9).text(`${totalDelivery} ${dinar}`);
+        $("#order-tbl tfoot").find('th').eq(10).text(`${allTotal} ${dinar}`);
     </script>
     
 @endpush
@@ -233,15 +232,17 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                     <thead>
                         <tr>
                             <th>id</th>
-                            <th>{{ __('messages.order_number') }}</th>
+                            <th>{{ __('messages.sub_order_number') }}</th>
+                            <th>{{ __('messages.main_order_number') }}</th>
                             <th>{{ __('messages.order_date') }}</th>
                             <th>{{ __('messages.user') }}</th>
+                            <th>{{ __('messages.store') }}</th>
                             <th>{{ __('messages.payment_method') }}</th>
                             <th>{{ __('messages.status') }}</th>
                             <th>{{ __('messages.price') }}</th>
                             <th>{{ __('messages.delivery_cost') }}</th>
                             <th>{{ __('messages.total_with_delivery') }}</th>
-                            {{-- <th class="text-center hide_col">{{ __('messages.details') }}</th> --}}
+                            <th class="text-center hide_col">{{ __('messages.details') }}</th>
                             <th class="text-center hide_col">{{ __('messages.invoice') }}</th>
                         </tr>
                     </thead>
@@ -252,10 +253,20 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                             <tr>
                                 <td><?=$i;?></td>
                                 <td>{{ $order->order_number }}</td>
+                                <td>
+                                    <a target="_blank" href="{{ route('orders.details', $order->main->id) }}">
+                                        {{ $order->main->main_order_number }}
+                                    </a>
+                                </td>
                                 <td>{{ $order->created_at->format("d-m-y") }}</td>
                                 <td>
                                     <a target="_blank" href="{{ route('users.details', $order->user->id) }}">
                                     {{ $order->user->name }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a target="_blank" href="{{ route('shops.details', $order->store_id) }}">
+                                    {{ $order->store->name }}
                                     </a>
                                 </td>
                                 <td>
@@ -294,7 +305,7 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                                 <td>{{ $order->delivery_cost . " " . __('messages.dinar') }}</td>
                                 <td>{{ $order->total_price . " " . __('messages.dinar') }}</td>
                                 
-                                {{-- <td class="text-center blue-color hide_col"><a href="{{ route('orders.details', $order->id) }}" ><i class="far fa-eye"></i></a></td> --}}
+                                <td class="text-center blue-color hide_col"><a href="{{ route('orders.sub_order.details', $order->id) }}" ><i class="far fa-eye"></i></a></td>
                                 <td class="text-center blue-color hide_col"><a target="_blank" href="{{ route('webview.store.invoice', $order->id) }}" ><i class="far fa-eye"></i></a></td>
                             </tr>
                             <?php $i ++ ?>
@@ -303,6 +314,8 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                     <tfoot>
                         <tr>
                           <th>{{ __('messages.total') }}:</th>
+                          <th></th>
+                          <th></th>
                           <th></th>
                           <th></th>
                           <th></th>

@@ -512,6 +512,7 @@
         "canceled_from_user" => "Canceled From User",
         "canceled_from_admin" => "Canceled From Admin",
         "sub_orders"  => "Sub Orders",
-        "show_sub_orders" => "Show Sub Orders"
+        "show_sub_orders" => "Show Sub Orders",
+        "sub_order_details" => "Sub Order Details"
     ];
 ?>
