@@ -591,6 +591,9 @@
                             <li class="sub-orders" >
                                 <a href="{{ route('orders.subOrders.index') }}"> {{ __('messages.sub_orders') }} </a>
                             </li>
+                            <li class="delivery-reports" >
+                                <a href="{{ route('orders.deliveryReports.index') }}"> {{ __('messages.delivery_reports') }} </a>
+                            </li>
                         </ul>
                     </li>
                     @endif 

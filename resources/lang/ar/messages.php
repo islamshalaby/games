@@ -511,6 +511,12 @@
             "canceled_from_admin" => "ملغى من قبل المدير",
             "sub_orders"  => "الطلبات الفرعية",
             "show_sub_orders" => "عرض الطلبات الفرعية",
-            "sub_order_details" => "تفاصيل الطلب الفرعى"
+            "sub_order_details" => "تفاصيل الطلب الفرعى",
+            "delivery_reports" => "تقارير التوصيل",
+            "delivery_date" => "تاريخ التوصيل",
+            "canceled_order" => "طلب ملغى",
+            "inprogress" => "جارى",
+            "inprogress_orders" => "طلبات جارية",
+            "delivered_orders" => "طلبات تم تسليمها"
         ];
 ?>

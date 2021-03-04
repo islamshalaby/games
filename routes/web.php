@@ -194,6 +194,7 @@ Route::group([
     ], function($router){
          Route::get('show' , 'OrderController@show')->name('orders.index');
          Route::get('sub-orders' , 'OrderController@showSubOrders')->name('orders.subOrders.index');
+         Route::get('delivery-reports' , 'OrderController@showDeliveryReports')->name('orders.deliveryReports.index');
          Route::get('action/items/{item}' , 'OrderController@order_items_actions')->name('orders.items.action');
          Route::get('action/order/{item}' , 'OrderController@order_actions')->name('orders.subo.action');
          Route::get('action/sub/{order}' , 'OrderController@action_sub_order')->name('orders.sub.action');

@@ -81,6 +81,48 @@ class OrderController extends AdminController{
         return view('admin.sub_orders' , ['data' => $data]);
     }
 
+    // get delivery reports
+    public function showDeliveryReports(Request $request) {
+        if (isset($request->order_status)) {
+            $statusArray = [1, 2, 5];
+            if ($request->order_status == 'delivered') {
+                $statusArray = [3, 6, 7];
+            }
+            $data['order_status'] = $request->order_status;
+            $data['orders'] = Order::whereIn('status', $statusArray)->orderBy('id' , 'desc');
+        }elseif(isset($request->area_id)){
+            $data['area'] = Area::where('id', $request->area_id)->select('id', 'title_en', 'title_ar')->first();
+            $data['orders'] = Order::join('user_addresses', 'user_addresses.id', '=', 'orders.address_id')
+            ->where('area_id', $request->area_id)
+            ->whereIn('status', [1, 2, 5, 3 ,6, 7])
+            ->select('orders.*')
+            ->orderBy('id', 'desc');
+        }elseif(isset($request->from) && isset($request->to)){
+            $data['from'] = $request->from;
+            $data['to'] = $request->to;
+            $data['orders'] = Order::whereBetween('created_at', array($request->from, $request->to))->whereIn('status', [1, 2, 5, 3,6, 7])->orderBy('id', 'desc');
+        }elseif(isset($request->method)){
+            $data['method'] = $request->method;
+            $data['orders'] = Order::where('payment_method', $request->method)->whereIn('status', [1, 2, 5, 3,6, 7])->orderBy('id', 'desc');
+        }elseif(isset($request->order_status2)){
+            $data['order_status2'] = $request->order_status2;
+            $data['orders'] = Order::where('status', $request->order_status2)->whereIn('status', [1, 2, 5, 3,6, 7])->orderBy('id', 'desc');
+        }elseif(isset($request->shop)){
+            $data['shop'] = $request->shop;
+            $data['orders'] = Order::where('store_id', $request->shop)->whereIn('status', [1, 2, 5, 3,6 , 7])->orderBy('id', 'desc');
+        }else {
+            $data['orders'] = Order::whereIn('status', [1, 2, 5, 3,6, 7])->orderBy('id' , 'desc');
+        }
+        $data['shops'] = Shop::orderBy('name', 'desc')->get();
+        $data['areas'] = Area::where('deleted', 0)->orderBy('title_ar', 'asc')->get();
+        $data['sum_price'] = $data['orders']->sum('subtotal_price');
+        $data['sum_delivery'] = $data['orders']->sum('delivery_cost');
+        $data['sum_total'] = $data['orders']->sum('total_price');
+        $data['orders'] = $data['orders']->get();
+
+        return view('admin.delivery_reports' , ['data' => $data]);
+    }
+
     // cancel | delivered order
     public function action_order(MainOrder $order, $status) {
         $order->update(['status' => $status]);

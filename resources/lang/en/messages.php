@@ -513,6 +513,12 @@
         "canceled_from_admin" => "Canceled From Admin",
         "sub_orders"  => "Sub Orders",
         "show_sub_orders" => "Show Sub Orders",
-        "sub_order_details" => "Sub Order Details"
+        "sub_order_details" => "Sub Order Details",
+        "delivery_reports" => "Delivery Reports",
+        "delivery_date" => "Delivery Date",
+        "canceled_order" => "Canceled Order",
+        "inprogress" => "In Progress",
+        "inprogress_orders" => "In Progress Orders",
+        "delivered_orders" => "Delivered Orders"
     ];
 ?>
