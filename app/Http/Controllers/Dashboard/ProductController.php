@@ -39,6 +39,7 @@ class ProductController extends Controller
             ->where('store_id', Auth::guard('dashboard')->user()->id)
             ->where('type', $request->type)
             ->select('id', 'remaining_quantity', 'title_en as title', 'final_price', 'price_before_offer', 'offer', 'barcode', 'stored_number')->with('mainImage');
+
         }else {
             $data['types'] = ProductType::select('id', 'type_ar as title')->get();
             $query = Product::where('deleted', 0)
@@ -68,7 +69,7 @@ class ProductController extends Controller
             $data['products'] = $query->where('remaining_quantity', '<', 10)->simplePaginate(16);
             $data['products_number'] = $data['products']->count('id');
         }
-
+        
 
         $response = APIHelpers::createApiResponse(false , 200 , '' , '' , $data , $request->lang);
         return response()->json($response , 200);
@@ -91,10 +92,66 @@ class ProductController extends Controller
             'main_image' => 'required'
         ]);
 
-        if ($validator->fails()) {
-            $response = APIHelpers::createApiResponse(true , 406 , 'title_en & description_en & title_ar & description_ar & title_ar & category_id & type & total_quatity & remaining_quantity & final_price & main_image Required Fields' , 'title_en & description_en & title_ar & description_ar & title_ar & category_id & type & total_quatity & remaining_quantity & final_price & main_image Required Fields'  , null , $request->lang);
+        if (!$request->title_en) {
+            $response = APIHelpers::createApiResponse(true , 406 , 'English Title is Required Field' , 'اسم المنتج بالإنجليزية حقل مطلوب'  , null , $request->lang);
             return response()->json($response , 406);
         }
+
+        if (!$request->title_ar) {
+            $response = APIHelpers::createApiResponse(true , 406 , 'Arabic Title is Required Field' , 'اسم المنتج بالعربية حقل مطلوب'  , null , $request->lang);
+            return response()->json($response , 406);
+        }
+
+        if (!$request->description_en) {
+            $response = APIHelpers::createApiResponse(true , 406 , 'English Description is Required Field' , 'الوصف بالإنجليزية حقل مطلوب'  , null , $request->lang);
+            return response()->json($response , 406);
+        }
+
+        if (!$request->description_ar) {
+            $response = APIHelpers::createApiResponse(true , 406 , 'Arabic Description is Required Field' , 'الوصف بالعربية حقل مطلوب'  , null , $request->lang);
+            return response()->json($response , 406);
+        }
+
+        if (!$request->category_id) {
+            $response = APIHelpers::createApiResponse(true , 406 , 'Category is Required Field' , 'القسم حقل مطلوب'  , null , $request->lang);
+            return response()->json($response , 406);
+        }
+
+        if (!$request->type) {
+            $response = APIHelpers::createApiResponse(true , 406 , 'Type is Required Field' , 'النوع حقل مطلوب'  , null , $request->lang);
+            return response()->json($response , 406);
+        }
+
+        if (!$request->total_quatity) {
+            $response = APIHelpers::createApiResponse(true , 406 , 'Total Quantity is Required Field' , 'إجمالى الكمية حقل مطلوب'  , null , $request->lang);
+            return response()->json($response , 406);
+        }
+
+        if (!$request->remaining_quantity) {
+            $response = APIHelpers::createApiResponse(true , 406 , 'Remaining Quantity is Required Field' , 'الكمية المتبقية حقل مطلوب'  , null , $request->lang);
+            return response()->json($response , 406);
+        }
+
+        if (!$request->final_price) {
+            $response = APIHelpers::createApiResponse(true , 406 , 'Price is Required Field' , 'السعر حقل مطلوب'  , null , $request->lang);
+            return response()->json($response , 406);
+        }
+
+        if (!$request->main_image) {
+            $response = APIHelpers::createApiResponse(true , 406 , 'Main Image is Required Field' , 'الصورة الرئيسية حقل مطلوب'  , null , $request->lang);
+            return response()->json($response , 406);
+        }
+
+        $product = Product::where('barcode', $request->barcode)->where('barcode', '!=', '')->select("id")->first();
+        if ($product) {
+            $response = APIHelpers::createApiResponse(true , 406 , 'Barcode must be Unique' , 'الباركود يجب ان لا يتكرر'  , null , $request->lang);
+            return response()->json($response , 406);
+        }
+
+        // if ($validator->fails()) {
+        //     $response = APIHelpers::createApiResponse(true , 406 , 'title_en & description_en & title_ar & description_ar & title_ar & category_id & type & total_quatity & remaining_quantity & final_price & main_image Required Fields' , 'title_en & description_en & title_ar & description_ar & title_ar & category_id & type & total_quatity & remaining_quantity & final_price & main_image Required Fields'  , null , $request->lang);
+        //     return response()->json($response , 406);
+        // }
 
         if ($request->total_quatity < $request->remaining_quantity) {
             $response = APIHelpers::createApiResponse(true , 406 , 'Total Quantity Must Be >= Remaining Quantity' , 'إجمالى الكمية يجب ان يكون أكبر من أو يساوى الكمية المتبقية'  , null , $request->lang);
@@ -269,6 +326,8 @@ class ProductController extends Controller
             $data['product']['properties'] = $product->propertiesEn;
             for ($i = 0; $i < count($data['product']['properties']); $i ++) {
                 $data['product']['properties'][$i]['values'] = OptionValue::where('option_id', $data['product']['properties'][$i]['option_id'])->select('id as value_id', 'value_en as value')->get();
+                $val = OptionValue::where('id', $data['product']['properties'][$i]['value_id'])->select('value_en as value')->first();
+                $data['product']['properties'][$i]['value_name'] = $val['value'];
                 for ($n = 0; $n < count($data['product']['properties'][$i]['values']); $n ++) {
                     $data['product']['properties'][$i]['values'][$n]['selected'] = false;
                     if ($data['product']['properties'][$i]['value_id'] == $data['product']['properties'][$i]['values'][$n]['value_id']) {
@@ -294,6 +353,8 @@ class ProductController extends Controller
             $data['product']['properties'] = $product->propertiesEn;
             for ($i = 0; $i < count($data['product']['properties']); $i ++) {
                 $data['product']['properties'][$i]['values'] = OptionValue::where('option_id', $data['product']['properties'][$i]['option_id'])->select('id as value_id', 'value_ar as value')->get();
+                $val = OptionValue::where('id', $data['product']['properties'][$i]['value_id'])->select('value_ar as value')->first();
+                $data['product']['properties'][$i]['value_name'] = $val['value'];
                 for ($n = 0; $n < count($data['product']['properties'][$i]['values']); $n ++) {
                     $data['product']['properties'][$i]['values'][$n]['selected'] = false;
                     if ($data['product']['properties'][$i]['value_id'] == $data['product']['properties'][$i]['values'][$n]['value_id']) {
@@ -302,7 +363,10 @@ class ProductController extends Controller
                 }
             }
         }
-        
+        $type = ProductType::where('id', $data['product']['type'])->select('type_' . $request->lang . ' as title')->first();
+        $data['product']['type_name'] = $type['title'];
+        $category = Category::where('id', $product['category_id'])->select('title_' . $request->lang . ' as title')->first();
+        $data['product']['category_name'] = $category['title'];
         
         $data['product']['images'] = $product->images->makeVisible('id');
         
