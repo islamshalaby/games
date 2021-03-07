@@ -34,28 +34,79 @@ class ProductController extends Controller
         $data['section'] = $request->section;
 
         if ($request->lang == 'en') {
-            $data['types'] = ProductType::select('id', 'type_en as title')->get();
-            $query = Product::where('deleted', 0)
-            ->where('hidden', 0)
-            ->where('store_id', Auth::guard('dashboard')->user()->id)
-            ->where('type', $request->type)
-            ->select('id', 'remaining_quantity', 'title_en as title', 'final_price', 'price_before_offer', 'offer', 'barcode', 'stored_number')->with('mainImage');
+            $types = ProductType::select('id', 'type_en as title')->get();
+            $data['types'] = [];
+            for ($p = 0; $p < count($types); $p ++) {
+                $single = (object)[
+                    "id" => $types[$p]['id'],
+                    "title" => $types[$p]['title'],
+                    "selected" => false
+                ];
+
+                array_push($data['types'], $single);
+            }
+
+            $zero = (object)[
+                "id" => 0,
+                "title" => "الكل",
+                "selected" => false
+            ];
+            array_unshift($data['types'], $zero);
+            
+            if ($request->type == 0) {
+                $query = Product::where('deleted', 0)
+                ->where('hidden', 0)
+                ->where('store_id', Auth::guard('dashboard')->user()->id)
+                ->select('id', 'remaining_quantity', 'title_en as title', 'final_price', 'price_before_offer', 'offer', 'barcode', 'stored_number')->with('mainImage');
+            }else {
+                $query = Product::where('deleted', 0)
+                ->where('hidden', 0)
+                ->where('store_id', Auth::guard('dashboard')->user()->id)
+                ->where('type', $request->type)
+                ->select('id', 'remaining_quantity', 'title_en as title', 'final_price', 'price_before_offer', 'offer', 'barcode', 'stored_number')->with('mainImage');
+            }
 
         }else {
-            $data['types'] = ProductType::select('id', 'type_ar as title')->get();
-            $query = Product::where('deleted', 0)
-            ->where('hidden', 0)
-            ->where('store_id', Auth::guard('dashboard')->user()->id)
-            ->where('type', $request->type)
-            ->select('id', 'remaining_quantity', 'title_ar as title', 'final_price', 'price_before_offer', 'offer', 'barcode', 'stored_number')->with('mainImage');
-        }
+            $types = ProductType::select('id', 'type_ar as title')->get();
+            $data['types'] = [];
+            for ($p = 0; $p < count($types); $p ++) {
+                $single = (object)[
+                    "id" => $types[$p]['id'],
+                    "title" => $types[$p]['title'],
+                    "selected" => false
+                ];
 
+                array_push($data['types'], $single);
+            }
+            $zero = (object)[
+                "id" => 0,
+                "title" => "الكل",
+                "selected" => false
+            ];
+            array_unshift($data['types'], $zero);
+            if ($request->type == 0) {
+                $query = Product::where('deleted', 0)
+                ->where('hidden', 0)
+                ->where('store_id', Auth::guard('dashboard')->user()->id)
+                ->select('id', 'remaining_quantity', 'title_ar as title', 'final_price', 'price_before_offer', 'offer', 'barcode', 'stored_number')->with('mainImage');
+            }else {
+                $query = Product::where('deleted', 0)
+                ->where('hidden', 0)
+                ->where('store_id', Auth::guard('dashboard')->user()->id)
+                ->where('type', $request->type)
+                ->select('id', 'remaining_quantity', 'title_ar as title', 'final_price', 'price_before_offer', 'offer', 'barcode', 'stored_number')->with('mainImage');
+            }
+            
+        }
+        
         for($i = 0; $i < count($data['types']); $i ++) {
-            $data['types'][$i]['selected'] = false;
-            if ($request->type == $data['types'][$i]['id']) {
-                $data['types'][$i]['selected'] = true;
+            $data['types'][$i]->selected = false;
+            if ($request->type == $data['types'][$i]->id) {
+                $data['types'][$i]->selected = true;
             }
         }
+
+        
         
         if ($request->section == 0) {
             $data['products'] = $query->simplePaginate(16);
