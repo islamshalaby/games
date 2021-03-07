@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use JD\Cloudder\Facades\Cloudder;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
+use App\Option;
 use App\ProductType;
 use App\Product;
 use App\OptionValue;
@@ -323,7 +324,20 @@ class ProductController extends Controller
                     $data['product']['categories'][$m]['selected'] = true;
                 }
             }
-            $data['product']['properties'] = $product->propertiesEn;
+            $prodProps = ProductProperty::where('product_id', $product->id)->get();
+            $propsArray = [];
+            for ($l = 0; $l < count($prodProps); $l ++) {
+                $single = Option::where('id', $prodProps[$l]['option_id'])->select('id as option_id', 'title_en as title')->first();
+                $obj = (object)[
+                    "option_id" => $single['option_id'],
+                    "title" => $single['title'],
+                    "value_id" => $prodProps[$l]['value_id']
+                ];
+
+                array_push($propsArray, $obj);
+            }
+            $data['product']['properties'] = $propsArray;
+            // dd($data['product']['properties']);
             for ($i = 0; $i < count($data['product']['properties']); $i ++) {
                 $data['product']['properties'][$i]['values'] = OptionValue::where('option_id', $data['product']['properties'][$i]['option_id'])->select('id as value_id', 'value_en as value')->get();
                 $val = OptionValue::where('id', $data['product']['properties'][$i]['value_id'])->select('value_en as value')->first();
@@ -350,10 +364,38 @@ class ProductController extends Controller
                     $data['product']['categories'][$m]['selected'] = true;
                 }
             }
-            $data['product']['properties'] = $product->propertiesEn;
+            
+            $props = $product->category->optionsAr;
+            // dd($props);
+            $prodProps = ProductProperty::where('product_id', $product->id)->get();
+            // dd($props);
+            // $prodVals = ProductProperty::where('product_id', $product->id)->pluck('value_id');
+            $propsArray = [];
+            for ($i = 0; $i < count($props); $i ++) {
+                $props[$i]['value_id'] = 0;
+                if (count($prodProps) > 0) {
+                    for ($g = 0; $g < count($prodProps); $g ++) {
+                        // var_dump($props[$i]['option_id']);
+                        // var_dump($prodProps[$g]['option_id']);
+                        if ($prodProps[$g]['option_id'] == $props[$i]['option_id']) {
+                            $props[$i]['value_id'] = $prodProps[$g]['value_id'];
+                        }
+                    }
+                }
+                $props[$i]['values'] = OptionValue::where('option_id', $props[$i]['option_id'])->select('id as value_id', 'value_' . $request->lang . ' as value')->get();
+                for ($n = 0; $n < count($props[$i]['values']); $n ++) {
+                    $props[$i]['values'][$n]['selected'] = false;
+                }
+            }
+            $data['product']['properties'] = $props;
+            
+            // dd($data['product']['properties']);
             for ($i = 0; $i < count($data['product']['properties']); $i ++) {
                 $data['product']['properties'][$i]['values'] = OptionValue::where('option_id', $data['product']['properties'][$i]['option_id'])->select('id as value_id', 'value_ar as value')->get();
-                $val = OptionValue::where('id', $data['product']['properties'][$i]['value_id'])->select('value_ar as value')->first();
+                $val = ['value' => ''];
+                if ($data['product']['properties'][$i]['value_id'] != 0) {
+                    $val = OptionValue::where('id', $data['product']['properties'][$i]['value_id'])->select('value_ar as value')->first();
+                }
                 $data['product']['properties'][$i]['value_name'] = $val['value'];
                 for ($n = 0; $n < count($data['product']['properties'][$i]['values']); $n ++) {
                     $data['product']['properties'][$i]['values'][$n]['selected'] = false;
