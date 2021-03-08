@@ -194,12 +194,14 @@
                 <table class="table table-bordered mb-4">
                     <tbody>
                         @for ($k = 0; $k < count($data['product']->properties); $k ++)
+                        @if(isset($data['product']->values[$k]))
                         <tr>
                             <td class="label-table" > {{ App::isLocale('en') ? $data['product']->properties[$k]['title_en'] : $data['product']->properties[$k]['title_ar'] }}</td>
                             <td>
                                 {{ App::isLocale('en') ? $data['product']->values[$k]['value_en'] : $data['product']->values[$k]['value_ar'] }}
                             </td>
                         </tr>
+                        @endif
                         @endfor          
                     </tbody>
                 </table>

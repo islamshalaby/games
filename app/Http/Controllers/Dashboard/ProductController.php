@@ -261,29 +261,19 @@ class ProductController extends Controller
             return response()->json($response , 406);
         }
         $post = $request->all();
-        if ($request->lang == 'en') {
-            $validator = Validator::make($request->all(), [
-                'barcode' => 'unique:products,barcode,' . $product->id . '|max:255|nullable',
-                'title_en' => 'filled',
-                'description_en' => 'filled',
-                'category_id' => 'filled',
-                'type' => 'filled',
-                'total_quatity' => 'filled',
-                'remaining_quantity' => 'filled',
-                'final_price' => 'filled'
-            ]);
-        }else {
-            $validator = Validator::make($request->all(), [
-                'barcode' => 'unique:products,barcode,' . $product->id . '|max:255|nullable',
-                'title_ar' => 'filled',
-                'description_ar' => 'filled',
-                'category_id' => 'filled',
-                'type' => 'filled',
-                'total_quatity' => 'filled',
-                'remaining_quantity' => 'filled',
-                'final_price' => 'filled'
-            ]);
-        }
+        $validator = Validator::make($request->all(), [
+            'barcode' => 'unique:products,barcode,' . $product->id . '|max:255|nullable',
+            'title_en' => 'filled',
+            'title_ar' => 'filled',
+            'description_ar' => 'filled',
+            'description_en' => 'filled',
+            'category_id' => 'filled',
+            'type' => 'filled',
+            'total_quatity' => 'filled',
+            'remaining_quantity' => 'filled',
+            'final_price' => 'filled'
+        ]);
+        
         
 
         if ($validator->fails()) {
