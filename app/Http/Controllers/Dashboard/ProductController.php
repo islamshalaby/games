@@ -274,7 +274,25 @@ class ProductController extends Controller
             'final_price' => 'filled'
         ]);
         
-        
+        if ($request->main_image) {
+            $allImages = ProductImage::where('product_id', $product->id)->get();
+            if (count($allImages) > 0) {
+                for ($s =0; $s < count($allImages); $s ++) {
+                    $allImages[$s]['main'] = 0;
+                    $allImages[$s]->save();
+                }
+            }
+            $mainImage = $request->main_image;
+            Cloudder::upload($mainImage, null);
+            $front_imageereturned = Cloudder::getResult();
+            $front_image_id = $front_imageereturned['public_id'];
+            $front_image_format = $front_imageereturned['format'];    
+            $front_image_new_name = $front_image_id.'.'.$front_image_format;
+            $postMainImage['image'] = $front_image_new_name;
+            $postMainImage['product_id'] = $product->id;
+            $postMainImage['main'] = 1;
+            ProductImage::create($postMainImage);
+        }
 
         if ($validator->fails()) {
             $response = APIHelpers::createApiResponse(true , 406 , 'Missing Required Fields' , 'بعض الحقول مفقودة'  , null , $request->lang);
@@ -488,7 +506,7 @@ class ProductController extends Controller
             $latestImages->update(['main' => 1]);
         }
 
-        $response = APIHelpers::createApiResponse(false , 200 , '' , '' , $image , $request->lang);
+        $response = APIHelpers::createApiResponse(false , 200 , '' , '' , (object)[] , $request->lang);
         return response()->json($response , 200);
     }
 
