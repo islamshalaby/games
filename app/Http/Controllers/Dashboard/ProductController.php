@@ -359,7 +359,7 @@ class ProductController extends Controller
             return response()->json($response , 406);
         }
         
-        $data['product'] = $product->select('id', 'title_en', 'title_ar', 'category_id', 'description_en', 'description_ar', 'offer_percentage', 'price_before_offer', 'final_price', 'offer', 'total_quatity', 'remaining_quantity', 'type', 'stored_number', 'barcode')->first();
+        $data['product'] = $product->where('id', $product->id)->select('id', 'title_en', 'title_ar', 'category_id', 'description_en', 'description_ar', 'offer_percentage', 'price_before_offer', 'final_price', 'offer', 'total_quatity', 'remaining_quantity', 'type', 'stored_number', 'barcode')->first();
         if ($request->lang == 'en') {
             $data['product']['types'] = ProductType::orderBy('id', 'desc')->select('id', 'type_en as type')->get();
             $data['product']['categories'] = Category::where('deleted', 0)->select('id', 'title_en as title')->get();
