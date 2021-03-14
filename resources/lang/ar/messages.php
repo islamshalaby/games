@@ -517,6 +517,8 @@
             "canceled_order" => "طلب ملغى",
             "inprogress" => "جارى",
             "inprogress_orders" => "طلبات جارية",
-            "delivered_orders" => "طلبات تم تسليمها"
+            "delivered_orders" => "طلبات تم تسليمها",
+            "opened" => "طلب مفتوح",
+            "closed" => "طلب مغلق"
         ];
 ?>

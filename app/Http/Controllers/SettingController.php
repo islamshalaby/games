@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Helpers\APIHelpers;
 use JD\Cloudder\Facades\Cloudder;
+use Cloudinary\Api\Upload\UploadApi;
 use App\Setting;
 use App\Seller;
 
@@ -51,6 +52,7 @@ class SettingController extends Controller
         $image = str_replace('data:image/png;base64,', '', $image);
         $image = str_replace(' ', '+', $image);
         $front_image = $request->front_image;
+        // Cloudder::uploadVideo($front_image,null, ['resource_type' => 'video',"eager_async" => TRUE, "eager" => ["format"=>"mp4","width"=>1280, "height"=>720, "crop"=>"limit", "duration"=>"7200p"], 'chunk_size' => 6000000]);
         Cloudder::upload($front_image, null);
         $front_imageereturned = Cloudder::getResult();
         $front_image_id = $front_imageereturned['public_id'];

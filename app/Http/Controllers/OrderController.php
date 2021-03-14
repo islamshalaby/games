@@ -225,9 +225,13 @@ class OrderController extends Controller
             // dd($total_price);
             $root_url = $request->root();
             $user = auth()->user();
-    
-            $path='https://apitest.myfatoorah.com/v2/SendPayment';
-            $token="bearer rLtt6JWvbUHDDhsZnfpAhpYk4dxYDQkbcPTyGaKp2TYqQgG7FGZ5Th_WD53Oq8Ebz6A53njUoo1w3pjU1D4vs_ZMqFiz_j0urb_BH9Oq9VZoKFoJEDAbRZepGcQanImyYrry7Kt6MnMdgfG5jn4HngWoRdKduNNyP4kzcp3mRv7x00ahkm9LAK7ZRieg7k1PDAnBIOG3EyVSJ5kK4WLMvYr7sCwHbHcu4A5WwelxYK0GMJy37bNAarSJDFQsJ2ZvJjvMDmfWwDVFEVe_5tOomfVNt6bOg9mexbGjMrnHBnKnZR1vQbBtQieDlQepzTZMuQrSuKn-t5XZM7V6fCW7oP-uXGX-sMOajeX65JOf6XVpk29DP6ro8WTAflCDANC193yof8-f5_EYY-3hXhJj7RBXmizDpneEQDSaSz5sFk0sV5qPcARJ9zGG73vuGFyenjPPmtDtXtpx35A-BVcOSBYVIWe9kndG3nclfefjKEuZ3m4jL9Gg1h2JBvmXSMYiZtp9MR5I6pvbvylU_PP5xJFSjVTIz7IQSjcVGO41npnwIxRXNRxFOdIUHn0tjQ-7LwvEcTXyPsHXcMD8WtgBh-wxR8aKX7WPSsT1O8d8reb2aR7K3rkV3K82K_0OgawImEpwSvp9MNKynEAJQS6ZHe_J_l77652xwPNxMRTMASk1ZsJL";
+            $liveApi = 'https://api.myfatoorah.com/v2/SendPayment';
+            $testApi = 'https://apitest.myfatoorah.com/v2/SendPayment';
+            $liveToken = "bearer vJRsGzHd9i6dl5Rc_GfYuXkGAWiHw7ieZRsRaic4BSWg5ewxiwinosoFIXxWogGsTDxwc1hkvBVRGLzaa8EgjjRTHGRybUeE9_ju2JovpHOXvHNxK2xGLQLtx93aCK3IbLH8QxmNkkW26Sjs2mQKItKRGDrOaslIXIFbTzEZX762W7AlLuszLDwMaQv6eikMX6--r86Rc7bj_9QzAuO0RykT2ljiUFMijolgLLHl2Sb7ESSUPmP_a0SlncgFog5AlWfmBpc3CJBTQunOUXbrTgAxmmp2hueyX9bkPjoz_iWNi3pwLNULhjcxgjflaXhi8rud0KnH0fIvfHn6Ftx8E06gBkcFuoHMOTN0WaJgX-jagyAGbiINiMwqrR6StDQJ6zU7FBJiZiv5rbb5ZIcsXkt_h1DLpab9NThyKRbgoFFYe2Il7DrI4QyOtkhGZJ2xV6Wd2S0OTApzh9GxyIGEBeyTa-CpmztGKzOUauqhuyVM2ITUcnMYEeNsr-aYBlAUMZX4zl_hQDvIVBpO4ykOguTNV6rcJ-KD5EZV7Xci6l1_P2b_U-O-l-LA49RWBumd_VHbACEopmquCxtApG9Rb9qwN5HxO1HaHQehC6kc-V1vjds27412lJkKaVPOAK89KMEsB1eSSNhfvBUIE3Z1orsu_rvy2e25Aj0k7Q7v0DIU-abd8a3-Ue2xhQN15-WyKfqzxNt5czeXEtBvwYPeLZiQJl-Xp1wACoQKyqbkbjIOYA6P";
+            $testToken = "bearer rLtt6JWvbUHDDhsZnfpAhpYk4dxYDQkbcPTyGaKp2TYqQgG7FGZ5Th_WD53Oq8Ebz6A53njUoo1w3pjU1D4vs_ZMqFiz_j0urb_BH9Oq9VZoKFoJEDAbRZepGcQanImyYrry7Kt6MnMdgfG5jn4HngWoRdKduNNyP4kzcp3mRv7x00ahkm9LAK7ZRieg7k1PDAnBIOG3EyVSJ5kK4WLMvYr7sCwHbHcu4A5WwelxYK0GMJy37bNAarSJDFQsJ2ZvJjvMDmfWwDVFEVe_5tOomfVNt6bOg9mexbGjMrnHBnKnZR1vQbBtQieDlQepzTZMuQrSuKn-t5XZM7V6fCW7oP-uXGX-sMOajeX65JOf6XVpk29DP6ro8WTAflCDANC193yof8-f5_EYY-3hXhJj7RBXmizDpneEQDSaSz5sFk0sV5qPcARJ9zGG73vuGFyenjPPmtDtXtpx35A-BVcOSBYVIWe9kndG3nclfefjKEuZ3m4jL9Gg1h2JBvmXSMYiZtp9MR5I6pvbvylU_PP5xJFSjVTIz7IQSjcVGO41npnwIxRXNRxFOdIUHn0tjQ-7LwvEcTXyPsHXcMD8WtgBh-wxR8aKX7WPSsT1O8d8reb2aR7K3rkV3K82K_0OgawImEpwSvp9MNKynEAJQS6ZHe_J_l77652xwPNxMRTMASk1ZsJL";
+
+            $path= $liveApi;
+            $token= $liveToken;
     
             $headers = array(
                 'Authorization:' .$token,

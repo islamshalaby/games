@@ -247,16 +247,9 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                                 </td>
                                 <td>
                                     @if($order->status == 1)
-                                    {{ __('messages.in_progress') }}
-                                    @elseif ($order->status == 3)
-                                    {{ __('messages.delivered') }}
-                                    @else
-                                    {{ __('messages.canceled') }}
-                                    @endif
-                                    @if (!in_array($order->status, [4, 9]))
-                                    <a style="margin-bottom: 5px" href="{{ route('orders.cancel', ['main', $order->id]) }}" onclick='return confirm("{{ __('messages.are_you_sure') }}");' class="btn btn-sm btn-danger hide_col">
-                                        {{ __('messages.cancel_order') }}
-                                    </a>
+                                    {{ __('messages.opened') }}
+                                    @elseif (in_array($order->status, [3, 4, 9]))
+                                    {{ __('messages.closed') }}
                                     @endif
                                 </td>
                                 <td>{{ $order->subtotal_price . " " . __('messages.dinar') }}</td>

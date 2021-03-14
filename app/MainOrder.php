@@ -39,4 +39,8 @@ class MainOrder extends Model
     public function canceledOrders() {
         return $this->hasMany('App\Order', 'main_id')->whereIn('status', [4, 9]);
     }
+
+    public function deliveredOrders() {
+        return $this->hasMany('App\Order', 'main_id')->where('status', 3);
+    }
 }

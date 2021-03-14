@@ -519,6 +519,8 @@
         "canceled_order" => "Canceled Order",
         "inprogress" => "In Progress",
         "inprogress_orders" => "In Progress Orders",
-        "delivered_orders" => "Delivered Orders"
+        "delivered_orders" => "Delivered Orders",
+        "opened" => "Opened Order",
+        "closed" => "Closed Order"
     ];
 ?>

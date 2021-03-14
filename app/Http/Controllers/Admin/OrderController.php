@@ -140,6 +140,7 @@ class OrderController extends AdminController{
 
     // action sub order
     public function action_sub_order(Request $request, Order $order) {
+        
         $order->update(['status' => $request->status]);
 
         for ($i = 0; $i < count($order->oItems); $i ++) {
@@ -225,25 +226,14 @@ class OrderController extends AdminController{
     public function order_actions(Request $request, Order $item) {
         $order_inprogress = 0;
         $order_delivered = 0;
-        $main_order_inprogress = 0;
-        $main_order_delivered = 0;
         $item->update(['status' => $request->status]);
         // dd($item);
         
         for ($i = 0; $i < count($item->oItems); $i ++) {
-            $item->oItems[$i]->status = $request->status;
-            $item->oItems[$i]->save();
-            if(in_array($request->status, [1, 2])) {
-                if ( in_array($item->oItems[$i]->status, [1, 2]) ) {
-                    $order_inprogress ++;
-                }
-            }else if($request->status == 3) {
-                if ( in_array($item->oItems[$i]->status, [3, 4, 7]) ) {
-                    $order_delivered ++;
-                }
+            if (!in_array($item->oItems[$i]->status, [3, 4, 9])) {
+                $item->oItems[$i]->status = $request->status;
+                $item->oItems[$i]->save();
             }
-
-            // array_push($status_array, $item->order->oItems[$i]->status);
         }
 
         
@@ -256,24 +246,15 @@ class OrderController extends AdminController{
         //     $item->update(['status' => 3]);
         // }
 
-        for ($n =0; $n < count($item->main->orders); $n ++) {
-            if(in_array($request->status, [1, 2])) {
-                if ( in_array($item->main->orders[$n]->status, [1, 2]) ) {
-                    $main_order_inprogress ++;
-                }
-            }else if($request->status == 3) {
-                if ( in_array($item->main->orders[$n]->status, [3, 4, 7]) ) {
-                    $main_order_delivered ++;
-                }
-            }
-        }
-
-        if ($order_inprogress == count($item->main->orders)) {
-            $item->main->update(['status' => 1]);
-        }
-        
-        if ($order_delivered == count($item->main->orders)) {
+        if (count($item->main->canceledOrders) + count($item->main->deliveredOrders) == count($item->main->orders) || count($item->main->deliveredOrders) == count($item->main->orders)) {
+            // dd("SSSS");
             $item->main->update(['status' => 3]);
+        }elseif (count($item->main->canceledOrders) == count($item->main->orders)) {
+            // dd("SSSdsdsdsS");
+            $item->main->update(['status' => 9]);
+        }else {
+            // dd("gfhghfg");
+            $item->main->update(['status' => 1]);
         }
 
         return redirect()->back();
