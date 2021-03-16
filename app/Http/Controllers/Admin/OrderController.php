@@ -533,7 +533,7 @@ class OrderController extends AdminController{
                 }
             }
 
-            $totalItem = 0;
+            $totalItem = 0.000;
             $subOrderDelivery = $order->delivery_cost;
             for ($n = 0; $n < count($order->oItems); $n ++) {
                 $finalPrice = $order->oItems[$n]->final_price * $order->oItems[$n]->count;
@@ -547,7 +547,7 @@ class OrderController extends AdminController{
             if (in_array(3, $pluckItems)) {
                 $status = 3;
             }else {
-                $subOrderDelivery = 0;
+                $subOrderDelivery = 0.000;
             }
 
             // update order

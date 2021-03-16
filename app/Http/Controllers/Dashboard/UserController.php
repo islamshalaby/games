@@ -8,6 +8,7 @@ use App\Helpers\APIHelpers;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use JD\Cloudder\Facades\Cloudder;
 use App\Shop;
 use App\DeliveryArea;
 use App\Area;
@@ -20,6 +21,7 @@ class UserController extends Controller
     {
         $this->middleware('auth:dashboard' , ['except' => []]);
     }
+
     // get profile
     public function getProfile(Request $request) {
         $user = Auth::guard('dashboard')->user();
@@ -127,7 +129,6 @@ class UserController extends Controller
     public function updateDeliveryAreas(Request $request) {
         $post = $request->all();
         $validator = Validator::make($request->all(), [
-            'area_id' => 'required',
             'delivery_cost' => 'numeric',
             'estimated_arrival_time' => 'numeric|min:1'
         ]);
@@ -136,16 +137,35 @@ class UserController extends Controller
             $response = APIHelpers::createApiResponse(true , 406 , 'Missing Required Fields' , 'بعض الحقول مفقودة'  , null , $request->lang);
             return response()->json($response , 406);
         }
-        $deliveryArea = DeliveryArea::where('area_id', $post['area_id'])
-                        ->where('store_id', Auth::guard('dashboard')->user()->id)
-                        ->select('delivery_cost', 'estimated_arrival_time', 'id')
-                        ->first();
-        if (isset($deliveryArea['id'])) {
-            $deliveryArea->update($post);
+        if (isset($post['area_id'])) {
+            $deliveryArea = DeliveryArea::where('area_id', $post['area_id'])
+            ->where('store_id', Auth::guard('dashboard')->user()->id)
+            ->select('delivery_cost', 'estimated_arrival_time', 'id')
+            ->first();
+            if (isset($deliveryArea['id'])) {
+                $deliveryArea->update($post);
+            }else {
+                $post['store_id'] = Auth::guard('dashboard')->user()->id;
+                DeliveryArea::create($post);
+            }
         }else {
-            $post['store_id'] = Auth::guard('dashboard')->user()->id;
-            DeliveryArea::create($post);
+            $areas = Area::where('deleted', 0)->pluck('id')->toArray();
+            for ($i = 0; $i < count($areas); $i ++) {
+                $deliveryArea = DeliveryArea::where('area_id', $areas[$i])
+                ->where('store_id', Auth::guard('dashboard')->user()->id)
+                ->select('delivery_cost', 'estimated_arrival_time', 'id')
+                ->first();
+
+                if (isset($deliveryArea['id'])) {
+                    $deliveryArea->update($post);
+                }else {
+                    $post['area_id'] = $areas[$i];
+                    $post['store_id'] = Auth::guard('dashboard')->user()->id;
+                    DeliveryArea::create($post);
+                }
+            }
         }
+        
 
         $response = APIHelpers::createApiResponse(false , 200 , '' , '', (object)[] , $request->lang);
         return response()->json($response , 200);
@@ -160,4 +180,38 @@ class UserController extends Controller
     }
 
 
+    // update logo
+    public function updateLogo(Request $request) {
+        $store = Shop::where('id', Auth::guard('dashboard')->user()->id)->first();
+        if (isset($request->logo)) {
+            $logo = $request->logo;
+            $publicId = substr($logo, 0 ,strrpos($logo, ".")); 
+            if ($publicId) {
+                Cloudder::delete($publicId);
+            }
+            Cloudder::upload($logo, null);
+            $iback_imagereturned = Cloudder::getResult();
+            $iback_image_id = $iback_imagereturned['public_id'];
+            $back_image_format = $iback_imagereturned['format'];    
+            $back_image_new_name = $iback_image_id.'.'.$back_image_format;
+            $store['logo'] = $back_image_new_name;
+        }
+        if (isset($request->cover)) {
+            $cover = $request->cover;
+            $publicId = substr($cover, 0 ,strrpos($cover, ".")); 
+            if ($publicId) {
+                Cloudder::delete($publicId);
+            }
+            Cloudder::upload($cover, null);
+            $iback_imagereturned = Cloudder::getResult();
+            $iback_image_id = $iback_imagereturned['public_id'];
+            $back_image_format = $iback_imagereturned['format'];    
+            $back_image_new_name = $iback_image_id.'.'.$back_image_format;
+            $store['cover'] = $back_image_new_name;
+        }
+        $store->save();
+
+        $response = APIHelpers::createApiResponse(false , 200 , '' , '', (object)[] , $request->lang);
+        return response()->json($response , 200);
+    }
 }

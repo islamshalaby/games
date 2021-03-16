@@ -34,6 +34,9 @@ Route::group([
     // update profile
     Route::put('profile/{lang}/{v}' , 'UserController@updateprofile');
 
+    // update logo & cover
+    Route::put('update-logo-cover/{lang}/{v}' , 'UserController@updateLogo');
+
     // reset password
     Route::put('resetpassword/{lang}/{v}' , 'UserController@resetpassword');
 
