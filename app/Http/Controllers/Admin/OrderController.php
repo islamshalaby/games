@@ -493,7 +493,7 @@ class OrderController extends AdminController{
             $totalSubOrders = Order::where('main_id', $orderId)->where('status', 4)->sum('total_price');
             $subTotalSubOrders = Order::where('main_id', $orderId)->where('status', 4)->sum('subtotal_price');
             $deliverySubOrders = Order::where('main_id', $orderId)->where('status', 4)->sum('delivery_cost');
-            $pluckStatus = Order::where('main_id', $orderId)->where('status', 4)->pluck('status');
+            $pluckStatus = Order::where('main_id', $orderId)->where('status', 4)->pluck('status')->toArray();
             $status = 9;
 
             // if there is suborder with status 3 make main status 3
