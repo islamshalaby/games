@@ -312,7 +312,7 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                                     @endif
                                 </td>
                                 
-                                <td class="text-center blue-color hide_col"><a href="{{ route('orders.details', $order->order_id) }}" ><i class="far fa-eye"></i></a></td>
+                                <td class="text-center blue-color hide_col"><a href="{{ route('orders.sub_order.details', $order->order_id) }}" ><i class="far fa-eye"></i></a></td>
                             </tr>
                             <?php $i ++ ?>
                         @endforeach
