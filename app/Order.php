@@ -54,6 +54,10 @@ class Order extends Model
         return $this->hasMany('App\OrderItem', 'order_id')->whereIn('status', [4, 9]);
     }
 
+    public function deliveredOrders() {
+        return $this->hasMany('App\OrderItem', 'order_id')->where('status', 3);
+    }
+
     public function oItemsRefunded() {
         return $this->hasMany('App\OrderItem', 'order_id')->whereBetween('status', [5, 8]);
     }

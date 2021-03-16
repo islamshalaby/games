@@ -521,6 +521,9 @@
         "inprogress_orders" => "In Progress Orders",
         "delivered_orders" => "Delivered Orders",
         "opened" => "Opened Order",
-        "closed" => "Closed Order"
+        "closed" => "Closed Order",
+        "products_orders" => "Products Orders",
+        "show_products_orders" => "Show Products Orders",
+        "amount" => "Amount"
     ];
 ?>

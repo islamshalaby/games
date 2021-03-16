@@ -121,12 +121,12 @@
                     </a>
                 </h5>
                 <p><b>{{ __('messages.sub_order_number') }} :</b> {{ $data['order']->order_number }}
-                    @if (!in_array($data['order']->status, [4, 9]))
+                    @if (!in_array($data['order']->status, [3, 4, 9]))
                     <a style="margin-bottom: 5px" href="{{ route('orders.cancel', ['order', $data['order']->id]) }}" onclick='return confirm("{{ __('messages.are_you_sure') }}");' class="btn btn-sm btn-danger hide_col">
                         {{ __('messages.cancel_order') }}
                     </a>
                     @endif
-                    @if( in_array($data['order']->status, [1, 2, 3]) && !in_array($data['order']->status, [4, 9])) 
+                    @if( !in_array($data['order']->status, [3, 4, 9])) 
                     <form action="{{ route('orders.subo.action', $data['order']->id) }}" >
                         <select id="statusSelect" name="status" class="form-control statusSelect">
                             <option selected>{{ __('messages.select') }}</option>
@@ -200,7 +200,7 @@
                                 @if($item->status == 6)
                                 <a onclick='return confirm("{{ __('messages.are_you_sure') }}");' class="btn btn-primary" href="{{ route('refund.received', $item->refund->id) }}">{{ __('messages.received_refund') }}</a>
                                 @endif
-                                @if (!in_array($item->status, [4, 9]))
+                                @if (!in_array($item->status, [3, 4, 9]))
                                 <a style="margin-bottom: 5px" href="{{ route('orders.cancel', ['item', $item->id]) }}" onclick='return confirm("{{ __('messages.are_you_sure') }}");' class="btn btn-sm btn-danger hide_col">
                                     {{ __('messages.cancel_order') }}
                                 </a>

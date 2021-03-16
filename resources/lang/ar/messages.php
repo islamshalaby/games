@@ -519,6 +519,9 @@
             "inprogress_orders" => "طلبات جارية",
             "delivered_orders" => "طلبات تم تسليمها",
             "opened" => "طلب مفتوح",
-            "closed" => "طلب مغلق"
+            "closed" => "طلب مغلق",
+            "products_orders" => "طلبات المنتجات",
+            "show_products_orders" => "عرض طلبات المنتجات",
+            "amount" => "الكمية"
         ];
 ?>

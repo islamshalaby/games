@@ -1,6 +1,6 @@
 @extends('admin.app')
 @php
-    $title = __('messages.show_orders');
+    $title = __('messages.show_products_orders');
     if (!empty($data['from'])) {
         $title = __('messages.show_orders') . " ( " . __('messages.from') . ": " . $data['from'] . " " . __('messages.to') . ": " . $data['to'] . " )";
     }else if (isset($data['area'])) {
@@ -33,6 +33,7 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
             $("#areaForm").submit()
         })
         $("#toDate").on("change", function() {
+            console.log("test")
             $("#dateForm").submit()
         })
         $("#payment_select").on("change", function() {
@@ -53,9 +54,9 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
             sumPrice = "{{ $data['sum_price'] }}",
             priceString = "{{ __('messages.price') }}",
             deliveryString = "{{ __('messages.delivery_cost') }}",
-            sumDelivery = "{{ $data['sum_delivery'] }}",
+            sumDelivery = 0,
             sumTotal = "{{ $data['sum_total'] }}",
-            totalString = "{{ __('messages.total_with_delivery') }}",
+            totalString = "{{ __('messages.total') }}",
             dinar = "{{ __('messages.dinar') }}"
         var dTbls = $('#order-tbl').DataTable( {
             dom: 'Blfrtip',
@@ -78,7 +79,7 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                             columns: ':visible',
                             rows: ':visible'
                         },customize: function(win) {
-                            $(win.document.body).prepend(`<br /><h4 style="border-bottom: 1px solid; padding : 10px">${priceString} : ${sumPrice} ${dinar} | ${deliveryString} : ${sumDelivery} ${dinar} | ${totalString} : ${sumTotal} ${dinar}</h4>`); //before the table
+                            $(win.document.body).prepend(`<br /><h4 style="border-bottom: 1px solid; padding : 10px">${priceString} : ${sumPrice} ${dinar} | ${totalString} : ${sumTotal} ${dinar}</h4>`); //before the table
                           }
                     }
                 ]
@@ -96,17 +97,17 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
         } );
     </script>
     <script>
-        var price = dTbls.column(8).data(),
-            delivery = dTbls.column(9).data(),
-            total = dTbls.column(10).data(),
+        var price = dTbls.column(6).data(),
+            delivery = dTbls.column(7).data(),
+            total = dTbls.column(8).data(),
             dinar = "{{ __('messages.dinar') }}"
         var totalPrice = parseFloat(price.reduce(function (a, b) { return parseFloat(a) + parseFloat(b); }, 0)).toFixed(3),
             totalDelivery = parseFloat(delivery.reduce(function (a, b) { return parseFloat(a) + parseFloat(b); }, 0)).toFixed(3),
             allTotal = parseFloat(total.reduce(function (a, b) { return parseFloat(a) + parseFloat(b); }, 0)).toFixed(3)
 
-        $("#order-tbl tfoot").find('th').eq(8).text(`${totalPrice} ${dinar}`);
-        $("#order-tbl tfoot").find('th').eq(9).text(`${totalDelivery} ${dinar}`);
-        $("#order-tbl tfoot").find('th').eq(10).text(`${allTotal} ${dinar}`);
+        $("#order-tbl tfoot").find('th').eq(6).text(`${totalPrice} ${dinar}`);
+        $("#order-tbl tfoot").find('th').eq(7).text(`${totalDelivery} ${dinar}`);
+        
     </script>
     
 @endpush
@@ -116,9 +117,10 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
         <div class="statbox widget box box-shadow">
             <div class="col-lg-12 filtered-list-search mx-auto">
                 <div class="btn-group" role="group" aria-label="Basic example">
-                    <a href="{{ route('orders.subOrders.index') }}" type="button" class="btn btn-{{ ( strpos($url,'sub-orders') !== false && !isset($data['order_status']) ) || strpos($url,'fetchbydate') !== false ? 'light' : 'dark' }}">{{ __('messages.all_orders') }}</a>
+                    {{-- <a href="{{ route('orders.index') }}" type="button" class="btn btn-{{ ( strpos($url,'show') !== false && !isset($data['order_status']) ) || strpos($url,'fetchbydate') !== false ? 'light' : 'dark' }}">{{ __('messages.all_orders') }}</a>
                     <a href="?order_status=opened" type="button" class="btn btn-{{ isset($data['order_status']) && $data['order_status'] == 'opened' ? 'light' : 'dark' }}">{{ __('messages.open_orders') }}</a>
-                    <a href="?order_status=closed" type="button" class="btn btn-{{ isset($data['order_status']) && $data['order_status'] == 'closed' ? 'light' : 'dark' }}">{{ __('messages.closed_orders') }}</a>
+                    <a href="?order_status=closed" type="button" class="btn btn-{{ isset($data['order_status']) && $data['order_status'] == 'closed' ? 'light' : 'dark' }}">{{ __('messages.closed_orders') }}</a> --}}
+                    {{--  <a href="{{ route('orders.filter', 3) }}" type="button" class="btn btn-{{ request()->segment(count(request()->segments())) == 2 ? 'light' : 'dark' }}">{{ __('messages.delivered_orders') }}</a>  --}}
                 </div>
             </div>
             <div class="widget-content widget-content-area">
@@ -213,7 +215,7 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
             <div class="widget-header">
             <div class="row">
                 <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                    <h4>{{ __('messages.show_sub_orders') }} 
+                    <h4>{{ __('messages.show_products_orders') }} 
                         @if (isset($data['area']))
                             @if(App::isLocale('en'))
                                 {{ "( " . $data['area']['title_en'] . " )" }}
@@ -232,18 +234,19 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                     <thead>
                         <tr>
                             <th>id</th>
-                            <th>{{ __('messages.sub_order_number') }}</th>
                             <th>{{ __('messages.main_order_number') }}</th>
+                            <th>{{ __('messages.sub_order_number') }}</th>
+                            <th>{{ __('messages.product_title') }}</th>
+                            <th>{{ __('messages.image') }}</th>
+                            <th>{{ __('messages.amount') }}</th>
+                            <th>{{ __('messages.product_price') }}</th>
+                            <th>{{ __('messages.total') }}</th>
+                            <th>{{ __('messages.store') }}</th>
                             <th>{{ __('messages.order_date') }}</th>
                             <th>{{ __('messages.user') }}</th>
-                            <th>{{ __('messages.store') }}</th>
                             <th>{{ __('messages.payment_method') }}</th>
                             <th>{{ __('messages.status') }}</th>
-                            <th>{{ __('messages.price') }}</th>
-                            <th>{{ __('messages.delivery_cost') }}</th>
-                            <th>{{ __('messages.total_with_delivery') }}</th>
                             <th class="text-center hide_col">{{ __('messages.details') }}</th>
-                            <th class="text-center hide_col">{{ __('messages.invoice') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -252,27 +255,36 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                         @foreach ($data['orders'] as $order)
                             <tr>
                                 <td><?=$i;?></td>
-                                <td>{{ $order->order_number }}</td>
                                 <td>
-                                    <a target="_blank" href="{{ route('orders.details', $order->main->id) }}">
-                                        {{ $order->main->main_order_number }}
+                                    <a target="_blank" href="{{ route('orders.details', $order->order->main_id) }}">
+                                        {{ $order->order->main->main_order_number }}
                                     </a>
                                 </td>
+                                <td>
+                                    <a href="{{ route('orders.details', $order->order_id) }}" >
+                                        {{ $order->order->order_number }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a target="_blank" href="{{ route('products.details', $order->product_id) }}">
+                                        {{ App::isLocale('en') ? $order->product->title_en : $order->product->title_ar }}
+                                    </a>
+                                </td>
+                                <td><img src="https://res.cloudinary.com/dezsm0sg7/image/upload/w_50,q_50/v1581928924/{{ isset($order->product->mainImage->image) ? $order->product->mainImage->image : '' }}"  /></td>
+                                <td>{{ $order->count }}</td>
+                                <td>{{ $order->final_price . " " . __('messages.dinar') }}</td>
+                                <td>{{ $order->final_price * $order->count }} {{ __('messages.dinar') }}</td>
+                                <td>{{ $order->order->store->name }}</td>
                                 <td>{{ $order->created_at->format("d-m-y") }}</td>
                                 <td>
-                                    <a target="_blank" href="{{ route('users.details', $order->user->id) }}">
-                                    {{ $order->user->name }}
+                                    <a target="_blank" href="{{ route('users.details', $order->order->user_id) }}">
+                                    {{ $order->order->user->name }}
                                     </a>
                                 </td>
                                 <td>
-                                    <a target="_blank" href="{{ route('shops.details', $order->store_id) }}">
-                                    {{ $order->store->name }}
-                                    </a>
-                                </td>
-                                <td>
-                                    @if($order->payment_method == 1)
+                                    @if($order->order->payment_method == 1)
                                     {{ __('messages.key_net') }}
-                                    @elseif ($order->payment_method == 2)
+                                    @elseif ($order->order->payment_method == 2)
                                     {{ __('messages.cash') }}
                                     @else
                                     {{ __('messages.wallet') }}
@@ -299,12 +311,8 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                                     {{ __('messages.canceled_from_admin') }}
                                     @endif
                                 </td>
-                                <td>{{ $order->subtotal_price . " " . __('messages.dinar') }}</td>
-                                <td>{{ $order->delivery_cost . " " . __('messages.dinar') }}</td>
-                                <td>{{ $order->total_price . " " . __('messages.dinar') }}</td>
                                 
-                                <td class="text-center blue-color hide_col"><a href="{{ route('orders.sub_order.details', $order->id) }}" ><i class="far fa-eye"></i></a></td>
-                                <td class="text-center blue-color hide_col"><a target="_blank" href="{{ route('webview.store.invoice', $order->id) }}" ><i class="far fa-eye"></i></a></td>
+                                <td class="text-center blue-color hide_col"><a href="{{ route('orders.details', $order->order_id) }}" ><i class="far fa-eye"></i></a></td>
                             </tr>
                             <?php $i ++ ?>
                         @endforeach
@@ -312,8 +320,6 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                     <tfoot>
                         <tr>
                           <th>{{ __('messages.total') }}:</th>
-                          <th></th>
-                          <th></th>
                           <th></th>
                           <th></th>
                           <th></th>
