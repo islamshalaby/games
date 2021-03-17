@@ -439,6 +439,7 @@ Route::group([
     Route::get('deliveryinformation/{lang}' , 'WebViewController@deliveryinformation');
     Route::get('pdfview/{order}','WebViewController@getStoreInvoice')->name('webview.store.invoice');
     Route::get('pdfview/main/{order}','WebViewController@getInvoice')->name('webview.invoice');
+    Route::get('sales-report-pdfview/{id}','WebViewController@getSalesReport');
     Route::get('test', 'WebViewController@test');
 
 });

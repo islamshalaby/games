@@ -522,6 +522,7 @@
             "closed" => "طلب مغلق",
             "products_orders" => "طلبات المنتجات",
             "show_products_orders" => "عرض طلبات المنتجات",
-            "amount" => "الكمية"
+            "amount" => "الكمية",
+            "sales_report" => "تقرير مبيعات"
         ];
 ?>

@@ -38,7 +38,7 @@
                                 <a style="text-decoration: none" href="https://www.google.com/maps/?q={{ $data['order']->address ? $data['order']->address->latitude : '' }},{{ $data['order']->address ? $data['order']->address->longitude : '' }}" target="_blank"> {{ $data['order']->address->area ? $data['order']->address->area->title_en . ", " . __('messages.st') . " " . $data['order']->address->street . ", " . __('messages.piece') . " " . $data['order']->address->piece . ", " . __('messages.gaddah') . " " . $data['order']->address->gaddah : '' }} <br/> {{ __('messages.home') . " " . $data['order']->address->building . ', ' . __('messages.floor') . " "  . $data['order']->address->floor . ', ' . __('messages.apartment') . " " . $data['order']->address->apartment_number }}</a><br>
                                 <br><br>
                                 <h6>{{ __('messages.additional_details') }}</h6>
-                                <i>{{ $data['order']->address->extra_details }}</i>
+                                {{ $data['order']->address->extra_details }}
                             </td>
                             
                             <td style="padding: 5px;vertical-align: top;text-align: left;padding-bottom: 40px;">

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Setting;
 use App\MainOrder;
 use App\Order;
+use Carbon\Carbon;
 use PDF;
 
 class WebViewController extends Controller
@@ -83,6 +84,24 @@ class WebViewController extends Controller
         $data['order'] = $order;
         $data['setting'] = Setting::where('id', 1)->first();
         $pdf = PDF::loadView('admin.invoice_store_pdf', ['data' => $data]);
+            
+        return $pdf->stream('download.pdf');
+    }
+
+    // get sales report
+    public function getSalesReport(Request $request) {
+        $data['orders'] = Order::where('store_id', $request->id)->orderBy('id' , 'desc')->get();
+        $data['sum_subtotal'] = Order::where('store_id', $request->id)->sum('subtotal_price');
+        $data['sum_subtotal'] = number_format((float)$data['sum_subtotal'], 3, '.', '');
+        $data['sum_delivery_cost'] = Order::where('store_id', $request->id)->sum('delivery_cost');
+        $data['sum_delivery_cost'] = number_format((float)$data['sum_delivery_cost'], 3, '.', '');
+        $data['sum_total_price'] = Order::where('store_id', $request->id)->sum('total_price');
+        $data['sum_total_price'] = number_format((float)$data['sum_total_price'], 3, '.', '');
+        $data['today'] = Carbon::now()->format('d-m-Y');
+        
+
+        $data['setting'] = Setting::where('id', 1)->first();
+        $pdf = PDF::loadView('admin.sales_report_pdf', ['data' => $data]);
             
         return $pdf->stream('download.pdf');
     }

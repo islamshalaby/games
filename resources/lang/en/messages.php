@@ -524,6 +524,7 @@
         "closed" => "Closed Order",
         "products_orders" => "Products Orders",
         "show_products_orders" => "Show Products Orders",
-        "amount" => "Amount"
+        "amount" => "Amount",
+        "sales_report" => "Sales Report"
     ];
 ?>
