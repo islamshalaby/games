@@ -112,6 +112,7 @@ class UserController extends AdminController{
 
         $user_notification = new UserNotification();
         $user_notification->notification_id = $insert_notification->id;
+        $user_notification->visitor_id = $user->id;
         $user_notification->user_id = $request->id;
         $user_notification->save();
 		
