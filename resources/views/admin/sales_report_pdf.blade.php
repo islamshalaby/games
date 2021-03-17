@@ -104,6 +104,7 @@
                     {{ __('messages.total_with_delivery') }}
                 </td>
             </tr>
+            @if ($data['orders'])
             <?php $i = 1; ?>
             @foreach ($data['orders'] as $order)
             <tr class="item">
@@ -165,6 +166,8 @@
             </tr>
             <?php $i ++; ?>
             @endforeach
+            @endif
+            
             <tr class="heading">
                 <td style="padding: 5px;text-align:center;vertical-align: top;background: #eee;border-bottom: 1px solid #ddd;font-weight: bold;">
                     {{ __('messages.total') }}
