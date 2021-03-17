@@ -111,7 +111,6 @@
                 <td style="padding: 5px;vertical-align: top;text-align:center;border-bottom: 1px solid #eee;">
                     <?=$i;?>
                 </td>
-                
                 <td style="padding: 5px;vertical-align: top;text-align: center;border-bottom: 1px solid #eee;">
                     {{ $order->order_number }}
                 </td>
