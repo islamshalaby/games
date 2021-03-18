@@ -25,7 +25,7 @@ class UserController extends Controller
     // get profile
     public function getProfile(Request $request) {
         $user = Auth::guard('dashboard')->user();
-        $data['username'] = $user->id;
+        $data['store_id'] = $user->id;
         $data['username'] = $user->name;
         $data['phone'] = $user->phone;
         $data['email'] = $user->email;
