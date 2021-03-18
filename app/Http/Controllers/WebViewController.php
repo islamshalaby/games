@@ -9,6 +9,7 @@ use App\Order;
 use Carbon\Carbon;
 use PDF;
 use App\OrderItem;
+use App\Shop;
 
 class WebViewController extends Controller
 {
@@ -91,6 +92,7 @@ class WebViewController extends Controller
 
     // get orders report
     public function getSalesReport(Request $request) {
+        $data['shop'] = Shop::where('id', $request->id)->select('name', 'logo')->first();
         $data['orders'] = Order::where('store_id', $request->id)->orderBy('id' , 'desc')->get();
         $data['sum_subtotal'] = Order::where('store_id', $request->id)->sum('subtotal_price');
         $data['sum_subtotal'] = number_format((float)$data['sum_subtotal'], 3, '.', '');
@@ -109,6 +111,7 @@ class WebViewController extends Controller
 
     // get sales report
     public function getSalesReport2(Request $request) {
+        $data['shop'] = Shop::where('id', $request->id)->select('name', 'logo')->first();
         $data['orders'] = OrderItem::join('orders', 'orders.id', '=', 'order_items.order_id')
         ->where('orders.store_id', $request->id)
         ->select('order_items.*')
