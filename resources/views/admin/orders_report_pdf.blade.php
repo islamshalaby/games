@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>{{ __('messages.sales_report') }}</title>
+    <title>{{ __('messages.orders_report') }}</title>
     
 </head>
 <body dir="rtl">
@@ -19,8 +19,8 @@
                                 <img src="https://res.cloudinary.com/dezsm0sg7/image/upload/h_300,w_300/v1581928924/{{ $data['setting']['logo'] }}" style="width:100px; max-width:300px;">
                             </td>
                             
-                            <td style="padding: 5px;vertical-align: top;text-align: left;padding-bottom: 20px;">
-                                <h2 style="margin-bottom: 50px;">{{ __('messages.sales_report') }}</h2><br>
+                            <td style="padding: 5px;vertical-align: top;text-align: center;padding-bottom: 20px;">
+                                <h2 style="margin-bottom: 50px;">{{ __('messages.orders_report') }}</h2><br>
                                 {{ __('messages.date') }}: {{ $data['today'] }}
                             </td>
                         </tr>
@@ -77,37 +77,31 @@
                     ID
                 </td>
                 <td style="padding: 5px;vertical-align: top;text-align:center;background: #eee;border-bottom: 1px solid #ddd;font-weight: bold;">
-                    {{ __('messages.main_order_number') }}
-                </td>
-                <td style="padding: 5px;vertical-align: top;text-align:center;background: #eee;border-bottom: 1px solid #ddd;font-weight: bold;">
                     {{ __('messages.sub_order_number') }}
                 </td>
                 <td style="padding: 5px;vertical-align: top;text-align:center;background: #eee;border-bottom: 1px solid #ddd;font-weight: bold;">
-                    {{ __('messages.product_title') }}
-                </td>
-                <td style="padding: 5px;vertical-align: top;text-align:center;background: #eee;border-bottom: 1px solid #ddd;font-weight: bold;">
-                    {{ __('messages.image') }}
-                </td>
-                <td style="padding: 5px;vertical-align: top;text-align:center;background: #eee;border-bottom: 1px solid #ddd;font-weight: bold;">
-                    {{ __('messages.amount') }}
-                </td>
-                <td style="padding: 5px;vertical-align: top;text-align:center;background: #eee;border-bottom: 1px solid #ddd;font-weight: bold;">
-                    {{ __('messages.product_price') }}
-                </td>
-                <td style="padding: 5px;vertical-align: top;text-align:center;background: #eee;border-bottom: 1px solid #ddd;font-weight: bold;">
-                    {{ __('messages.total') }}
+                    {{ __('messages.main_order_number') }}
                 </td>
                 <td style="padding: 5px;vertical-align: top;text-align:center;background: #eee;border-bottom: 1px solid #ddd;font-weight: bold;">
                     {{ __('messages.order_date') }}
                 </td>
-                <td style="padding: 5px;vertical-align: top;text-align: center;background: #eee;border-bottom: 1px solid #ddd;font-weight: bold;">
+                <td style="padding: 5px;vertical-align: top;text-align:center;background: #eee;border-bottom: 1px solid #ddd;font-weight: bold;">
                     {{ __('messages.user') }}
                 </td>
                 <td style="padding: 5px;vertical-align: top;text-align:center;background: #eee;border-bottom: 1px solid #ddd;font-weight: bold;">
                     {{ __('messages.payment_method') }}
                 </td>
-                <td style="padding: 5px;vertical-align: top;text-align: center;background: #eee;border-bottom: 1px solid #ddd;font-weight: bold;">
+                <td style="padding: 5px;vertical-align: top;text-align:center;background: #eee;border-bottom: 1px solid #ddd;font-weight: bold;">
                     {{ __('messages.status') }}
+                </td>
+                <td style="padding: 5px;vertical-align: top;text-align:center;background: #eee;border-bottom: 1px solid #ddd;font-weight: bold;">
+                    {{ __('messages.price') }}
+                </td>
+                <td style="padding: 5px;vertical-align: top;text-align:center;background: #eee;border-bottom: 1px solid #ddd;font-weight: bold;">
+                    {{ __('messages.delivery_cost') }}
+                </td>
+                <td style="padding: 5px;vertical-align: top;text-align: center;background: #eee;border-bottom: 1px solid #ddd;font-weight: bold;">
+                    {{ __('messages.total_with_delivery') }}
                 </td>
             </tr>
             @if ($data['orders'])
@@ -118,36 +112,21 @@
                     <?=$i;?>
                 </td>
                 <td style="padding: 5px;vertical-align: top;text-align: center;border-bottom: 1px solid #eee;">
-                    {{ $order->order->main ? $order->order->main->main_order_number : '' }}
+                    {{ $order->order_number }}
                 </td>
                 <td style="padding: 5px;vertical-align: top;text-align: center;border-bottom: 1px solid #eee;">
-                    {{ $order->order->order_number }}
-                </td>
-                <td style="padding: 5px;vertical-align: top;text-align: center;border-bottom: 1px solid #eee;">
-                    {{ $order->product->title_ar }}
-                </td>
-                <td style="padding: 5px;vertical-align: top;text-align: center;border-bottom: 1px solid #eee;">
-                    <img src="https://res.cloudinary.com/dezsm0sg7/image/upload/w_50,q_50/v1581928924/{{ isset($order->product->mainImage->image) ? $order->product->mainImage->image : '' }}"  />
-                </td>
-                <td style="padding: 5px;vertical-align: top;text-align: center;border-bottom: 1px solid #eee;">
-                    {{ $order->count }}
-                </td>
-                <td style="padding: 5px;vertical-align: top;text-align: center;border-bottom: 1px solid #eee;">
-                    {{ $order->final_price . " " . __('messages.dinar') }}
-                </td>
-                <td style="padding: 5px;vertical-align: top;text-align: center;border-bottom: 1px solid #eee;">
-                    {{ $order->final_price * $order->count }} {{ __('messages.dinar') }}
+                    {{ $order->main->main_order_number }}
                 </td>
                 <td style="padding: 5px;vertical-align: top;text-align: center;border-bottom: 1px solid #eee;">
                     {{ $order->created_at->format("d-m-y") }}
                 </td>
                 <td style="padding: 5px;vertical-align: top;text-align: center;border-bottom: 1px solid #eee;">
-                    {{ $order->order->user->name }}
+                    {{ $order->user->name }}
                 </td>
                 <td style="padding: 5px;vertical-align: top;text-align: center;border-bottom: 1px solid #eee;">
-                    @if($order->order->payment_method == 1)
+                    @if($order->payment_method == 1)
                     {{ __('messages.key_net') }}
-                    @elseif ($order->order->payment_method == 2)
+                    @elseif ($order->payment_method == 2)
                     {{ __('messages.cash') }}
                     @else
                     {{ __('messages.wallet') }}
@@ -174,6 +153,15 @@
                     {{ __('messages.canceled_from_admin') }}
                     @endif
                 </td>
+                <td style="padding: 5px;vertical-align: top;text-align: center;border-bottom: 1px solid #eee;">
+                    {{ $order->subtotal_price . " " . __('messages.dinar') }}
+                </td>
+                <td style="padding: 5px;vertical-align: top;text-align: center;border-bottom: 1px solid #eee;">
+                    {{ $order->delivery_cost . " " . __('messages.dinar') }}
+                </td>
+                <td style="padding: 5px;vertical-align: top;text-align: center;border-bottom: 1px solid #eee;">
+                    {{ $order->total_price . " " . __('messages.dinar') }}
+                </td>
             </tr>
             <?php $i ++; ?>
             @endforeach
@@ -199,22 +187,16 @@
                     
                 </td>
                 <td style="padding: 5px;text-align:center;vertical-align: top;background: #eee;border-bottom: 1px solid #ddd;font-weight: bold;">
-                    {{ $data['sum_final_price'] . " " . __('messages.dinar') }}
-                </td>
-                <td style="padding: 5px;text-align:center;vertical-align: top;background: #eee;border-bottom: 1px solid #ddd;font-weight: bold;">
-                    {{ $data['sum_total'] . " " . __('messages.dinar') }}
-                </td>
-                <td style="padding: 5px;text-align:center;vertical-align: top;background: #eee;border-bottom: 1px solid #ddd;font-weight: bold;">
                     
                 </td>
                 <td style="padding: 5px;text-align:center;vertical-align: top;background: #eee;border-bottom: 1px solid #ddd;font-weight: bold;">
-                    
+                    {{ $data['sum_subtotal'] . " " . __('messages.dinar') }}
                 </td>
                 <td style="padding: 5px;text-align:center;vertical-align: top;background: #eee;border-bottom: 1px solid #ddd;font-weight: bold;">
-                    
+                    {{ $data['sum_delivery_cost'] . " " . __('messages.dinar') }}
                 </td>
                 <td style="padding: 5px;text-align:center;vertical-align: top;background: #eee;border-bottom: 1px solid #ddd;font-weight: bold;">
-                    
+                    {{ $data['sum_total_price'] . " " . __('messages.dinar') }}
                 </td>
             </tr>
             

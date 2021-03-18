@@ -166,6 +166,8 @@ class OrderController extends AdminController{
             $data['sum_total'] = $data['sum_total'] + ($data['orders'][$i]['final_price'] * $data['orders'][$i]['count']);
         }
         $data['sum_total'] = number_format((float)$data['sum_total'], 3, '.', '');
+        // dd($data['orders']);
+
         return view('admin.products_orders' , ['data' => $data]);
     }
 

@@ -8,6 +8,7 @@ use App\MainOrder;
 use App\Order;
 use Carbon\Carbon;
 use PDF;
+use App\OrderItem;
 
 class WebViewController extends Controller
 {
@@ -88,7 +89,7 @@ class WebViewController extends Controller
         return $pdf->stream('download.pdf');
     }
 
-    // get sales report
+    // get orders report
     public function getSalesReport(Request $request) {
         $data['orders'] = Order::where('store_id', $request->id)->orderBy('id' , 'desc')->get();
         $data['sum_subtotal'] = Order::where('store_id', $request->id)->sum('subtotal_price');
@@ -97,6 +98,29 @@ class WebViewController extends Controller
         $data['sum_delivery_cost'] = number_format((float)$data['sum_delivery_cost'], 3, '.', '');
         $data['sum_total_price'] = Order::where('store_id', $request->id)->sum('total_price');
         $data['sum_total_price'] = number_format((float)$data['sum_total_price'], 3, '.', '');
+        $data['today'] = Carbon::now()->format('d-m-Y');
+        
+
+        $data['setting'] = Setting::where('id', 1)->first();
+        $pdf = PDF::loadView('admin.orders_report_pdf', ['data' => $data]);
+            
+        return $pdf->stream('download.pdf');
+    }
+
+    // get sales report
+    public function getSalesReport2(Request $request) {
+        $data['orders'] = OrderItem::join('orders', 'orders.id', '=', 'order_items.order_id')
+        ->where('orders.store_id', $request->id)
+        ->select('order_items.*')
+        ->orderBy('id', 'desc')->get();
+        $data['sum_total'] = 0;
+        for ($i = 0; $i < count($data['orders']); $i ++) {
+            $data['sum_total'] = $data['sum_total'] + ($data['orders'][$i]['final_price'] * $data['orders'][$i]['count']);
+        }
+        $data['sum_total'] = number_format((float)$data['sum_total'], 3, '.', '');
+        $data['sum_final_price'] = OrderItem::join('orders', 'orders.id', '=', 'order_items.order_id')
+        ->where('orders.store_id', $request->id)->sum('final_price');
+        $data['sum_final_price'] = number_format((float)$data['sum_final_price'], 3, '.', '');
         $data['today'] = Carbon::now()->format('d-m-Y');
         
 

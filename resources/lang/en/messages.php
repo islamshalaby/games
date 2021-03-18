@@ -525,6 +525,7 @@
         "products_orders" => "Products Orders",
         "show_products_orders" => "Show Products Orders",
         "amount" => "Amount",
-        "sales_report" => "Sales Report"
+        "sales_report" => "Sales Report",
+        "orders_report" => "Orders Report"
     ];
 ?>

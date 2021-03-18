@@ -523,6 +523,7 @@
             "products_orders" => "طلبات المنتجات",
             "show_products_orders" => "عرض طلبات المنتجات",
             "amount" => "الكمية",
-            "sales_report" => "تقرير مبيعات"
+            "sales_report" => "تقرير مبيعات",
+            "orders_report" => "تقرير الطلبات"
         ];
 ?>
