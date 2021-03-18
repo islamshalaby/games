@@ -27,6 +27,7 @@ class OrderController extends Controller
         }
 
         $query = Order::where('store_id', Auth::guard('dashboard')->user()->id)->select('id', 'status', 'order_number', 'created_at');
+        $data['store_id'] = Auth::guard('dashboard')->user()->id;
         if ($request->status == 0) {
             $data['orders'] = $query->orderBy('id', 'desc')->get();
         }else {
