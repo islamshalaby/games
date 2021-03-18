@@ -125,7 +125,7 @@
                     {{ $order->order_number }}
                 </td>
                 <td style="padding: 5px;vertical-align: top;text-align: center;border-bottom: 1px solid #eee;">
-                    {{ $order->main->main_order_number }}
+                    {{ $order->main ? $order->main->main_order_number : '' }}
                 </td>
                 <td style="padding: 5px;vertical-align: top;text-align: center;border-bottom: 1px solid #eee;">
                     {{ $order->created_at->format("d-m-y") }}
