@@ -69,14 +69,18 @@ class HomeController extends Controller
         ->simplePaginate(16);
 
         if (count($orders) > 0) {
-            $data['type'] = 1;
             for ($i = 0; $i < count($orders); $i ++) {
+                $orders[$i]['type'] = 1;
                 $orders[$i]['date'] = $orders[$i]['created_at']->format('Y-m-d'); 
                 $orders[$i]['time'] = $orders[$i]['created_at']->format('g:i A');
             }
             $data['result'] = $orders;
-        }else {
-            $data['type'] = 2;
+        }
+        if (count($products) > 0) {
+            for ($i = 0; $i < count($products); $i ++) {
+                $products[$i]['type'] = 2;
+            }
+            // $data['type'] = 2;
             $data['result'] = $products;
         }
 
