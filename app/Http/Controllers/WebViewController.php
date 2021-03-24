@@ -109,6 +109,23 @@ class WebViewController extends Controller
         return $pdf->stream('download.pdf');
     }
 
+    public function getSalesReportAdmin(Request $request) {
+        $data['orders'] = Order::orderBy('id' , 'desc')->get();
+        $data['sum_subtotal'] = Order::sum('subtotal_price');
+        $data['sum_subtotal'] = number_format((float)$data['sum_subtotal'], 3, '.', '');
+        $data['sum_delivery_cost'] = Order::sum('delivery_cost');
+        $data['sum_delivery_cost'] = number_format((float)$data['sum_delivery_cost'], 3, '.', '');
+        $data['sum_total_price'] = Order::sum('total_price');
+        $data['sum_total_price'] = number_format((float)$data['sum_total_price'], 3, '.', '');
+        $data['today'] = Carbon::now()->format('d-m-Y');
+        
+
+        $data['setting'] = Setting::where('id', 1)->first();
+        $pdf = PDF::loadView('admin.orders_report_admin_pdf', ['data' => $data]);
+            
+        return $pdf->stream('download.pdf');
+    }
+
     // get sales report
     public function getSalesReport2(Request $request) {
         $data['shop'] = Shop::where('id', $request->id)->select('name', 'logo')->first();
@@ -129,6 +146,28 @@ class WebViewController extends Controller
 
         $data['setting'] = Setting::where('id', 1)->first();
         $pdf = PDF::loadView('admin.sales_report_pdf', ['data' => $data]);
+            
+        return $pdf->stream('download.pdf');
+    }
+
+    // get sales report admin
+    public function getSalesReport2Admin(Request $request) {
+        $data['orders'] = OrderItem::join('orders', 'orders.id', '=', 'order_items.order_id')
+        ->select('order_items.*')
+        ->orderBy('id', 'desc')->get();
+        $data['sum_total'] = 0;
+        for ($i = 0; $i < count($data['orders']); $i ++) {
+            $data['sum_total'] = $data['sum_total'] + ($data['orders'][$i]['final_price'] * $data['orders'][$i]['count']);
+        }
+        
+        $data['sum_total'] = number_format((float)$data['sum_total'], 3, '.', '');
+        $data['sum_final_price'] = $data['orders']->sum('final_price');
+        $data['sum_final_price'] = number_format((float)$data['sum_final_price'], 3, '.', '');
+        $data['today'] = Carbon::now()->format('d-m-Y');
+        
+
+        $data['setting'] = Setting::where('id', 1)->first();
+        $pdf = PDF::loadView('admin.sales_report_admin_pdf', ['data' => $data]);
             
         return $pdf->stream('download.pdf');
     }

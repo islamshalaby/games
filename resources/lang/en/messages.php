@@ -526,6 +526,7 @@
         "show_products_orders" => "Show Products Orders",
         "amount" => "Amount",
         "sales_report" => "Sales Report",
-        "orders_report" => "Orders Report"
+        "orders_report" => "Orders Report",
+        "print" => "Print"
     ];
 ?>

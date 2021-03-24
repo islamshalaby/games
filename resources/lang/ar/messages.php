@@ -524,6 +524,7 @@
             "show_products_orders" => "عرض طلبات المنتجات",
             "amount" => "الكمية",
             "sales_report" => "تقرير مبيعات",
-            "orders_report" => "تقرير الطلبات"
+            "orders_report" => "تقرير الطلبات",
+            "print" => "طباعة"
         ];
 ?>

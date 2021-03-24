@@ -225,6 +225,7 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                         @endif
                         <button data-show="0" class="btn btn-primary show_actions">{{ __('messages.hide_actions') }}</button>
                     </h4>
+                    <a href="{{ route('webview.salesReport2') }}" target="_blank" class="btn btn-primary">{{ __('messages.print') . ' ' . __('messages.sales_report') }}</a>
                 </div>
             </div>
         </div>

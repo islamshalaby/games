@@ -223,6 +223,7 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                         @endif
                         <button data-show="0" class="btn btn-primary show_actions">{{ __('messages.hide_actions') }}</button>
                     </h4>
+                    <a href="{{ route('webview.salesReport') }}" target="_blank" class="btn btn-primary">{{ __('messages.print') . ' ' . __('messages.orders_report') }}</a>
                 </div>
             </div>
         </div>
@@ -254,8 +255,8 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                                 <td><?=$i;?></td>
                                 <td>{{ $order->order_number }}</td>
                                 <td>
-                                    <a target="_blank" href="{{ route('orders.details', $order->main->id) }}">
-                                        {{ $order->main->main_order_number }}
+                                    <a target="_blank" href="{{ route('orders.details', $order->main_id) }}">
+                                        {{ $order->main ? $order->main->main_order_number : '' }}
                                     </a>
                                 </td>
                                 <td>{{ $order->created_at->format("d-m-y") }}</td>
