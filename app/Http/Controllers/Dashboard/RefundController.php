@@ -19,7 +19,7 @@ class RefundController extends Controller
     // get refunds
     public function getRefunds(Request $request) {
         $validator = Validator::make($request->all(), [
-            'status' => 'required|integer'
+            'section' => 'required|integer'
         ]);
 
         if ($validator->fails()) {
@@ -34,7 +34,7 @@ class RefundController extends Controller
         
 
         if ($request->section != 0) {
-            $data['refunds'] = $query->where('status', $request->status)->get()->makeHidden(['order', 'refund', 'refunded_at', 'created_at', 'order_id']);
+            $data['refunds'] = $query->where('status', $request->section)->get()->makeHidden(['order', 'refund', 'refunded_at', 'created_at', 'order_id']);
         }else {
             $data['refunds'] = $query->whereBetween('status', [5, 8])->get()->makeHidden(['order', 'refund', 'refunded_at', 'created_at', 'order_id']);
         }
