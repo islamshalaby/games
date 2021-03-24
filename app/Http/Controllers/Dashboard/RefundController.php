@@ -50,7 +50,11 @@ class RefundController extends Controller
                 $datetime2 = Carbon::parse(Carbon::now());
                 $interval = $datetime1->diff($datetime2);
                 $data['refunds'][$i]['refund_request_period'] = $interval;
-                $data['refunds'][$i]['received_at'] = $data['refunds'][$i]['refunded_at']->format('d/m/Y');
+                $refundDate = "";
+                if(!empty($data['refunds'][$i]['refunded_at'])) {
+                    $refundDate = $data['refunds'][$i]['refunded_at']->format('d/m/Y');
+                }
+                $data['refunds'][$i]['received_at'] = $refundDate;
                 
                 
             }

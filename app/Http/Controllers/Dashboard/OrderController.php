@@ -30,11 +30,19 @@ class OrderController extends Controller
         $data['store_id'] = Auth::guard('dashboard')->user()->id;
         if ($request->status == 0) {
             $data['orders'] = $query->orderBy('id', 'desc')->get();
-        }else {
-            $data['orders'] = $query->where('status', $request->status)->orderBy('id', 'desc')->get();
+        }elseif ($request->status == 1) {
+            $data['orders'] = $query->whereIn('status', [1, 2, 5])->orderBy('id', 'desc')->get();
+        }elseif ($request->status == 2) {
+            $data['orders'] = $query->whereIn('status', [3, 4, 6, 7, 8, 9])->orderBy('id', 'desc')->get();
         }
 
         for ($i = 0; $i < count($data['orders']); $i ++) {
+            if (in_array($data['orders'][$i]['status'], [1, 2, 5])) {
+                $data['orders'][$i]['status'] = 1;
+            }
+            if (in_array($data['orders'][$i]['status'], [3, 4, 6, 7, 8, 9])) {
+                $data['orders'][$i]['status'] = 2;
+            }
             $data['orders'][$i]['date'] = $data['orders'][$i]['created_at']->format('Y-m-d'); 
             $data['orders'][$i]['time'] = $data['orders'][$i]['created_at']->format('g:i A');
         }
