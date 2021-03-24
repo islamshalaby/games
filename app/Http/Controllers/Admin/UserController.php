@@ -87,9 +87,10 @@ class UserController extends AdminController{
     // send notifications
     public function SendNotifications(Request $request){
         $user = Visitor::select('id','fcm_token', 'user_id')->where('user_id', $request->id)->first();
+        $users = Visitor::where('user_id', $request->id)->pluck('fcm_token');
         $fcm_token = $user->fcm_token;
 
-        if(!$fcm_token){
+        if(!$users){
             return redirect('admin-panel/users/details/'.$request->id)->with('error', 'Empty Fcm Token');
         }
 
@@ -118,7 +119,7 @@ class UserController extends AdminController{
 		
 		$the_image = "https://res.cloudinary.com/ddcmwwmwk/image/upload/w_200,q_100/v1581928924/".$image_new_name;
         
-        $notification = APIHelpers::send_notification($request->title , $request->body , $the_image , null , [$fcm_token]);
+        $notification = APIHelpers::send_notification($request->title , $request->body , $the_image , null , $users);
         $json_notification = json_decode($notification);
         if($json_notification->success){
              return redirect('admin-panel/users/details/'.$request->id)->with('status', 'Sent');
