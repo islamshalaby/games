@@ -527,6 +527,7 @@
         "amount" => "Amount",
         "sales_report" => "Sales Report",
         "orders_report" => "Orders Report",
-        "print" => "Print"
+        "print" => "Print",
+        "prefere_to" => "For better use experience, it is recommended to use The latest version of Google chroome and at least windows 8",
     ];
 ?>

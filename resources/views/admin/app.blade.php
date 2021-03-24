@@ -175,6 +175,7 @@
                     </div>
                 </li>
             </ul>
+            <h4 style="margin: auto; text-align: center">{{ __('messages.prefere_to') }}</h4>
         </header>
     </div>
     <!--  END NAVBAR  -->
