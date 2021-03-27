@@ -38,7 +38,7 @@ class RefundController extends Controller
         }else {
             $data['refunds'] = $query->whereBetween('status', [5, 8])->get()->makeHidden(['order', 'refund', 'refunded_at', 'created_at', 'order_id']);
         }
-// dd($data['refunds']);
+
         if (count($data['refunds']) > 0) {
             //dd(count($data['refunds']));
             for ($i = 0; $i < count($data['refunds']); $i ++) {

@@ -223,7 +223,24 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                         @endif
                         <button data-show="0" class="btn btn-primary show_actions">{{ __('messages.hide_actions') }}</button>
                     </h4>
-                    <a href="{{ route('webview.salesReport') }}" target="_blank" class="btn btn-primary">{{ __('messages.print') . ' ' . __('messages.orders_report') }}</a>
+                    @php
+                        $queryArray = [];
+                        if (isset($data['order_status'])) {
+                            $queryArray['order_status'] = $data['order_status'];
+                        }else if(isset($data['area_id'])) {
+                            $queryArray['area_id'] = $data['area_id'];
+                        }else if(isset($data['from']) && isset($data['to'])) {
+                            $queryArray['from'] = $data['from'];
+                            $queryArray['to'] = $data['to'];
+                        }else if(isset($data['method'])) {
+                            $queryArray['method'] = $data['method'];
+                        }else if(isset($data['order_status2'])) {
+                            $queryArray['order_status2'] = $data['order_status2'];
+                        }else if(isset($data['shop'])) {
+                            $queryArray['shop'] = $data['shop'];
+                        }
+                    @endphp
+                    <a href="{{ route('webview.salesReport', $queryArray) }}" target="_blank" class="btn btn-primary">{{ __('messages.print') . ' ' . __('messages.orders_report') }}</a>
                 </div>
             </div>
         </div>

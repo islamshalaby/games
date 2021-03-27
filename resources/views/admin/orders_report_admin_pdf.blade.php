@@ -22,7 +22,50 @@
                             
                             <td colspan="3" style="padding: 5px;vertical-align: top;text-align: center;padding-bottom: 20px;">
                                 <h2 style="margin-bottom: 50px; font-size:30px">{{ __('messages.orders_report') }}</h2><br>
-                                <span style="text-align: center;margin-left:70px;display:block">{{ $data['today'] }}</span>
+                                <span style="text-align: center;margin-left:70px;display:block">{{ $data['today'] }}</span><br/>
+                                <b style="text-align: center;margin-left:70px;display:block">
+                                    @if (isset($data['order_status']))
+                                        @if ($data['order_status'] == 'opened')
+                                        {{ __('messages.open_orders') }}
+                                        @else
+                                        {{ __('messages.closed_orders') }}
+                                        @endif
+                                    @elseif(isset($data['area']))
+                                    {{ $data['area']['title_ar'] }}
+                                    @elseif(isset($data['from']) && isset($data['to']))
+                                    {{ '( ' . $data['from'] . " | " . $data['to'] . ' )' }}
+                                    @elseif(isset($data['method']))
+                                        @if($data['method'] == 1)
+                                        {{ __('messages.key_net') }}
+                                        @elseif ($data['method'] == 2)
+                                        {{ __('messages.cash') }}
+                                        @else
+                                        {{ __('messages.wallet') }}
+                                        @endif
+                                    @elseif(isset($data['order_status2']))
+                                        @if ($data['order_status2'] == 1)
+                                        {{ __('messages.in_progress') }}
+                                        @elseif($data['order_status2'] == 2)
+                                        {{ __('messages.order_confirmed') }}
+                                        @elseif($data['order_status2'] == 3)
+                                        {{ __('messages.delivered') }}
+                                        @elseif($data['order_status2'] == 4)
+                                        {{ __('messages.canceled_from_user') }}
+                                        @elseif($data['order_status2'] == 5)
+                                        {{ __('messages.refund_request') }}
+                                        @elseif($data['order_status2'] == 6)
+                                        {{ __('messages.refund_accepted') }}
+                                        @elseif($data['order_status2'] == 7)
+                                        {{ __('messages.refund_rejected') }}
+                                        @elseif($data['order_status2'] == 8)
+                                        {{ __('messages.received_refund') }}
+                                        @elseif($data['order_status2'] == 9)
+                                        {{ __('messages.canceled_from_admin') }}
+                                        @endif
+                                    @elseif(isset($data['shop']))
+                                    {{ $data['shop_name']['name'] }}
+                                    @endif
+                                </b>
                             </td>
                             
                         </tr>

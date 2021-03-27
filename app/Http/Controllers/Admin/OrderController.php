@@ -51,6 +51,7 @@ class OrderController extends AdminController{
             $data['orders'] = Order::whereIn('status', $statusArray)->orderBy('id' , 'desc');
         }elseif(isset($request->area_id)){
             $data['area'] = Area::where('id', $request->area_id)->select('id', 'title_en', 'title_ar')->first();
+            $data['area_id'] = $request->area_id;
             $data['orders'] = Order::join('user_addresses', 'user_addresses.id', '=', 'orders.address_id')
             ->where('area_id', $request->area_id)
             ->select('orders.*')
@@ -127,6 +128,7 @@ class OrderController extends AdminController{
     public function showProductsOrders(Request $request) {
         if(isset($request->area_id)){
             $data['area'] = Area::where('id', $request->area_id)->select('id', 'title_en', 'title_ar')->first();
+            $data['area_id'] = $request->area_id;
             $data['orders'] = OrderItem::join('orders', 'orders.id', '=', 'order_items.order_id')
             ->leftjoin('user_addresses', function($join) {
                 $join->on('user_addresses.id', '=', 'orders.address_id');
