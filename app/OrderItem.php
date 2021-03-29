@@ -25,6 +25,10 @@ class OrderItem extends Model
         return $this->belongsTo('App\Product', 'product_id');
     }
 
+    public function product_data() {
+        return $this->belongsTo('App\Product', 'product_id')->select('id', 'title_' . session('api_lang') . ' as title')->with('mainImage');
+    }
+
     public function product_with_select()
     {
         return $this->belongsTo('App\Product', 'product_id')->select('title_ar as product_name', 'type', 'final_price', 'price_before_offer', 'id', 'offer', 'offer_percentage');
@@ -43,6 +47,11 @@ class OrderItem extends Model
     public function order()
     {
         return $this->belongsTo('App\Order', 'order_id');
+    }
+
+    public function order_data()
+    {
+        return $this->belongsTo('App\Order', 'order_id')->select('id', 'order_number as sub_order_number', 'payment_method', 'main_id', 'user_id')->with(['main_order_data', 'user_data']);
     }
 
     public function multiOption()

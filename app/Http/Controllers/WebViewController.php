@@ -93,13 +93,39 @@ class WebViewController extends Controller
 
     // get orders report
     public function getSalesReport(Request $request) {
+        if (isset($request->status)) {
+            $statusArray = [1, 2, 5];
+            if ($request->order_status == 2) {
+                $statusArray = [3, 4, 6, 7, 8, 9];
+            }
+            $data['status'] = $request->status;
+            $data['orders'] = Order::whereIn('status', $statusArray)->where('store_id', $request->id);
+        }else if(isset($request->area_id)) {
+            $data['area'] = Area::where('id', $request->area_id)->select('id', 'title_en', 'title_ar')->first();
+            $data['orders'] = Order::join('user_addresses', 'user_addresses.id', '=', 'orders.address_id')
+            ->where('area_id', $request->area_id)
+            ->where('store_id', $request->id)
+            ->select('orders.*');
+        }else if(isset($request->from) && isset($request->to)) {
+            $data['from'] = $request->from;
+            $data['to'] = $request->to;
+            $data['orders'] = Order::where('store_id', $request->id)->whereBetween('created_at', array($request->from, $request->to));
+        }else if(isset($request->method)) {
+            $data['method'] = $request->method;
+            $data['orders'] = Order::where('store_id', $request->id)->where('payment_method', $request->method);
+        }else if(isset($request->order_status)) {
+            $data['order_status'] = $request->order_status;
+            $data['orders'] = Order::where('store_id', $request->id)->where('status', $request->order_status);
+        }else{
+            $data['orders'] = Order::where('store_id', $request->id);
+        }
         $data['shop'] = Shop::where('id', $request->id)->select('name', 'logo')->first();
-        $data['orders'] = Order::where('store_id', $request->id)->orderBy('id' , 'desc')->get();
-        $data['sum_subtotal'] = Order::where('store_id', $request->id)->sum('subtotal_price');
+        $data['orders'] = $data['orders']->orderBy('id' , 'desc')->get();
+        $data['sum_subtotal'] = $data['orders']->sum('subtotal_price');
         $data['sum_subtotal'] = number_format((float)$data['sum_subtotal'], 3, '.', '');
-        $data['sum_delivery_cost'] = Order::where('store_id', $request->id)->sum('delivery_cost');
+        $data['sum_delivery_cost'] = $data['orders']->sum('delivery_cost');
         $data['sum_delivery_cost'] = number_format((float)$data['sum_delivery_cost'], 3, '.', '');
-        $data['sum_total_price'] = Order::where('store_id', $request->id)->sum('total_price');
+        $data['sum_total_price'] = $data['orders']->sum('total_price');
         $data['sum_total_price'] = number_format((float)$data['sum_total_price'], 3, '.', '');
         $data['today'] = Carbon::now()->format('d-m-Y');
         
@@ -159,11 +185,41 @@ class WebViewController extends Controller
 
     // get sales report
     public function getSalesReport2(Request $request) {
+        if(isset($request->area_id)){
+            $data['area_id'] = $request->area_id;
+            $data['orders'] = OrderItem::join('orders', 'orders.id', '=', 'order_items.order_id')
+            ->where('orders.store_id', $request->id)
+            ->leftjoin('user_addresses', function($join) {
+                $join->on('user_addresses.id', '=', 'orders.address_id');
+            })
+            ->where('area_id', $request->area_id)
+            ->select('order_items.*')
+            ->orderBy('id', 'desc')->get();
+        }else if(isset($request->from) && isset($request->to)) {
+            $data['from'] = $request->from;
+            $data['to'] = $request->to;
+            $data['orders'] = OrderItem::join('orders', 'orders.id', '=', 'order_items.order_id')
+            ->where('orders.store_id', $request->id)
+            ->whereBetween('order_items.created_at', array($request->from, $request->to))
+            ->select('order_items.*')
+            ->orderBy('id', 'desc')->get();
+        }elseif(isset($request->method)){
+            $data['method'] = $request->method;
+            $data['orders'] = OrderItem::join('orders', 'orders.id', '=', 'order_items.order_id')
+            ->where('orders.store_id', $request->id)
+            ->where('orders.payment_method', $request->method)
+            ->select('order_items.*')
+            ->orderBy('id', 'desc')->get();
+        }elseif(isset($request->order_status)){
+            $data['order_status'] = $request->order_status;
+            $data['orders'] = OrderItem::where('status', $request->order_status)->orderBy('id', 'desc')->get();
+        }else {
+            $data['orders'] = OrderItem::join('orders', 'orders.id', '=', 'order_items.order_id')
+            ->where('orders.store_id', $request->id)
+            ->select('order_items.*')
+            ->orderBy('id', 'desc')->get();
+        }
         $data['shop'] = Shop::where('id', $request->id)->select('name', 'logo')->first();
-        $data['orders'] = OrderItem::join('orders', 'orders.id', '=', 'order_items.order_id')
-        ->where('orders.store_id', $request->id)
-        ->select('order_items.*')
-        ->orderBy('id', 'desc')->get();
         $data['sum_total'] = 0;
         for ($i = 0; $i < count($data['orders']); $i ++) {
             $data['sum_total'] = $data['sum_total'] + ($data['orders'][$i]['final_price'] * $data['orders'][$i]['count']);

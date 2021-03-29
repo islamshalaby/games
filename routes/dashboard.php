@@ -43,6 +43,9 @@ Route::group([
     // get areas
     Route::get('areas/{lang}/{v}' , 'UserController@getAreas');
 
+    // get covered areas
+    Route::get('covered-areas/{lang}/{v}' , 'UserController@getCoveredAreas');
+
     // update delivery areas
     Route::post('deliverytime/{lang}/{v}' , 'UserController@updateDeliveryAreas');
 
@@ -111,6 +114,9 @@ Route::group([
 ], function ($router) {
     // get orders
     Route::get('{lang}/{v}' , 'OrderController@getOrders');
+
+    // get products orders
+    Route::get('products-orders/{lang}/{v}' , 'OrderController@getProductsOrders');
 
     // order details
     Route::get('details/{order}/{lang}/{v}' , 'OrderController@orderDetails');

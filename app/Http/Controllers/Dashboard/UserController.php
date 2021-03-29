@@ -82,10 +82,12 @@ class UserController extends Controller
                                 ->where('title_en', 'like', '%' . $request->search . '%')
                                 ->orWhere('title_ar', 'like', '%' . $request->search . '%')
                                 ->select('title_en as title', 'id as area_id')
+                                ->orderBy('title_en', 'asc')
                                 ->get();
             }else {
                 $data['areas'] = Area::where('areas.deleted', 0)
                                 ->select('title_en as title', 'id as area_id')
+                                ->orderBy('title_en', 'asc')
                                 ->get();
             }
             
@@ -95,10 +97,12 @@ class UserController extends Controller
                                 ->where('title_en', 'like', '%' . $request->search . '%')
                                 ->orWhere('title_ar', 'like', '%' . $request->search . '%')
                                 ->select('title_ar as title', 'id as area_id')
+                                ->orderBy('title_ar', 'asc')
                                 ->get();
             }else {
                 $data['areas'] = Area::where('areas.deleted', 0)
                                 ->select('title_en as title', 'id as area_id')
+                                ->orderBy('title_ar', 'asc')
                                 ->get();
             }
             
@@ -121,6 +125,16 @@ class UserController extends Controller
             }
         }
         
+
+        $response = APIHelpers::createApiResponse(false , 200 , '' , '' , $data , $request->lang);
+        return response()->json($response , 200);
+    }
+
+    // get covered areas
+    public function getCoveredAreas(Request $request) {
+        $deliveryArea = DeliveryArea::where('store_id', Auth::guard('dashboard')->user()->id)
+            ->pluck('area_id')->toArray();
+        $data['areas'] = Area::whereIn('id', $deliveryArea)->select('id', 'title_' . $request->lang . ' as title')->orderBy('title_ar', 'asc')->get();
 
         $response = APIHelpers::createApiResponse(false , 200 , '' , '' , $data , $request->lang);
         return response()->json($response , 200);

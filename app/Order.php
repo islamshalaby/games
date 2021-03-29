@@ -34,12 +34,20 @@ class Order extends Model
         return $this->belongsTo('App\User', 'user_id');
     }
 
+    public function user_data() {
+        return $this->belongsTo('App\User', 'user_id')->select('id', 'name');
+    }
+
     public function address() {
         return $this->belongsTo('App\UserAddress', 'address_id');
     }
 
     public function main() {
         return $this->belongsTo('App\MainOrder', 'main_id');
+    }
+
+    public function main_order_data() {
+        return $this->belongsTo('App\MainOrder', 'main_id')->select('id', 'main_order_number');
     }
 
     public function items() {
