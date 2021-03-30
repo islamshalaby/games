@@ -64,7 +64,7 @@ Route::group([
     Route::post('/setdefault/{lang}/{v}' , 'AddressController@setmain');
     Route::get('/areas/{lang}/{v}' , 'AddressController@getareas')->middleware('checkguest');
     Route::get('/all-areas/{governorate}/{lang}/{v}' , 'AddressController@getAllAreas');
-    Route::get('/governorates/{lang}/{v}' , 'AddressController@getGovernorates');
+    Route::get('/governorates/{lang}/{v}' , 'AddressController@getGovernorates')->middleware('checkguest');
     Route::get('/details/{id}/{lang}/{v}' , 'AddressController@getdetails');
 });
 

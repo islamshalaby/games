@@ -17,7 +17,7 @@ class AddressController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api' , ['except' => ['getdeliveryprice' , 'getareas', 'getAllAreas']]);
+        $this->middleware('auth:api' , ['except' => ['getdeliveryprice' , 'getareas', 'getAllAreas', 'getGovernorates']]);
     }
 
     public function getaddress(Request $request){
