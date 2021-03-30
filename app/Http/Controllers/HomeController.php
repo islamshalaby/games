@@ -205,14 +205,15 @@ class HomeController extends Controller
                     if(count($data['stores']) > $i+1 ){
                         if ((($i+1) % 1) == 0) {
                             $ad = Ad::select('id', 'image', 'type', 'content', 'content_type', 'store_id')->where('place', 2)->inRandomOrder()->first();
-                            $ad->logo = "";
-                            $ad->name = "";
-                            $ad->categories = [];
-                            $ad->min_order_cost = "";
-                            $ad->estimated_arrival_time = "";
-                            $ad->delivery_cost = "";
-                            $ad->isAd = true;
+                            
                             if($ad){
+                                $ad->logo = "";
+                                $ad->name = "";
+                                $ad->categories = [];
+                                $ad->min_order_cost = "";
+                                $ad->estimated_arrival_time = "";
+                                $ad->delivery_cost = "";
+                                $ad->isAd = true;
                                 array_push($new_products , $ad);
                             }
                         
