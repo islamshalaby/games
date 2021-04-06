@@ -290,11 +290,11 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                                 <td>{{ $order->count }}</td>
                                 <td>{{ $order->final_price . " " . __('messages.dinar') }}</td>
                                 <td>{{ $order->final_price * $order->count }} {{ __('messages.dinar') }}</td>
-                                <td>{{ $order->order->store->name }}</td>
+                                <td>{{ $order->order ? $order->order->store->name : '' }}</td>
                                 <td>{{ $order->created_at->format("d-m-y") }}</td>
                                 <td>
                                     <a target="_blank" href="{{ route('users.details', $order->order->user_id) }}">
-                                    {{ $order->order->user->name }}
+                                    {{ $order->order ? $order->order->user->name : '' }}
                                     </a>
                                 </td>
                                 <td>
