@@ -529,5 +529,7 @@
         "orders_report" => "Orders Report",
         "print" => "Print",
         "prefere_to" => "For better use experience, it is recommended to use The latest version of Google chroome and at least windows 8",
+        "main_report" => "Main Orders Report",
+        "show_delivery_reports" => "Show Delivery Reports"
     ];
 ?>

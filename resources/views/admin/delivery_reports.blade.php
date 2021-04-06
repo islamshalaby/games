@@ -29,21 +29,10 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
 @push('scripts')
     <script>
         var language = "{{ Config::get('app.locale') }}"
-        $("#area_select").on("change", function() {
-            $("#areaForm").submit()
+        $("#area_select, #toDate, #payment_select, #orderStatus, #shop_select").on("change", function() {
+            $("#filter-form").submit()
         })
-        $("#toDate").on("change", function() {
-            $("#dateForm").submit()
-        })
-        $("#payment_select").on("change", function() {
-            $("#paymentForm").submit()
-        })
-        $("#orderStatus").on("change", function() {
-            $("#orderStatusForm").submit()
-        })
-        $("#shop_select").on("change", function() {
-            $("#shopForm").submit()
-        })
+        
     </script>
     
     
@@ -122,9 +111,9 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                 </div>
             </div>
             <div class="widget-content widget-content-area">
-                <div class="row">
-                    <div class="form-group col-md-3">
-                        <form id="areaForm" method="" action="">
+                <form id="filter-form">
+                    <div class="row">
+                        <div class="form-group col-md-3">
                             
                             <label for="area">{{ __('messages.area') }}</label>
                             <select required id="area_select" name="area_id" class="form-control">
@@ -133,11 +122,10 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                                 <option {{ isset($data['area']) && $data['area']['id'] == $area->id ? 'selected' : '' }} value="{{ $area->id }}">{{ App::isLocale('en') ? $area->title_en : $area->title_ar }}</option>
                                 @endforeach 
                             </select>
-                                
-                        </form>
-                    </div>
-                    <div class="form-group col-md-6">
-                        <form id="dateForm" method="" action="">
+
+                        </div>
+                        <div class="form-group col-md-6">
+                        
                             <div class="form-group mb-4">
                                 <div class="row">
                                     <div class="col-md-6">
@@ -150,12 +138,10 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                                     </div>
                                 </div>
                             </div>
-                            
-                        </form>
-                    </div>
 
-                    <div class="form-group col-md-3">
-                        <form id="paymentForm" method="" action="">
+                        </div>
+
+                        <div class="form-group col-md-3">
                             
                             <label for="payment_select">{{ __('messages.payment_method') }}</label>
                             <select required id="payment_select" name="method" class="form-control">
@@ -166,12 +152,9 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                                 <option {{ isset($data['method']) && $data['method'] == 3 ? 'selected' : '' }} value="3">{{ __('messages.wallet') }}</option>
                                 
                             </select>
-                                
-                        </form>
-                    </div>
+                        </div>
 
-                    <div class="form-group col-md-3">
-                        <form id="shopForm" method="" action="">
+                        <div class="form-group col-md-3">
                             
                             <label for="payment_select">{{ __('messages.store') }}</label>
                             <select required id="shop_select" name="shop" class="form-control">
@@ -181,18 +164,18 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                                 @endforeach
                                 
                             </select>
-                                
-                        </form>
+                                    
+                            
+                        </div>
                     </div>
-                </div>
-                
+                </form>
         
             </div>
             
             <div class="widget-header">
             <div class="row">
                 <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                    <h4>{{ __('messages.show_sub_orders') }} 
+                    <h4>{{ __('messages.show_delivery_reports') }} 
                         @if (isset($data['area']))
                             @if(App::isLocale('en'))
                                 {{ "( " . $data['area']['title_en'] . " )" }}

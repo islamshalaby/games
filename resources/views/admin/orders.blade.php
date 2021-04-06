@@ -29,22 +29,10 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
 @push('scripts')
     <script>
         var language = "{{ Config::get('app.locale') }}"
-        $("#area_select").on("change", function() {
-            $("#areaForm").submit()
-        })
-        $("#toDate").on("change", function() {
-            console.log("test")
-            $("#dateForm").submit()
-        })
-        $("#payment_select").on("change", function() {
-            $("#paymentForm").submit()
-        })
-        $("#orderStatus").on("change", function() {
-            $("#orderStatusForm").submit()
+        $("#area_select, #toDate, #payment_select, #orderStatus").on("change", function() {
+            $("#filter-form").submit()
         })
     </script>
-    
-    
 
     <script>
         var ttle = "{{ $title }}",
@@ -98,6 +86,7 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
             delivery = dTbls.column(7).data(),
             total = dTbls.column(8).data(),
             dinar = "{{ __('messages.dinar') }}"
+            
         var totalPrice = parseFloat(price.reduce(function (a, b) { return parseFloat(a) + parseFloat(b); }, 0)).toFixed(3),
             totalDelivery = parseFloat(delivery.reduce(function (a, b) { return parseFloat(a) + parseFloat(b); }, 0)).toFixed(3),
             allTotal = parseFloat(total.reduce(function (a, b) { return parseFloat(a) + parseFloat(b); }, 0)).toFixed(3)
@@ -121,10 +110,9 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                 </div>
             </div>
             <div class="widget-content widget-content-area">
-                <div class="row">
-                    <div class="form-group col-md-3">
-                        <form id="areaForm" method="" action="{{ strpos($url,'filter') !== false ? '' : route('orders.fetchbyarea') }}">
-                            
+                <form id="filter-form">
+                    <div class="row">
+                        <div class="form-group col-md-3">
                             <label for="area">{{ __('messages.area') }}</label>
                             <select required id="area_select" name="area_id" class="form-control">
                                 <option disabled selected>{{ __('messages.select') }}</option>
@@ -132,11 +120,8 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                                 <option {{ isset($data['area']) && $data['area']['id'] == $area->id ? 'selected' : '' }} value="{{ $area->id }}">{{ App::isLocale('en') ? $area->title_en : $area->title_ar }}</option>
                                 @endforeach 
                             </select>
-                                
-                        </form>
-                    </div>
-                    <div class="form-group col-md-6">
-                        <form id="dateForm" method="" action="{{ strpos($url,'filter') !== false ? '' : route('orders.fetchbydate') }}">
+                        </div>
+                        <div class="form-group col-md-6">
                             <div class="form-group mb-4">
                                 <div class="row">
                                     <div class="col-md-6">
@@ -149,13 +134,9 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                                     </div>
                                 </div>
                             </div>
-                            
-                        </form>
-                    </div>
+                        </div>
 
-                    <div class="form-group col-md-3">
-                        <form id="paymentForm" method="" action="{{ strpos($url,'filter') !== false ? '' : route('orders.fetchbypayment') }}">
-                            
+                        <div class="form-group col-md-3">
                             <label for="payment_select">{{ __('messages.payment_method') }}</label>
                             <select required id="payment_select" name="method" class="form-control">
                                 <option disabled selected>{{ __('messages.select') }}</option>
@@ -165,13 +146,9 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                                 <option {{ isset($data['method']) && $data['method'] == 3 ? 'selected' : '' }} value="3">{{ __('messages.wallet') }}</option>
                                 
                             </select>
-                                
-                        </form>
-                    </div>
+                        </div>
 
-                    <div class="form-group col-md-3">
-                        <form id="orderStatusForm" method="" action="">
-                            
+                        <div class="form-group col-md-3">
                             <label for="orderStatus">{{ __('messages.status') }}</label>
                             <select required id="orderStatus" name="order_status2" class="form-control">
                                 <option disabled selected>{{ __('messages.select') }}</option>
@@ -181,10 +158,9 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                                 <option {{ isset($data['order_status2']) && $data['order_status2'] == 4 ? 'selected' : '' }} value="4">{{ __('messages.canceled_from_user') }}</option>
                                 <option {{ isset($data['order_status2']) && $data['order_status2'] == 9 ? 'selected' : '' }} value="9">{{ __('messages.canceled_from_admin') }}</option>
                             </select>
-                                
-                        </form>
+                        </div>
                     </div>
-                </div>
+                </form>
                 
         
             </div>
@@ -202,6 +178,26 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                         @endif
                         <button data-show="0" class="btn btn-primary show_actions">{{ __('messages.hide_actions') }}</button>
                     </h4>
+                    @php
+                        $queryArray = [];
+                        if (isset($data['order_status'])) {
+                            $queryArray['order_status'] = $data['order_status'];
+                        }
+                        if(isset($data['area_id'])) {
+                            $queryArray['area_id'] = $data['area_id'];
+                        }
+                        if(isset($data['from']) && isset($data['to'])) {
+                            $queryArray['from'] = $data['from'];
+                            $queryArray['to'] = $data['to'];
+                        }
+                        if(isset($data['method'])) {
+                            $queryArray['method'] = $data['method'];
+                        }
+                        if(isset($data['order_status2'])) {
+                            $queryArray['order_status2'] = $data['order_status2'];
+                        }
+                    @endphp
+                    <a href="{{ route('webview.mainReport', $queryArray) }}" target="_blank" class="btn btn-primary">{{ __('messages.print') . ' ' . __('messages.main_report') }}</a>
                 </div>
             </div>
         </div>

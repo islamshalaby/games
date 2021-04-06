@@ -443,6 +443,7 @@ Route::group([
     Route::get('orders-report-pdfview-admin','WebViewController@getSalesReportAdmin')->name('webview.salesReport');
     Route::get('sales-report-pdfview/{id}','WebViewController@getSalesReport2');
     Route::get('sales-report-pdfview-admin','WebViewController@getSalesReport2Admin')->name('webview.salesReport2');
+    Route::get('main-report-pdfview-admin','WebViewController@getMainOrdersReport')->name('webview.mainReport');
     Route::get('test', 'WebViewController@test');
 
 });
