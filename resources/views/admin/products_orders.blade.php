@@ -298,9 +298,9 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                                     </a>
                                 </td>
                                 <td>
-                                    @if($order->order->payment_method == 1)
+                                    @if($order->order && $order->order->payment_method == 1)
                                     {{ __('messages.key_net') }}
-                                    @elseif ($order->order->payment_method == 2)
+                                    @elseif ($order->order && $order->order->payment_method == 2)
                                     {{ __('messages.cash') }}
                                     @else
                                     {{ __('messages.wallet') }}
