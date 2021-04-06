@@ -283,7 +283,7 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                                 </td>
                                 <td>
                                     <a target="_blank" href="{{ route('products.details', $order->product_id) }}">
-                                        {{ App::isLocale('en') ? $order->product->title_en : $order->product->title_ar }}
+                                        {{ $order->product ? $order->product->title_ar : '' }}
                                     </a>
                                 </td>
                                 <td><img src="https://res.cloudinary.com/dezsm0sg7/image/upload/w_50,q_50/v1581928924/{{ isset($order->product->mainImage->image) ? $order->product->mainImage->image : '' }}"  /></td>
