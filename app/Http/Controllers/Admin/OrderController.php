@@ -48,36 +48,39 @@ class OrderController extends AdminController{
                 $statusArray = [3, 4, 6, 7, 8, 9];
             }
             $data['order_status'] = $request->order_status;
-            $data['orders'] = Order::whereIn('status', $statusArray)->orderBy('id' , 'desc');
-        }elseif(isset($request->area_id)){
-            $data['area'] = Area::where('id', $request->area_id)->select('id', 'title_en', 'title_ar')->first();
-            $data['area_id'] = $request->area_id;
-            $data['orders'] = Order::join('user_addresses', 'user_addresses.id', '=', 'orders.address_id')
-            ->where('area_id', $request->area_id)
-            ->select('orders.*')
-            ->orderBy('id', 'desc');
-        }elseif(isset($request->from) && isset($request->to)){
-            $data['from'] = $request->from;
-            $data['to'] = $request->to;
-            $data['orders'] = Order::whereBetween('created_at', array($request->from, $request->to))->orderBy('id', 'desc');
-        }elseif(isset($request->method)){
-            $data['method'] = $request->method;
-            $data['orders'] = Order::where('payment_method', $request->method)->orderBy('id', 'desc');
-        }elseif(isset($request->order_status2)){
-            $data['order_status2'] = $request->order_status2;
-            $data['orders'] = Order::where('status', $request->order_status2)->orderBy('id', 'desc');
-        }elseif(isset($request->shop)){
-            $data['shop'] = $request->shop;
-            $data['orders'] = Order::where('store_id', $request->shop)->orderBy('id', 'desc');
-        }else {
-            $data['orders'] = Order::orderBy('id' , 'desc');
+            $data['orders'] = Order::whereIn('status', $statusArray);
+        }else{
+            $data['orders'] = Order::join('user_addresses', 'user_addresses.id', '=', 'orders.address_id');
+            if(isset($request->area_id)){
+                $data['area'] = Area::where('id', $request->area_id)->select('id', 'title_en', 'title_ar')->first();
+                $data['area_id'] = $request->area_id;
+                $data['orders'] = $data['orders']->where('area_id', $request->area_id);
+            }
+            if(isset($request->from) && isset($request->to)){
+                $data['from'] = $request->from;
+                $data['to'] = $request->to;
+                $data['orders'] = $data['orders']->whereBetween('orders.created_at', array($request->from, $request->to));
+            }
+            if(isset($request->method)){
+                $data['method'] = $request->method;
+                $data['orders'] = $data['orders']->where('orders.payment_method', $request->method);
+            }
+            if(isset($request->order_status2)){
+                $data['order_status2'] = $request->order_status2;
+                $data['orders'] = $data['orders']->where('orders.status', $request->order_status2);
+            }
+            if(isset($request->shop)){
+                $data['shop'] = $request->shop;
+                $data['orders'] = $data['orders']->where('orders.store_id', $request->shop);
+            }
         }
+        
         $data['shops'] = Shop::orderBy('name', 'desc')->get();
         $data['areas'] = Area::where('deleted', 0)->orderBy('title_ar', 'asc')->get();
         $data['sum_price'] = $data['orders']->sum('subtotal_price');
         $data['sum_delivery'] = $data['orders']->sum('delivery_cost');
         $data['sum_total'] = $data['orders']->sum('total_price');
-        $data['orders'] = $data['orders']->get();
+        $data['orders'] = $data['orders']->select('orders.*')->orderBy('orders.id', 'desc')->get();
 
         return view('admin.sub_orders' , ['data' => $data]);
     }
@@ -126,43 +129,40 @@ class OrderController extends AdminController{
 
     // show products orders
     public function showProductsOrders(Request $request) {
+        $data['orders'] = OrderItem::join('orders', 'orders.id', '=', 'order_items.order_id');
         if(isset($request->area_id)){
             $data['area'] = Area::where('id', $request->area_id)->select('id', 'title_en', 'title_ar')->first();
             $data['area_id'] = $request->area_id;
-            $data['orders'] = OrderItem::join('orders', 'orders.id', '=', 'order_items.order_id')
+            $data['orders'] = $data['orders']
             ->leftjoin('user_addresses', function($join) {
                 $join->on('user_addresses.id', '=', 'orders.address_id');
             })
-            ->where('area_id', $request->area_id)
-            ->select('order_items.*')
-            ->orderBy('id', 'desc');
-        }elseif(isset($request->from) && isset($request->to)){
+            ->where('area_id', $request->area_id);
+        }
+        if(isset($request->from) && isset($request->to)){
             $data['from'] = $request->from;
             $data['to'] = $request->to;
-            $data['orders'] = OrderItem::whereBetween('created_at', array($request->from, $request->to))->orderBy('id', 'desc');
-        }elseif(isset($request->method)){
+            $data['orders'] = $data['orders']->whereBetween('order_items.created_at', array($request->from, $request->to));
+        }
+        if(isset($request->method)){
             $data['method'] = $request->method;
-            $data['orders'] = OrderItem::join('orders', 'orders.id', '=', 'order_items.order_id')
-            ->where('orders.payment_method', $request->method)
-            ->select('order_items.*')
-            ->orderBy('id', 'desc');
-        }elseif(isset($request->order_status2)){
+            $data['orders'] = $data['orders']
+            ->where('orders.payment_method', $request->method);
+        }
+        if(isset($request->order_status2)){
             $data['order_status2'] = $request->order_status2;
-            $data['orders'] = OrderItem::where('status', $request->order_status2)->orderBy('id', 'desc');
-        }elseif(isset($request->shop)){
+            $data['orders'] = $data['orders']->where('order_items.status', $request->order_status2);
+        }
+        if(isset($request->shop)){
             $data['shop'] = $request->shop;
-            $data['orders'] = OrderItem::join('orders', 'orders.id', '=', 'order_items.order_id')
-            ->where('orders.store_id', $request->shop)
-            ->select('order_items.*')
-            ->orderBy('id', 'desc');
-        }else {
-            $data['orders'] = OrderItem::orderBy('id' , 'desc');
+            $data['orders'] = $data['orders']
+            ->where('orders.store_id', $request->shop);
         }
         $data['shops'] = Shop::orderBy('name', 'desc')->get();
         $data['areas'] = Area::where('deleted', 0)->orderBy('title_ar', 'asc')->get();
         $data['sum_price'] = $data['orders']->sum('final_price');
         $data['sum_price'] = number_format((float)$data['sum_price'], 3, '.', '');
-        $data['orders'] = $data['orders']->get();
+        $data['orders'] = $data['orders']->select('order_items.*')->orderBy('id', 'desc')->get();
         $data['sum_total'] = 0;
         for ($i = 0; $i < count($data['orders']); $i ++) {
             $data['sum_total'] = $data['sum_total'] + ($data['orders'][$i]['final_price'] * $data['orders'][$i]['count']);

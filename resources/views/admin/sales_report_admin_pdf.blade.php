@@ -26,9 +26,13 @@
                                 <b style="text-align: center;margin-left:70px;display:block">
                                     @if (isset($data['area']))
                                     {{ $data['area']['title_ar'] }}
-                                    @elseif(isset($data['from']) && isset($data['to']))
+                                    @endif
+                                    @if(isset($data['from']) && isset($data['to']))
+                                     - 
                                     {{ '( ' . $data['from'] . " | " . $data['to'] . ' )' }}
-                                    @elseif(isset($data['method']))
+                                    @endif
+                                    @if(isset($data['method']))
+                                     - 
                                         @if($data['method'] == 1)
                                         {{ __('messages.key_net') }}
                                         @elseif ($data['method'] == 2)
@@ -36,7 +40,9 @@
                                         @else
                                         {{ __('messages.wallet') }}
                                         @endif
-                                    @elseif(isset($data['order_status2']))
+                                    @endif
+                                    @if(isset($data['order_status2']))
+                                     - 
                                         @if ($data['order_status2'] == 1)
                                         {{ __('messages.in_progress') }}
                                         @elseif($data['order_status2'] == 2)
@@ -56,7 +62,9 @@
                                         @elseif($data['order_status2'] == 9)
                                         {{ __('messages.canceled_from_admin') }}
                                         @endif
-                                    @elseif(isset($data['shop']))
+                                    @endif
+                                    @if(isset($data['shop']))
+                                     - 
                                     {{ $data['shop_name']['name'] }}
                                     @endif
                                 </b>

@@ -29,22 +29,10 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
 @push('scripts')
     <script>
         var language = "{{ Config::get('app.locale') }}"
-        $("#area_select").on("change", function() {
-            $("#areaForm").submit()
+        $("#area_select, #toDate, #payment_select, #orderStatus, #shop_select").on("change", function() {
+            $("#filter-form").submit()
         })
-        $("#toDate").on("change", function() {
-            console.log("test")
-            $("#dateForm").submit()
-        })
-        $("#payment_select").on("change", function() {
-            $("#paymentForm").submit()
-        })
-        $("#orderStatus").on("change", function() {
-            $("#orderStatusForm").submit()
-        })
-        $("#shop_select").on("change", function() {
-            $("#shopForm").submit()
-        })
+        
     </script>
     
     
@@ -124,10 +112,9 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                 </div>
             </div>
             <div class="widget-content widget-content-area">
-                <div class="row">
-                    <div class="form-group col-md-3">
-                        <form id="areaForm" method="" action="">
-                            
+                <form id="filter-form">
+                    <div class="row">
+                        <div class="form-group col-md-3">
                             <label for="area">{{ __('messages.area') }}</label>
                             <select required id="area_select" name="area_id" class="form-control">
                                 <option disabled selected>{{ __('messages.select') }}</option>
@@ -135,11 +122,8 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                                 <option {{ isset($data['area']) && $data['area']['id'] == $area->id ? 'selected' : '' }} value="{{ $area->id }}">{{ App::isLocale('en') ? $area->title_en : $area->title_ar }}</option>
                                 @endforeach 
                             </select>
-                                
-                        </form>
-                    </div>
-                    <div class="form-group col-md-6">
-                        <form id="dateForm" method="" action="">
+                        </div>
+                        <div class="form-group col-md-6">
                             <div class="form-group mb-4">
                                 <div class="row">
                                     <div class="col-md-6">
@@ -152,13 +136,9 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                                     </div>
                                 </div>
                             </div>
-                            
-                        </form>
-                    </div>
+                        </div>
 
-                    <div class="form-group col-md-3">
-                        <form id="paymentForm" method="" action="">
-                            
+                        <div class="form-group col-md-3">
                             <label for="payment_select">{{ __('messages.payment_method') }}</label>
                             <select required id="payment_select" name="method" class="form-control">
                                 <option disabled selected>{{ __('messages.select') }}</option>
@@ -168,13 +148,10 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                                 <option {{ isset($data['method']) && $data['method'] == 3 ? 'selected' : '' }} value="3">{{ __('messages.wallet') }}</option>
                                 
                             </select>
-                                
-                        </form>
-                    </div>
+                        </div>
 
-                    <div class="form-group col-md-3">
-                        <form id="orderStatusForm" method="" action="">
-                            
+                        <div class="form-group col-md-3">
+                                
                             <label for="orderStatus">{{ __('messages.status') }}</label>
                             <select required id="orderStatus" name="order_status2" class="form-control">
                                 <option disabled selected>{{ __('messages.select') }}</option>
@@ -189,26 +166,24 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                                 <option {{ isset($data['order_status2']) && $data['order_status2'] == 8 ? 'selected' : '' }} value="8">{{ __('messages.received_refund') }}</option>
                                 <option {{ isset($data['order_status2']) && $data['order_status2'] == 9 ? 'selected' : '' }} value="9">{{ __('messages.canceled_from_admin') }}</option>
                             </select>
-                                
-                        </form>
-                    </div>
+                        </div>
 
-                    <div class="form-group col-md-3">
-                        <form id="shopForm" method="" action="">
-                            
-                            <label for="payment_select">{{ __('messages.store') }}</label>
-                            <select required id="shop_select" name="shop" class="form-control">
-                                <option disabled selected>{{ __('messages.select') }}</option>
-                                @foreach ($data['shops'] as $shop)
-                                <option {{ isset($data['shop']) && $data['shop'] == $shop->id ? 'selected' : '' }} value="{{ $shop->id }}">{{ $shop->name }}</option>
-                                @endforeach
+                        <div class="form-group col-md-3">
+                            <form id="shopForm" method="" action="">
                                 
-                            </select>
-                                
-                        </form>
+                                <label for="payment_select">{{ __('messages.store') }}</label>
+                                <select required id="shop_select" name="shop" class="form-control">
+                                    <option disabled selected>{{ __('messages.select') }}</option>
+                                    @foreach ($data['shops'] as $shop)
+                                    <option {{ isset($data['shop']) && $data['shop'] == $shop->id ? 'selected' : '' }} value="{{ $shop->id }}">{{ $shop->name }}</option>
+                                    @endforeach
+                                    
+                                </select>
+                                    
+                            </form>
+                        </div>
                     </div>
-                </div>
-                
+                </form>
         
             </div>
             
@@ -229,14 +204,18 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                         $queryArray = [];
                         if (isset($data['area_id'])) {
                             $queryArray['area_id'] = $data['area_id'];
-                        }else if(isset($data['from']) && isset($data['to'])) {
+                        }
+                        if(isset($data['from']) && isset($data['to'])) {
                             $queryArray['from'] = $data['from'];
                             $queryArray['to'] = $data['to'];
-                        }else if(isset($data['method'])) {
+                        }
+                        if(isset($data['method'])) {
                             $queryArray['method'] = $data['method'];
-                        }else if(isset($data['order_status2'])) {
+                        }
+                        if(isset($data['order_status2'])) {
                             $queryArray['order_status2'] = $data['order_status2'];
-                        }else if(isset($data['shop'])) {
+                        }
+                        if(isset($data['shop'])) {
                             $queryArray['shop'] = $data['shop'];
                         }
                     @endphp
