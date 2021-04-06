@@ -272,7 +272,7 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                             <tr>
                                 <td><?=$i;?></td>
                                 <td>
-                                    <a target="_blank" href="{{ route('orders.details', $order->order->main_id) }}">
+                                    <a target="_blank" href="{{ route('orders.details', 1) }}">
                                         {{ $order->order->main ? $order->order->main->main_order_number : '' }}
                                     </a>
                                 </td>
