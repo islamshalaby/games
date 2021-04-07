@@ -114,6 +114,7 @@ class OrderController extends AdminController{
             $data['orders'] = Order::join('user_addresses', 'user_addresses.id', '=', 'orders.address_id')->whereIn('status', [1, 2, 5, 3 ,6, 7]);
             if(isset($request->area_id)){
                 $data['area'] = Area::where('id', $request->area_id)->select('id', 'title_en', 'title_ar')->first();
+                $data['area_id'] = $request->area_id;
                 $data['orders'] = $data['orders']
                 ->where('area_id', $request->area_id);
             }

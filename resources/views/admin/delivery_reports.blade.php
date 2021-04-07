@@ -185,6 +185,26 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                         @endif
                         <button data-show="0" class="btn btn-primary show_actions">{{ __('messages.hide_actions') }}</button>
                     </h4>
+                    @php
+                        $queryArray = [];
+                        if (isset($data['order_status'])) {
+                            $queryArray['order_status'] = $data['order_status'];
+                        }
+                        if(isset($data['area_id'])) {
+                            $queryArray['area_id'] = $data['area_id'];
+                        }
+                        if(isset($data['from']) && isset($data['to'])) {
+                            $queryArray['from'] = $data['from'];
+                            $queryArray['to'] = $data['to'];
+                        }
+                        if(isset($data['method'])) {
+                            $queryArray['method'] = $data['method'];
+                        }
+                        if(isset($data['order_status2'])) {
+                            $queryArray['order_status2'] = $data['order_status2'];
+                        }
+                    @endphp
+                    <a href="{{ route('webview.deliveryReport', $queryArray) }}" target="_blank" class="btn btn-primary">{{ __('messages.print') . ' ' . __('messages.delivery_reports') }}</a>
                 </div>
             </div>
         </div>

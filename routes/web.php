@@ -444,6 +444,7 @@ Route::group([
     Route::get('sales-report-pdfview/{id}','WebViewController@getSalesReport2');
     Route::get('sales-report-pdfview-admin','WebViewController@getSalesReport2Admin')->name('webview.salesReport2');
     Route::get('main-report-pdfview-admin','WebViewController@getMainOrdersReport')->name('webview.mainReport');
+    Route::get('delivery-report-pdfview-admin','WebViewController@getDeliveryReport')->name('webview.deliveryReport');
     Route::get('test', 'WebViewController@test');
 
 });

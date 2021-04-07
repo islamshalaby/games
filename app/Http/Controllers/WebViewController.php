@@ -336,7 +336,58 @@ class WebViewController extends Controller
         return $pdf->stream('download.pdf');
     }
 
-    
+    // get delivery report
+    public function getDeliveryReport(Request $request) {
+        if (isset($request->order_status)) {
+            $statusArray = [1, 2, 5];
+            if ($request->order_status == 'delivered') {
+                $statusArray = [3, 6, 7];
+            }
+            $data['order_status'] = $request->order_status;
+            $data['orders'] = Order::whereIn('status', $statusArray)->orderBy('id' , 'desc');
+        }else{
+            $data['orders'] = Order::join('user_addresses', 'user_addresses.id', '=', 'orders.address_id')->whereIn('status', [1, 2, 5, 3 ,6, 7]);
+            if(isset($request->area_id)){
+                $data['area'] = Area::where('id', $request->area_id)->select('id', 'title_en', 'title_ar')->first();
+                $data['area_id'] = $request->area_id;
+                $data['orders'] = $data['orders']
+                ->where('area_id', $request->area_id);
+            }
+            if(isset($request->from) && isset($request->to)){
+                $data['from'] = $request->from;
+                $data['to'] = $request->to;
+                $data['orders'] = $data['orders']->whereBetween('orders.created_at', array($request->from, $request->to));
+            }
+            if(isset($request->method)){
+                $data['method'] = $request->method;
+                $data['orders'] = $data['orders']->where('orders.payment_method', $request->method);
+            }
+            if(isset($request->order_status2)){
+                $data['order_status2'] = $request->order_status2;
+                $data['orders'] = $data['orders']->where('status', $request->order_status2);
+            }
+            if(isset($request->shop)){
+                $data['shop'] = $request->shop;
+                $data['shop_name'] = Shop::where('id', $data['shop'])->select('name')->first();
+                $data['orders'] = $data['orders']->where('orders.store_id', $request->shop);
+            }
+        }
+        
+        $data['sum_subtotal'] = $data['orders']->sum('subtotal_price');
+        $data['sum_subtotal'] = number_format((float)$data['sum_subtotal'], 3, '.', '');
+        $data['sum_delivery_cost'] = $data['orders']->sum('delivery_cost');
+        $data['sum_delivery_cost'] = number_format((float)$data['sum_delivery_cost'], 3, '.', '');
+        $data['sum_total_price'] = $data['orders']->sum('total_price');
+        $data['sum_total_price'] = number_format((float)$data['sum_total_price'], 3, '.', '');
+        $data['today'] = Carbon::now()->format('d-m-Y');
+        $data['orders'] = $data['orders']->select('orders.*')->orderBy('orders.id', 'desc')->get();
+        
+
+        $data['setting'] = Setting::where('id', 1)->first();
+        $pdf = PDF::loadView('admin.delivery_report_admin_pdf', ['data' => $data]);
+            
+        return $pdf->stream('download.pdf');
+    }
 
     public function test() {
         
