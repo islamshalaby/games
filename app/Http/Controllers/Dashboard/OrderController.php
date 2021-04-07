@@ -25,34 +25,37 @@ class OrderController extends Controller
         $data['to'] = "";
         $data['method'] = "";
         $data['order_status'] = "";
-        if (isset($request->area_id)) {
-            $data['orders'] = Order::join('user_addresses', 'user_addresses.id', '=', 'orders.address_id')
-            ->where('store_id', Auth::guard('dashboard')->user()->id)
-            ->where('area_id', $request->area_id)
-            ->select('orders.*')
-            ->orderBy('id', 'desc');
-            $data['area_id'] = $request->area_id;
-        }else if(isset($request->from) && isset($request->to)) {
-            $data['from'] = $request->from;
-            $data['to'] = $request->to;
-            $data['orders'] = Order::whereBetween('created_at', array($request->from, $request->to))->where('store_id', Auth::guard('dashboard')->user()->id)->orderBy('id', 'desc');
-        }else if(isset($request->method)) {
-            $data['method'] = $request->method;
-            $data['orders'] = Order::where('payment_method', $request->method)->where('store_id', Auth::guard('dashboard')->user()->id)->orderBy('id', 'desc');
-        }else if(isset($request->status) && $request->status != 0) {
+        if(isset($request->status) && $request->status != 0) {
             $statusArray = [1, 2, 5];
             if ($request->status == 2) {
                 $statusArray = [3, 4, 6, 7, 8, 9];
             }
             $data['status'] = $request->status;
-            $data['orders'] = Order::whereIn('status', $statusArray)->where('store_id', Auth::guard('dashboard')->user()->id)->orderBy('id', 'desc');
-        }else if(isset($request->order_status)) {
-            $data['order_status'] = $request->order_status;
-            $data['orders'] = Order::where('status', $request->order_status)->where('store_id', Auth::guard('dashboard')->user()->id)->orderBy('id', 'desc');
+            $data['orders'] = Order::whereIn('status', $statusArray)->where('store_id', Auth::guard('dashboard')->user()->id);
         }else {
-            $data['orders'] = Order::where('store_id', Auth::guard('dashboard')->user()->id)->orderBy('id', 'desc');
+            $data['orders'] = Order::join('user_addresses', 'user_addresses.id', '=', 'orders.address_id')
+                ->where('store_id', Auth::guard('dashboard')->user()->id);
+            if (isset($request->area_id)) {
+                $data['orders'] = $data['orders']
+                ->where('area_id', $request->area_id);
+                $data['area_id'] = $request->area_id;
+            }
+            if(isset($request->from) && isset($request->to)) {
+                $data['from'] = $request->from;
+                $data['to'] = $request->to;
+                $data['orders'] = $data['orders']->whereBetween('orders.created_at', array($request->from, $request->to));
+            }
+            if(isset($request->method)) {
+                $data['method'] = $request->method;
+                $data['orders'] = $data['orders']->where('orders.payment_method', $request->method);
+            }
+            if(isset($request->order_status)) {
+                $data['order_status'] = $request->order_status;
+                $data['orders'] = $data['orders']->where('orders.status', $request->order_status);
+            }
         }
-        $data['orders'] = $data['orders']->simplePaginate(16);
+        
+        $data['orders'] = $data['orders']->select('orders.*')->orderBy('id', 'desc')->simplePaginate(16);
         
         for ($i = 0; $i < count($data['orders']); $i ++) {
             if (in_array($data['orders'][$i]['status'], [1, 2, 5])) {
@@ -208,38 +211,35 @@ class OrderController extends Controller
         $data['method'] = "";
         $data['order_status'] = "";
         $orders = Order::where('store_id', Auth::guard('dashboard')->user()->id)->pluck('id')->toArray();
+        $data['orders'] = OrderItem::join('orders', 'orders.id', '=', 'order_items.order_id')->whereIn('order_id', $orders);
         if(isset($request->area_id)){
             $data['area'] = Area::where('id', $request->area_id)->select('id', 'title_' . $request->lang . ' as title')->first();
             $data['area_id'] = $request->area_id;
-            $data['orders'] = OrderItem::join('orders', 'orders.id', '=', 'order_items.order_id')
+            $data['orders'] = $data['orders']
             ->leftjoin('user_addresses', function($join) {
                 $join->on('user_addresses.id', '=', 'orders.address_id');
             })
             ->where('area_id', $request->area_id)
-            ->whereIn('order_id', $orders)
-            ->select('order_items.id', 'order_items.count', 'order_items.final_price', 'order_items.created_at', 'order_items.status', 'order_items.order_id', 'order_items.product_id')->with(['product_data', 'order_data'])
-            ->orderBy('id', 'desc');
-        }elseif(isset($request->from) && isset($request->to)){
+            ->whereIn('order_items.order_id', $orders);
+        }
+        if(isset($request->from) && isset($request->to)){
             $data['from'] = $request->from;
             $data['to'] = $request->to;
-            $data['orders'] = OrderItem::whereIn('order_id', $orders)->whereBetween('created_at', array($request->from, $request->to))->select('id', 'count', 'final_price', 'created_at', 'status', 'order_id', 'product_id')->with(['product_data', 'order_data'])->orderBy('id', 'desc');
-        }elseif(isset($request->method)){
+            $data['orders'] = $data['orders']->whereBetween('order_items.created_at', array($request->from, $request->to));
+        }
+        if(isset($request->method)){
             $data['method'] = $request->method;
-            $data['orders'] = OrderItem::join('orders', 'orders.id', '=', 'order_items.order_id')
-            ->where('orders.payment_method', $request->method)
-            ->whereIn('order_id', $orders)
-            ->select('order_items.id', 'order_items.count', 'order_items.final_price', 'order_items.created_at', 'order_items.status', 'order_items.order_id', 'order_items.product_id')->with(['product_data', 'order_data'])
-            ->orderBy('id', 'desc');
-        }elseif(isset($request->order_status)){
+            $data['orders'] = $data['orders']
+            ->where('orders.payment_method', $request->method);
+        }
+        if(isset($request->order_status)){
             $data['order_status'] = $request->order_status;
-            $data['orders'] = OrderItem::where('status', $request->order_status2)->whereIn('order_id', $orders)->select('id', 'count', 'final_price', 'created_at', 'status', 'order_id', 'product_id')->with(['product_data', 'order_data'])->orderBy('id', 'desc');
-        }else {
-            $data['orders'] = OrderItem::whereIn('order_id', $orders)->select('id', 'count', 'final_price', 'created_at', 'status', 'order_id', 'product_id')->with(['product_data', 'order_data'])->orderBy('id' , 'desc');
+            $data['orders'] = $data['orders']->where('status', $request->order_status)->whereIn('order_id', $orders);
         }
 
         $data['sum_price'] = $data['orders']->sum('final_price');
         $data['sum_price'] = number_format((float)$data['sum_price'], 3, '.', '');
-        $data['orders'] = $data['orders']->simplePaginate(16);
+        $data['orders'] = $data['orders']->select('order_items.id', 'order_items.count', 'order_items.final_price', 'order_items.created_at', 'order_items.status', 'order_items.order_id', 'order_items.product_id')->with(['product_data', 'order_data'])->orderBy('order_items.id', 'desc')->simplePaginate(16);
         $data['sum_total'] = 0;
         for ($i = 0; $i < count($data['orders']); $i ++) {
             $data['sum_total'] = $data['sum_total'] + ($data['orders'][$i]['final_price'] * $data['orders'][$i]['count']);
