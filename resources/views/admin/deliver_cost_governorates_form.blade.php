@@ -1,27 +1,6 @@
 @extends('admin.app')
 
-@section('title' , __('messages.add_by_areas') )
-@push('scripts')
-    <script>
-        $("#area_id").on('change', function() {
-            var areaId = $(this).val()
-            $.ajax({
-                url : "/admin-panel/deliver-cost/fetch-stores-by-area/" + areaId,
-                type : 'GET',
-                success : function (data) {
-                    $("#store_id").parent('.form-group').show()
-                    $("#store_id").html("")
-                    
-                    data.forEach(function (row) {
-                        $("#store_id").append(`
-                            <option value="${row.id}">${row.name}</option>
-                        `)
-                    })
-                }
-            })
-        })
-    </script>
-@endpush
+@section('title' , __('messages.add_by_governorates') )
 
 @section('content')
     <div class="col-lg-12 col-12 layout-spacing">
@@ -29,7 +8,7 @@
             <div class="widget-header">
                 <div class="row">
                     <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                        <h4>{{ __('messages.add_by_areas') }}</h4>
+                        <h4>{{ __('messages.add_by_governorates') }}</h4>
                  </div>
         </div>
         <form action="" method="post" enctype="multipart/form-data" >
@@ -47,18 +26,17 @@
                 <input required type="number" step="any" min="0" name="estimated_arrival_time" class="form-control" id="estimated_arrival_time" placeholder="{{ __('messages.estimated_arrival_time') }}" >
             </div>
             <div class="form-group mb-4">
-                <label for="area_id">{{ __('messages.area') }}</label>
+                <label for="area_id">{{ __('messages.governorate') }}</label>
                 <select id="area_id" name="area_id" class="form-control">
                     <option disabled selected>{{ __('messages.select') }}</option>
-                    @foreach ( $data['areas'] as $area )
-                    <option value="{{ $area->id }}">{{ App::isLocale("en") ? $area->title_en : $area->title_ar }}</option>
+                    @foreach ( $data['governorates'] as $governorate )
+                    <option value="{{ $governorate->id }}">{{ App::isLocale("en") ? $governorate->title_en : $governorate->title_ar }}</option>
                     @endforeach
                 </select>
             </div>
             <div style="display: none" class="form-group mb-4">
                 <label for="store_id">{{ __('messages.store') }}</label>
                 <select id="store_id" name="store_id" class="form-control">
-                    
                 </select>
             </div>
             <input type="submit" value="{{ __('messages.submit') }}" class="btn btn-primary">

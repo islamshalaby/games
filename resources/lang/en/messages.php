@@ -530,6 +530,19 @@
         "print" => "Print",
         "prefere_to" => "For better use experience, it is recommended to use The latest version of Google chroome and at least windows 8",
         "main_report" => "Main Orders Report",
-        "show_delivery_reports" => "Show Delivery Reports"
+        "show_delivery_reports" => "Show Delivery Reports",
+        "areas_governorates" => "Areas & Governorates",
+        "add_area" => "Add Area",
+        "add_governorate" => "Add Governorate",
+        "governorate" => "Governorate",
+        "added_successfully" => "Added Successfuly",
+        "show_governorates" => "Show Governorates",
+        "updated_successfully" => "Updated Successfully",
+        "add_new_governorate" => "Add new governorate",
+        "edit_governorate" => "Edit governorate",
+        "deleted_successfully" => "Deleted Successfully",
+        "governorate_details" => "Governorate details",
+        "add_by_areas" => "Add by areas",
+        "add_by_governorates" => "Add by governorates"
     ];
 ?>

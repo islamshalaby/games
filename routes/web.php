@@ -219,18 +219,33 @@ Route::group([
         "prefix" => "areas"
     ], function($router){
          Route::get('show' , 'AreasController@show')->name('areas.index');
-         Route::get('show/deliverycost/{area}' , 'AreasController@show_delivery_costs')->name('areas.show.delivercost');
+         Route::get('show-governorates' , 'AreasController@getGovernorates')->name('areas.governorates.index');
          Route::get('add' , 'AreasController@AddGet')->name('areas.add');
          Route::post('add' , 'AreasController@AddPost');
+         Route::get('add-governorates' , 'AreasController@getAddGovernorate')->name('areas.governorates.add');
+         Route::post('add-governorates' , 'AreasController@postAddGovernorate');
          Route::get('edit/{area}' , 'AreasController@EditGet')->name('areas.edit');
          Route::post('edit/{area}' , 'AreasController@EditPost');
-         Route::get('add/deliverycost/{area}' , 'AreasController@add_deliver_cost_get')->name('areas.add.delivercost');
-         Route::post('add/deliverycost/{area}' , 'AreasController@add_deliver_cost_post');
-         Route::get('edit/deliverycost/{area}/{cost}' , 'AreasController@edit_delivery_cost_get')->name('edit_delivery_cost_get');
-         Route::post('edit/deliverycost/{area}/{cost}' , 'AreasController@edit_delivery_cost_post');
-         Route::get('delete/deliverycost/{cost}' , 'AreasController@deleteDeliveryCost')->name('delete_delivery_cost_get');
+         Route::get('edit-governorates/{governorate}' , 'AreasController@getEditGovernorate')->name('areas.governorates.edit');
+         Route::post('edit-governorates/{governorate}' , 'AreasController@postEditGovernorate');
          Route::get('delete/{area}' , 'AreasController@delete')->name('areas.delete');
+         Route::get('delete-governorates/{governorate}' , 'AreasController@getDeleteGovernorate')->name('areas.governorates.delete');
          Route::get('details/{area}' , 'AreasController@details')->name('areas.details');
+         Route::get('details-governorates/{governorate}' , 'AreasController@getGovernorateDetails')->name('areas.governorates.details');
+    });
+
+    // Areas Route
+    Route::group([
+        "prefix" => "deliver-cost"
+    ], function($router){
+        Route::get('show/deliverycost/{area}' , 'AreasController@show_delivery_costs')->name('areas.show.delivercost');
+        Route::get('add/deliverycost' , 'AreasController@add_deliver_cost_get')->name('areas.add.delivercost');
+        Route::post('add/deliverycost' , 'AreasController@add_deliver_cost_post');
+        Route::get('edit/deliverycost/{area}/{cost}' , 'AreasController@edit_delivery_cost_get')->name('edit_delivery_cost_get');
+        Route::post('edit/deliverycost/{area}/{cost}' , 'AreasController@edit_delivery_cost_post');
+        Route::get('delete/deliverycost/{cost}' , 'AreasController@deleteDeliveryCost')->name('delete_delivery_cost_get');
+        Route::get('fetch-stores-by-area/{area}' , 'AreasController@fetchStoresByArea');
+        Route::get('add-by-governorate' , 'AreasController@addDeliveryCostByGovernorate')->name('areas.add.deliveryCostByGovernorate');
     });
 
     // Brands Route

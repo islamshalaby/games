@@ -27,6 +27,14 @@
                                         <td>
                                             {{ $data['area']['title_ar'] }}
                                         </td>
+                                    </tr> 
+                                    <tr>
+                                        <td class="label-table" > {{ __('messages.governorate') }}</td>
+                                        <td>
+                                            <a href="{{ route('areas.governorates.details', $data['area']->governorate_id) }}" target="_blank">
+                                                {{ App::isLocale('en') ? $data['area']->governorate->title_en : $data['area']->governorate->title_ar }}
+                                            </a>
+                                        </td>
                                     </tr>                            
                             </tbody>
                         </table>

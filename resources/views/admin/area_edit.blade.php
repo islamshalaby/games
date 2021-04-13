@@ -23,14 +23,15 @@
                 <input required type="text" name="title_ar" class="form-control" id="title_ar" placeholder="{{ __('messages.title_ar') }}" value="{{ $data['area']['title_ar'] }}" >
             </div>
 
-            {{-- <div class="form-group mb-4">
-                <label for="lat">Lat</label>
-                <input required type="text" name="lat" class="form-control" id="lat" placeholder="lat" >
-            </div>
             <div class="form-group mb-4">
-                <label for="long">Long</label>
-                <input required type="text" name="long" class="form-control" id="long" placeholder="long" >
-            </div> --}}
+                <label for="name">{{ __('messages.governorate') }}</label>
+                <select id="seller_id" name="governorate_id" class="form-control">
+                    <option disabled selected>{{ __('messages.select') }}</option>
+                    @foreach ( $data['governorates'] as $governorate )
+                    <option {{ $data['area']['governorate_id'] == $governorate->id ? 'selected' : '' }} value="{{ $governorate->id }}">{{ App::isLocale('en') ? $governorate->title_en : $governorate->title_ar }}</option>
+                    @endforeach
+                </select>
+            </div>
 
             <input type="submit" value="{{ __('messages.submit') }}" class="btn btn-primary">
         </form>

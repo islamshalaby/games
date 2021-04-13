@@ -528,6 +528,19 @@
             "print" => "طباعة",
             "prefere_to" => "للحصول على تجربة إستخدام أفضل ، يوصى بإستخدام أحدث إصدار من Google chrome و windows 8 على الأقل",
             "main_report" => "تقرير الطلبات الرئيسية",
-            "show_delivery_reports" => "عرض تقارير التوصيل"
+            "show_delivery_reports" => "عرض تقارير التوصيل",
+            "areas_governorates" => "المناطق والمحافظات",
+            "add_area" => "إضافة منطقة",
+            "add_governorate" => "إضافة محافظة",
+            "governorate" => "المحافظة",
+            "added_successfully" => "تم الإضافة بنجاح",
+            "show_governorates" => "عرض المحافظات",
+            "updated_successfully" => "تم تحديث البيانات بنجاح",
+            "add_new_governorate" => "إضافة محافظة جديدة",
+            "edit_governorate" => "تعديل المحافظة",
+            "deleted_successfully" => "تم الحذف بنجاح",
+            "governorate_details" => "تفاصيل المحافظة",
+            "add_by_areas" => "إضافة بالمناطق",
+            "add_by_governorates" => "إضافة بالمحافظات"
         ];
 ?>

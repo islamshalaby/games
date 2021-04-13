@@ -531,7 +531,7 @@
                         <a href="#areas" data-active="true" data-toggle="collapse" aria-expanded="true" class="dropdown-toggle first-link">
                             <div class="">
                                 <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                                <span>{{ __('messages.areas') }}</span>
+                                <span>{{ __('messages.areas_governorates') }}</span>
                             </div>
                             <div>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
@@ -539,13 +539,58 @@
                         </a>
                         <ul class="collapse submenu list-unstyled show" id="areas" data-parent="#accordionExample">
                             @if(Auth::user()->add_data) 
+                                <li class="active add-governorates">
+                                    <a href="{{ route('areas.governorates.add') }}"> {{ __('messages.add_governorate') }} </a>
+                                </li>
+                            @endif
+                            <li class="show-governorates" >
+                                <a href="{{ route('areas.governorates.index') }}"> {{ __('messages.show_governorates') }} </a>
+                            </li>
+                            @if(Auth::user()->add_data) 
                                 <li class="active add">
-                                    <a href="{{ route('areas.add') }}"> {{ __('messages.add') }} </a>
+                                    <a href="{{ route('areas.add') }}"> {{ __('messages.add_area') }} </a>
                                 </li>
                             @endif
                             <li class="show" >
-                                <a href="{{ route('areas.index') }}"> {{ __('messages.show') }} </a>
+                                <a href="{{ route('areas.index') }}"> {{ __('messages.show_areas') }} </a>
                             </li>
+                            
+                        </ul>
+                    </li>
+                    @endif
+
+                    @if(in_array(32 , Auth::user()->custom['admin_permission']))
+                    <li class="menu deliver-cost">
+                        <a href="#deliver-cost" data-active="true" data-toggle="collapse" aria-expanded="true" class="dropdown-toggle first-link">
+                            <div class="">
+                                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                <span>{{ __('messages.delivery_costs') }}</span>
+                            </div>
+                            <div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </div>
+                        </a>
+                        <ul class="collapse submenu list-unstyled show" id="deliver-cost" data-parent="#accordionExample">
+                            @if(Auth::user()->add_data) 
+                                <li class="active add">
+                                    <a href="{{ route('areas.add.delivercost') }}"> {{ __('messages.add_by_areas') }} </a>
+                                </li>
+                                {{--  <li class="active add-by-governorate">
+                                    <a href="{{ route('areas.add.deliveryCostByGovernorate') }}"> {{ __('messages.add_by_governorates') }} </a>
+                                </li>  --}}
+                            @endif
+                            {{-- <li class="show-governorates" >
+                                <a href="{{ route('areas.governorates.index') }}"> {{ __('messages.show_governorates') }} </a>
+                            </li>
+                            @if(Auth::user()->add_data) 
+                                <li class="active add">
+                                    <a href="{{ route('areas.add') }}"> {{ __('messages.add_area') }} </a>
+                                </li>
+                            @endif
+                            <li class="show" >
+                                <a href="{{ route('areas.index') }}"> {{ __('messages.show_areas') }} </a>
+                            </li> --}}
+                            
                         </ul>
                     </li>
                     @endif
@@ -824,6 +869,15 @@
             <div class="layout-px-spacing">
                 <div class="row layout-top-spacing">
                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
+                        @if($errors->any())
+                            <div class="alert alert-danger">
+                                <ul class="list-unstyled mb-0">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
                         @yield('content')
                     </div>
             </div>

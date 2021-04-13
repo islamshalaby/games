@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Area;
 use App\DeliveryArea;
+use App\Governorate;
 use App\Shop;
 
 class AreasController extends AdminController{
@@ -16,37 +17,48 @@ class AreasController extends AdminController{
 
     // add get
     public function addGet() {
-        return view('admin.area_form');
+        $data['governorates'] = Governorate::where('deleted', 0)->get();
+        return view('admin.area_form', compact('data'));
     }
 
     // add post
     public function AddPost(Request $request){
-        Area::create($request->all());
-        return redirect()->route('areas.index');
+        $post = $request->validate([
+            'title_en' => 'required',
+            'title_ar' => 'required',
+            'governorate_id' => 'required'
+        ]);
+        Area::create($post);
+        return redirect()->route('areas.index')->with('success', __('messages.added_successfully'));
     }
 
     // get edit page
     public function EditGet(Area $area){
         $data['area'] = $area;
+        $data['governorates'] = Governorate::where('deleted', 0)->get();
         return view('admin.area_edit' , ['data' => $data ]);
     }
 
     // edit area
     public function EditPost(Request $request, Area $area){
-        $post = $request->all();
-        if (isset($post['lat']) && isset($post['long'])) {
-            $geocode=file_get_contents('https://maps.googleapis.com/maps/api/geocode/json?latlng=' . $post['lat'] . ',' . $post['long'] . '&sensor=true&key=AIzaSyCMSfq40Bo2KuQvQVSQE1gmmgJdxEbDS0Y&libraries');
-            $output= json_decode($geocode);
-            // echo "<pre>";
-            // print_r($output);
-            // echo "</pre>";
-            // dd();
-            $post['formatted_address'] = $output->results[2]->formatted_address;
-        }
+        $post = $request->validate([
+            'title_en' => "required",
+            "title_ar" => "required",
+            "governorate_id" => "required"
+        ]);
+        // if (isset($post['lat']) && isset($post['long'])) {
+        //     $geocode=file_get_contents('https://maps.googleapis.com/maps/api/geocode/json?latlng=' . $post['lat'] . ',' . $post['long'] . '&sensor=true&key=AIzaSyCMSfq40Bo2KuQvQVSQE1gmmgJdxEbDS0Y&libraries');
+        //     $output= json_decode($geocode);
+        //     // echo "<pre>";
+        //     // print_r($output);
+        //     // echo "</pre>";
+        //     // dd();
+        //     $post['formatted_address'] = $output->results[2]->formatted_address;
+        // }
         // dd($post);
         $area->update($post);
 
-        return redirect()->route('areas.index');
+        return redirect()->route('areas.index')->with('success', __('messages.updated_successfully'));
     }
 
     // delete
@@ -63,25 +75,34 @@ class AreasController extends AdminController{
         return view('admin.area_details', ['data' => $data]);
     }
 
-    // get add delivery costs
-    public function add_deliver_cost_get(Area $area) {
-        $data['area'] = $area;
-        $d_areas = DeliveryArea::where('area_id', $area->id)->pluck('store_id')->toArray();
-        $data['stores'] = Shop::whereNotIn('id', $d_areas)->where('status', 1)->get();
+    // get add delivery costs by area
+    public function add_deliver_cost_get() {
+        $data['areas'] = Area::where('deleted', 0)->orderBy('title_ar', 'asc')->get();
 
-        return view('admin.deliver_cost_form', ['data' => $data]);
+        return view('admin.deliver_cost_form', compact('data'));
+    }
+
+    // get add delivery costs by governorate
+    public function addDeliveryCostByGovernorate() {
+        $data['governorates'] = Governorate::where('deleted', 0)->orderBy('id', 'desc')->get();
+
+        return view('admin.deliver_cost_governorates_form', compact('data'));
     }
 
     // post add delivery costs
-    public function add_deliver_cost_post(Request $request, Area $area) {
-        $post = $request->all();
-        $post['area_id'] = $area->id;
+    public function add_deliver_cost_post(Request $request) {
+        $post = $request->validate([
+            "delivery_cost" => 'required',
+            "estimated_arrival_time" => "required",
+            "area_id" => "required",
+            "store_id" => "required"
+        ]);
         DeliveryArea::create($post);
 
-        return redirect()->route('areas.show.delivercost', $area->id);
+        return redirect()->route('areas.show.delivercost', $request->area_id)->with('success', __('messages.added_successfully'));
     }
 
-    // show delivery costs
+    // show delivery costs by area
     public function show_delivery_costs(Area $area) {
         $data['area'] = $area;
         $data['costs'] = DeliveryArea::where('area_id', $area->id)->get();
@@ -120,7 +141,75 @@ class AreasController extends AdminController{
     public function deleteDeliveryCost(DeliveryArea $cost) {
         $cost->delete();
 
-        return redirect()->back();
+        return redirect()->back()->with('success', __('messages.deleted_successfully'));
+    }
+
+    // fetch stores by area
+    public function fetchStoresByArea($area) {
+        $deliveryArea = DeliveryArea::where('area_id', $area)->pluck('store_id')->toArray();
+
+        $rows = Shop::whereNotIn('id', $deliveryArea)->select('id', 'name')->orderBy('id', 'desc')->get();
+        
+        $data = json_decode(($rows));
+        
+        return response($data, 200);
+    }
+
+    // get add governorate
+    public function getAddGovernorate() {
+        return view('admin.governorate_form');
+    }
+
+    // post add governorate
+    public function postAddGovernorate(Request $request) {
+        $post = $request->validate([
+            'title_en' => 'required',
+            'title_ar' => 'required'
+        ]);
+
+        Governorate::create($post);
+
+        return redirect()->route('areas.governorates.index')->with('success', __('messages.added_successfully'));
+    }
+
+    // get governorates
+    public function getGovernorates() {
+        $data['governorates'] = Governorate::where('deleted', 0)->orderBy('id', 'desc')->get();
+
+        return view('admin.governorates', compact('data'));
+    }
+
+    // get edit governorate
+    public function getEditGovernorate(Governorate $governorate) {
+        $data['governorate'] = $governorate;
+
+        return view('admin.governorate_edit', compact('data'));
+    }
+
+    // post edit governorate
+    public function postEditGovernorate(Governorate $governorate, Request $request) {
+        $post = $request->validate([
+            'title_en' => "required",
+            "title_ar" => "required"
+        ]);
+
+        $governorate->update($post);
+
+        return redirect()->route('areas.governorates.index')->with('success', __('messages.updated_successfully'));
+    }
+
+    // get delete governorate
+    public function getDeleteGovernorate(Governorate $governorate) {
+        $governorate->update(['deleted' => 1]);
+
+        return redirect()->back()->with('success', __('messages.deleted_successfully'));
+    }
+
+    // get governorates details
+    public function getGovernorateDetails(Governorate $governorate) {
+        $data['governorate'] = $governorate;
+
+        return view('admin.governorate_details', compact('data'));
     }
 
     public function test() {

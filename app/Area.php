@@ -11,4 +11,8 @@ class Area extends Model
     public function stores() {
         return $this->belongsToMany('App\Shop', 'delivery_areas', 'area_id', 'store_id')->select("*");
     }
+
+    public function governorate() {
+        return $this->belongsTo('App\Governorate', 'governorate_id');
+    }
 }
