@@ -572,12 +572,12 @@
                         </a>
                         <ul class="collapse submenu list-unstyled show" id="deliver-cost" data-parent="#accordionExample">
                             @if(Auth::user()->add_data) 
-                                <li class="active add">
-                                    <a href="{{ route('areas.add.delivercost') }}"> {{ __('messages.add_by_areas') }} </a>
+                                <li class="active deliverycost">
+                                    <a href="{{ route('areas.byArea.delivercost') }}"> {{ __('messages.add_by_areas') }} </a>
                                 </li>
-                                {{--  <li class="active add-by-governorate">
+                                <li class="active add-by-governorate">
                                     <a href="{{ route('areas.add.deliveryCostByGovernorate') }}"> {{ __('messages.add_by_governorates') }} </a>
-                                </li>  --}}
+                                </li>
                             @endif
                             {{-- <li class="show-governorates" >
                                 <a href="{{ route('areas.governorates.index') }}"> {{ __('messages.show_governorates') }} </a>

@@ -239,8 +239,9 @@ Route::group([
         "prefix" => "deliver-cost"
     ], function($router){
         Route::get('show/deliverycost/{area}' , 'AreasController@show_delivery_costs')->name('areas.show.delivercost');
-        Route::get('add/deliverycost' , 'AreasController@add_deliver_cost_get')->name('areas.add.delivercost');
-        Route::post('add/deliverycost' , 'AreasController@add_deliver_cost_post');
+        Route::get('deliverycost' , 'AreasController@deliver_cost_areas')->name('areas.byArea.delivercost');
+        Route::get('add/deliverycost/{area}' , 'AreasController@getAddDeliveryByArea')->name('areas.add.byArea.delivercost');
+        Route::post('add/deliverycost/{area}' , 'AreasController@add_deliver_cost_post');
         Route::get('edit/deliverycost/{area}/{cost}' , 'AreasController@edit_delivery_cost_get')->name('edit_delivery_cost_get');
         Route::post('edit/deliverycost/{area}/{cost}' , 'AreasController@edit_delivery_cost_post');
         Route::get('delete/deliverycost/{cost}' , 'AreasController@deleteDeliveryCost')->name('delete_delivery_cost_get');

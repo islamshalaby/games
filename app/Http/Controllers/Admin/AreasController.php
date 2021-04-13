@@ -75,18 +75,34 @@ class AreasController extends AdminController{
         return view('admin.area_details', ['data' => $data]);
     }
 
-    // get add delivery costs by area
-    public function add_deliver_cost_get() {
+    // get add delivery by area
+    public function getAddDeliveryByArea($area) {
+        $data['stores'] = Shop::where('status', 1)->orderBy('id', 'desc')->get();
+        $data['area_id'] = $area;
+
+        return view('admin.deliver_cost_areas_form', compact('data'));
+    }
+
+    // get add delivery by governorate
+    public function getAddDeliveryByGovernorate($governorate) {
+        $data['stores'] = Shop::where('status', 1)->orderBy('id', 'desc')->get();
+        $areas = Area::where('deleted', 0)->where('governorate_id', $governorate)->pluck('id')->toArray();
+
+        return view('admin.deliver_cost_areas_form', compact('data'));
+    }
+
+    // get delivery costs by area
+    public function deliver_cost_areas() {
         $data['areas'] = Area::where('deleted', 0)->orderBy('title_ar', 'asc')->get();
 
-        return view('admin.deliver_cost_form', compact('data'));
+        return view('admin.deliver_cost_areas', compact('data'));
     }
 
     // get add delivery costs by governorate
     public function addDeliveryCostByGovernorate() {
         $data['governorates'] = Governorate::where('deleted', 0)->orderBy('id', 'desc')->get();
 
-        return view('admin.deliver_cost_governorates_form', compact('data'));
+        return view('admin.deliver_cost_governorates', compact('data'));
     }
 
     // post add delivery costs
@@ -97,9 +113,14 @@ class AreasController extends AdminController{
             "area_id" => "required",
             "store_id" => "required"
         ]);
-        DeliveryArea::create($post);
+        $deliveryArea = DeliveryArea::where('area_id', $request->area_id)->where('store_id', $request->store_id)->first();
+        if ($deliveryArea) {
+            $deliveryArea->update($post);
+        }else {
+            DeliveryArea::create($post);
+        }
 
-        return redirect()->route('areas.show.delivercost', $request->area_id)->with('success', __('messages.added_successfully'));
+        return redirect()->back()->with('success', __('messages.added_successfully'));
     }
 
     // show delivery costs by area
@@ -148,7 +169,7 @@ class AreasController extends AdminController{
     public function fetchStoresByArea($area) {
         $deliveryArea = DeliveryArea::where('area_id', $area)->pluck('store_id')->toArray();
 
-        $rows = Shop::whereNotIn('id', $deliveryArea)->select('id', 'name')->orderBy('id', 'desc')->get();
+        $rows = Shop::whereNotIn('id', $deliveryArea)->where('status', 1)->select('id', 'name')->orderBy('id', 'desc')->get();
         
         $data = json_decode(($rows));
         
