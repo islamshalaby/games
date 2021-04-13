@@ -79,6 +79,7 @@ class AreasController extends AdminController{
     public function getAddDeliveryByArea($area) {
         $data['stores'] = Shop::where('status', 1)->orderBy('id', 'desc')->get();
         $data['area_id'] = $area;
+        $data['area'] = Area::where('id', $area)->first();
 
         return view('admin.deliver_cost_areas_form', compact('data'));
     }
@@ -87,8 +88,10 @@ class AreasController extends AdminController{
     public function getAddDeliveryByGovernorate($governorate) {
         $data['stores'] = Shop::where('status', 1)->orderBy('id', 'desc')->get();
         $areas = Area::where('deleted', 0)->where('governorate_id', $governorate)->pluck('id')->toArray();
+        $data['governorate_id'] = $governorate;
+        $data['governorate'] = Governorate::where('id', $governorate)->first();
 
-        return view('admin.deliver_cost_areas_form', compact('data'));
+        return view('admin.deliver_cost_governorates_form', compact('data'));
     }
 
     // get delivery costs by area
@@ -117,6 +120,27 @@ class AreasController extends AdminController{
         if ($deliveryArea) {
             $deliveryArea->update($post);
         }else {
+            DeliveryArea::create($post);
+        }
+
+        return redirect()->back()->with('success', __('messages.added_successfully'));
+    }
+
+    // post add delivery costs by governorate
+    public function add_deliver_cost_post_by_governorate(Request $request) {
+        $post = $request->validate([
+            "delivery_cost" => 'required',
+            "estimated_arrival_time" => "required",
+            "store_id" => "required",
+            "governorate_id" => "required"
+        ]);
+        $areas = Area::where('deleted', 0)->where('governorate_id', $post['governorate_id'])->pluck('id')->toArray();
+        $store = Shop::where('id', $post['store_id'])->first();
+        $store->areas()->delete();
+        
+        for ($i = 0; $i < count($areas); $i ++) {
+            $post['area_id'] = $areas[$i];
+
             DeliveryArea::create($post);
         }
 

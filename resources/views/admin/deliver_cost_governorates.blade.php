@@ -43,7 +43,7 @@
                                 <td><?=$i;?></td>
                                 <td>{{ App::isLocale('en') ? $governorate->title_en : $governorate->title_ar }}</td>
                                 @if(Auth::user()->add_data) 
-                                    <td class="text-center blue-color" ><a href="#" target="_blank"><i class="far fa-eye"></i></a></td>
+                                    <td class="text-center blue-color" ><a href="{{ route('areas.adddelivery.deliveryCostByGovernorate', $governorate->id) }}" target="_blank"><i class="far fa-eye"></i></a></td>
                                 @endif                          
                                 <?php $i++; ?>
                             </tr>

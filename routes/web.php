@@ -247,6 +247,8 @@ Route::group([
         Route::get('delete/deliverycost/{cost}' , 'AreasController@deleteDeliveryCost')->name('delete_delivery_cost_get');
         Route::get('fetch-stores-by-area/{area}' , 'AreasController@fetchStoresByArea');
         Route::get('add-by-governorate' , 'AreasController@addDeliveryCostByGovernorate')->name('areas.add.deliveryCostByGovernorate');
+        Route::get('adddelivery-by-governorate/{governorate}' , 'AreasController@getAddDeliveryByGovernorate')->name('areas.adddelivery.deliveryCostByGovernorate');
+        Route::post('adddelivery-by-governorate/{governorate}' , 'AreasController@add_deliver_cost_post_by_governorate');
     });
 
     // Brands Route
