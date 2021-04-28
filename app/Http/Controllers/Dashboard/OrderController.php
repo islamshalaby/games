@@ -49,9 +49,11 @@ class OrderController extends Controller
                 $data['method'] = $request->method;
                 $data['orders'] = $data['orders']->where('orders.payment_method', $request->method);
             }
-            if(isset($request->order_status) && $request->order_status != 0) {
+            if(isset($request->order_status)) {
                 $data['order_status'] = $request->order_status;
-                $data['orders'] = $data['orders']->where('orders.status', $request->order_status);
+                if ($request->order_status != 0) {
+                    $data['orders'] = $data['orders']->where('orders.status', $request->order_status);
+                }
             }
         }
         

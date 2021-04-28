@@ -210,9 +210,11 @@ class WebViewController extends Controller
             $data['orders'] = $data['orders']
             ->where('orders.payment_method', $request->method);
         }
-        if(isset($request->order_status) && $request->order_status != 0){
+        if(isset($request->order_status)){
             $data['order_status'] = $request->order_status;
-            $data['orders'] = $data['orders']->where('order_items.status', $request->order_status);
+            if ($request->order_status != 0) {
+                $data['orders'] = $data['orders']->where('order_items.status', $request->order_status);
+            }
         }
         $data['shop'] = Shop::where('id', $request->id)->select('name', 'logo')->first();
         $data['sum_final_price'] = $data['orders']->sum('final_price');
