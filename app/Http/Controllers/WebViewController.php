@@ -114,7 +114,7 @@ class WebViewController extends Controller
             }else if(isset($request->method)) {
                 $data['method'] = $request->method;
                 $data['orders'] = $data['orders']->where('orders.payment_method', $request->method);
-            }else if(isset($request->order_status)) {
+            }else if(isset($request->order_status) && $request->order_status != 0) {
                 $data['order_status'] = $request->order_status;
                 $data['orders'] = $data['orders']->where('orders.status', $request->order_status);
             }
@@ -210,7 +210,7 @@ class WebViewController extends Controller
             $data['orders'] = $data['orders']
             ->where('orders.payment_method', $request->method);
         }
-        if(isset($request->order_status)){
+        if(isset($request->order_status) && $request->order_status != 0){
             $data['order_status'] = $request->order_status;
             $data['orders'] = $data['orders']->where('order_items.status', $request->order_status);
         }
