@@ -203,6 +203,9 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                         if(isset($data['order_status2'])) {
                             $queryArray['order_status2'] = $data['order_status2'];
                         }
+                        if(isset($data['shop'])) {
+                            $queryArray['shop'] = $data['shop'];
+                        }
                     @endphp
                     <a href="{{ route('webview.deliveryReport', $queryArray) }}" target="_blank" class="btn btn-primary">{{ __('messages.print') . ' ' . __('messages.delivery_reports') }}</a>
                 </div>

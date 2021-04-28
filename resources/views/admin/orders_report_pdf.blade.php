@@ -69,10 +69,6 @@
                                         {{ __('messages.canceled_from_admin') }}
                                         @endif
                                     @endif
-                                    @if(isset($data['shop']))
-                                    - 
-                                    {{ $data['shop_name']['name'] }}
-                                    @endif
                                 </b>
                             </td>
                             

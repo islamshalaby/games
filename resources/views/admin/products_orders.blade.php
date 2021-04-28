@@ -251,7 +251,7 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                             <tr>
                                 <td><?=$i;?></td>
                                 <td>
-                                    <a target="_blank" href="{{ route('orders.details', 1) }}">
+                                    <a target="_blank" href="{{ route('orders.details', $order->order->main_id) }}">
                                         {{ $order->order ? $order->order->main->main_order_number : '' }}
                                     </a>
                                 </td>
@@ -272,7 +272,7 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                                 <td>{{ $order->order ? $order->order->store->name : '' }}</td>
                                 <td>{{ $order->created_at->format("d-m-y") }}</td>
                                 <td>
-                                    <a target="_blank" href="{{ route('users.details', 1) }}">
+                                    <a target="_blank" href="{{ route('users.details', $order->order->user_id) }}">
                                     {{ $order->order ? $order->order->user->name : '' }}
                                     </a>
                                 </td>
