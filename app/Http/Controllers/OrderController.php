@@ -108,8 +108,9 @@ class OrderController extends Controller
                                 $response = APIHelpers::createApiResponse(true , 406 , 'The remaining amount of the product is not enough' , 'الكميه المتبقيه من المنتج غير كافيه'  , null , $request->lang);
                                 return response()->json($response , 406);
                             }
-                            $single_product = Product::select('id', 'remaining_quantity')->where('id', $store_products[$n]['product_id'])->first();
+                            $single_product = Product::select('id', 'remaining_quantity', 'sold_count')->where('id', $store_products[$n]['product_id'])->first();
                             $single_product->remaining_quantity = $single_product->remaining_quantity - $store_products[$n]['count'];
+                            $single_product->sold_count = $single_product->sold_count - $store_products[$n]['count'];
                             $single_product->save();
                             // var_dump($store_products[$n]->product->final_price * $store_products[$n]['count']);
                             $subtotal_price = $subtotal_price + ($store_products[$n]->product->final_price * $store_products[$n]['count']);
@@ -200,8 +201,9 @@ class OrderController extends Controller
                                 $response = APIHelpers::createApiResponse(true , 406 , 'The remaining amount of the product is not enough' , 'الكميه المتبقيه من المنتج غير كافيه'  , null , $request->lang);
                                 return response()->json($response , 406);
                             }
-                            $single_product = Product::select('id', 'remaining_quantity')->where('id', $store_products[$n]['product_id'])->first();
+                            $single_product = Product::select('id', 'remaining_quantity', 'sold_count')->where('id', $store_products[$n]['product_id'])->first();
                             $single_product->remaining_quantity = $single_product->remaining_quantity - $store_products[$n]['count'];
+                            $single_product->sold_count = $single_product->sold_count + $store_products[$n]['count'];
                             $single_product->save();
                             $subtotal_price = $subtotal_price + ($store_products[$n]->product->final_price * $store_products[$n]['count']);
                             
@@ -264,7 +266,6 @@ class OrderController extends Controller
             curl_close($curl_session);
             $result = json_decode($result);
             $data['url'] = $result->Data->InvoiceURL;
-            
             
         }else {
             $main_order = MainOrder::create([
@@ -443,6 +444,7 @@ class OrderController extends Controller
                         }
                         $single_product = Product::select('id', 'remaining_quantity')->where('id', $store_products[$n]['product_id'])->first();
                         $single_product->remaining_quantity = $single_product->remaining_quantity - $store_products[$n]['count'];
+                        $single_product->sold_count = $single_product->sold_count + $store_products[$n]['count'];
                         $single_product->save();
                         if ($store_products[$n]['option_id'] != 0) {
                             $m_option = ProductMultiOption::find($store_products[$n]['option_id']);
@@ -613,6 +615,7 @@ class OrderController extends Controller
         ]);
 
         $item->product->remaining_quantity = $item->product->remaining_quantity + $item->count;
+        $item->product->sold_count = $item->product->sold_count - $item->count;
         $item->product->save();
         
         $orderStatus = $item->order->status;

@@ -36,12 +36,24 @@ class OptionsController extends AdminController{
 
     // add post
     public function addPost(Request $request) {
+        $request->validate([
+            'title_en' => 'required',
+            'title_ar' => 'required',
+            'category_ids' => 'required',
+            'property_values_en' => 'required',
+            'property_values_ar' => 'required'
+        ]);
+        $values_en = explode(',', $request->property_values_en);
+        $values_ar = explode(',', $request->property_values_ar);
+        if (count($values_en) != count($values_ar)) {
+            return redirect()->back()->with('fail', __('messages.values_number_should'));
+        }
         $post = $request->except(['category_ids', 'property_values_en', 'property_values_ar']);
         $option = Option::create($post);
+
+        $option->categories()->sync($request->category_ids);
         
         if (isset($request->property_values_en) && isset($request->property_values_ar)) {
-            $values_en = explode(',', $request->property_values_en);
-            $values_ar = explode(',', $request->property_values_ar);
         
             if (count($values_en) == count($values_ar)) {
                 for ($i = 0; $i < count($values_en); $i ++) {

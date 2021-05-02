@@ -54,7 +54,7 @@
                 </select>
             </div>
             <div class="form-group mb-4">
-                <label for="title_en">{{ __('messages.value_en') }}</label><br/>
+                <label for="title_en">{{ __('messages.value_en') }} ( {{ __('messages.values_number_should') }} )</label><br/>
                 <input type="text" name="property_values_en" class="form-control" value="
                 @if(count($data['option']->values) > 0)
                 @php
@@ -70,7 +70,7 @@
                 " data-role="tagsinput"></input>
             </div>
             <div class="form-group mb-4">
-                <label for="value_ar">{{ __('messages.value_ar') }}</label><br/>
+                <label for="value_ar">{{ __('messages.value_ar') }} ( {{ __('messages.values_number_should') }} )</label><br/>
                 <input type="text" name="property_values_ar" class="form-control" value="
                 @if(count($data['option']->values) > 0)
                 @php

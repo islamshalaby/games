@@ -139,6 +139,10 @@ class OrderController extends Controller
             if ($request->status == 3) {
                 $order->oItems[$i]->update(['status' => $request->status, 'delivered_at' => date("Y-m-d H:i:s")]);
             }else {
+                if (in_array($request->status, [4, 9])) {
+                    $order->oItems[$i]->product->sold_count = $order->oItems[$i]->product->sold_count - $order->oItems[$i]->count;
+                    $order->oItems[$i]->save();
+                }
                 $order->oItems[$i]->update(['status' => $request->status]);
             }
             
@@ -152,6 +156,10 @@ class OrderController extends Controller
     public function updateItemStatus(Request $request, OrderItem $item) {
         
         $item->update(['status' => $request->status]);
+        if (in_array($request->status, [4, 9])) {
+            $item->product->sold_count = $item->product->sold_count - $item->count;
+            $item->product->save();
+        }
         $order_status = 0;
         $main_order_inprogress = 0;
         $main_order_delivered = 0;
@@ -162,8 +170,6 @@ class OrderController extends Controller
                 $order_status ++;
             }
         }
-
-        
 
         if ($order_status == count($item->order->oItems)) {
             $item->order->update(['status' => $item->order->oItems[0]->status]);
