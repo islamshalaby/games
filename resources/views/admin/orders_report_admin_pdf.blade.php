@@ -49,24 +49,10 @@
                                     @endif
                                     @if(isset($data['order_status2']))
                                     - 
-                                        @if ($data['order_status2'] == 1)
-                                        {{ __('messages.in_progress') }}
-                                        @elseif($data['order_status2'] == 2)
-                                        {{ __('messages.order_confirmed') }}
-                                        @elseif($data['order_status2'] == 3)
-                                        {{ __('messages.delivered') }}
-                                        @elseif($data['order_status2'] == 4)
-                                        {{ __('messages.canceled_from_user') }}
-                                        @elseif($data['order_status2'] == 5)
-                                        {{ __('messages.refund_request') }}
-                                        @elseif($data['order_status2'] == 6)
-                                        {{ __('messages.refund_accepted') }}
-                                        @elseif($data['order_status2'] == 7)
-                                        {{ __('messages.refund_rejected') }}
-                                        @elseif($data['order_status2'] == 8)
-                                        {{ __('messages.received_refund') }}
-                                        @elseif($data['order_status2'] == 9)
-                                        {{ __('messages.canceled_from_admin') }}
+                                        @if ($data['order_status2'] == 'opened')
+                                        {{ __('messages.opened') }}
+                                        @elseif($data['order_status2'] == 'closed')
+                                        {{ __('messages.closed') }}
                                         @endif
                                     @endif
                                     @if(isset($data['shop']))
@@ -194,24 +180,10 @@
                     @endif
                 </td>
                 <td style="padding: 5px;vertical-align: top;text-align: center;border-bottom: 1px solid #eee;">
-                    @if ($order->status == 1)
-                    {{ __('messages.in_progress') }}
-                    @elseif($order->status == 2)
-                    {{ __('messages.order_confirmed') }}
-                    @elseif($order->status == 3)
-                    {{ __('messages.delivered') }}
-                    @elseif($order->status == 4)
-                    {{ __('messages.canceled_from_user') }}
-                    @elseif($order->status == 5)
-                    {{ __('messages.refund_request') }}
-                    @elseif($order->status == 6)
-                    {{ __('messages.refund_accepted') }}
-                    @elseif($order->status == 7)
-                    {{ __('messages.refund_rejected') }}
-                    @elseif($order->status == 8)
-                    {{ __('messages.received_refund') }}
-                    @elseif($order->status == 9)
-                    {{ __('messages.canceled_from_admin') }}
+                    @if (in_array($order->status, [1, 2, 5]))
+                    {{ __('messages.opened') }}
+                    @else
+                    {{ __('messages.closed') }}
                     @endif
                 </td>
                 <td style="padding: 5px;vertical-align: top;text-align: center;border-bottom: 1px solid #eee;">

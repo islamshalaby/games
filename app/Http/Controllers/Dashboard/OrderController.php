@@ -50,9 +50,13 @@ class OrderController extends Controller
                 $data['orders'] = $data['orders']->where('orders.payment_method', $request->method);
             }
             if(isset($request->order_status)) {
+                $statusArray = [1, 2, 5];
+                if ($request->order_status == 2) {
+                    $statusArray = [3, 4, 6, 7, 8, 9];
+                }
                 $data['order_status'] = $request->order_status;
                 if ($request->order_status != 0) {
-                    $data['orders'] = $data['orders']->where('orders.status', $request->order_status);
+                    $data['orders'] = $data['orders']->whereIn('orders.status', $statusArray);
                 }
             }
         }

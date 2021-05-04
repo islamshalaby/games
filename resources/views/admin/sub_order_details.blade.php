@@ -65,26 +65,10 @@
                         <tr>
                             <td class="label-table" > {{ __('messages.status') }} </td>
                             <td>
-                                @if ($data['order']->status == 1)
-                                {{ __('messages.in_progress') }}
-                                @elseif($data['order']->status == 2)
-                                {{ __('messages.order_confirmed') }}
-                                @elseif($data['order']->status == 3)
-                                {{ __('messages.delivered') }}
-                                @elseif($data['order']->status == 4)
-                                {{ __('messages.canceled_from_user') }}
-                                @elseif($data['order']->status == 5)
-                                <a href="{{ route('refund.details', $item->refund->id) }}" target="_blank">
-                                    {{ __('messages.refund_request') }}
-                                </a>
-                                @elseif($data['order']->status == 6)
-                                {{ __('messages.refund_accepted') }}
-                                @elseif($data['order']->status == 7)
-                                {{ __('messages.refund_rejected') }}
-                                @elseif($data['order']->status == 8)
-                                {{ __('messages.received_refund') }}
-                                @elseif($data['order']->status == 9)
-                                {{ __('messages.canceled_from_admin') }}
+                                @if (in_array($data['order']->status, [1, 2, 5]))
+                                {{ __('messages.opened') }}
+                                @else
+                                {{ __('messages.closed') }}
                                 @endif
                             </td>
                         </tr>  
@@ -126,7 +110,7 @@
                         {{ __('messages.cancel_order') }}
                     </a>
                     @endif
-                    @if( !in_array($data['order']->status, [3, 4, 9])) 
+                    {{--  @if( !in_array($data['order']->status, [3, 4, 9])) 
                     <form action="{{ route('orders.subo.action', $data['order']->id) }}" >
                         <select id="statusSelect" name="status" class="form-control statusSelect">
                             <option selected>{{ __('messages.select') }}</option>
@@ -135,7 +119,7 @@
                             <option {{ $data['order']->status == 3 ? 'selected' : '' }} value="3">{{ __('messages.delivered') }}</option>
                         </select>
                     </form>
-                    @endif
+                    @endif  --}}
                 </p>
                 <table class="table table-bordered mb-4">
                     <thead>

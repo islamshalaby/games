@@ -122,7 +122,7 @@
                     {{ $item->final_price }} {{ __('messages.dinar') }}
                 </td>
                 <td style="padding: 5px;vertical-align: top;text-align: center;border-bottom: 1px solid #eee;">
-                    {{ (double)$item->product->final_price * (double)$item->count }} {{ __('messages.dinar') }}
+                    {{ (double)$item->final_price * (double)$item->count }} {{ __('messages.dinar') }}
                 </td>
                 <td style="padding: 5px;vertical-align: top;text-align: center;border-bottom: 1px solid #eee;">
                     @if ($item->status == 1)
@@ -132,15 +132,13 @@
                     @elseif($item->status == 3)
                     {{ __('messages.delivered') }}
                     @elseif($item->status == 4)
-                    {{ __('messages.order_canceled') }}
-                    @elseif($item->status == 5)
-                    {{-- <a href="{{ route('refund.details', $item->refund->id) }}" target="_blank"> --}}
-                        {{ __('messages.refund_request') }}
-                    {{-- </a> --}}
+                    {{ __('messages.canceled_from_user') }}
                     @elseif($item->status == 6)
                     {{ __('messages.refund_accepted') }}
                     @elseif($item->status == 7)
                     {{ __('messages.refund_rejected') }}
+                    @elseif($item->status == 9)
+                    {{ __('messages.canceled_from_admin') }}
                     @endif
                 </td>
             </tr>

@@ -156,15 +156,8 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                                 <select required id="orderStatus" name="order_status2" class="form-control">
                                     <option disabled selected>{{ __('messages.select') }}</option>
                                     
-                                    <option {{ isset($data['order_status2']) && $data['order_status2'] == 1 ? 'selected' : '' }} value="1">{{ __('messages.in_progress') }}</option>
-                                    <option {{ isset($data['order_status2']) && $data['order_status2'] == 2 ? 'selected' : '' }} value="2">{{ __('messages.order_confirmed') }}</option>
-                                    <option {{ isset($data['order_status2']) && $data['order_status2'] == 3 ? 'selected' : '' }} value="3">{{ __('messages.delivered') }}</option>
-                                    <option {{ isset($data['order_status2']) && $data['order_status2'] == 4 ? 'selected' : '' }} value="4">{{ __('messages.canceled_from_user') }}</option>
-                                    <option {{ isset($data['order_status2']) && $data['order_status2'] == 5 ? 'selected' : '' }} value="5">{{ __('messages.refund_request') }}</option>
-                                    <option {{ isset($data['order_status2']) && $data['order_status2'] == 6 ? 'selected' : '' }} value="6">{{ __('messages.refund_accepted') }}</option>
-                                    <option {{ isset($data['order_status2']) && $data['order_status2'] == 7 ? 'selected' : '' }} value="7">{{ __('messages.refund_rejected') }}</option>
-                                    <option {{ isset($data['order_status2']) && $data['order_status2'] == 8 ? 'selected' : '' }} value="8">{{ __('messages.received_refund') }}</option>
-                                    <option {{ isset($data['order_status2']) && $data['order_status2'] == 9 ? 'selected' : '' }} value="9">{{ __('messages.canceled_from_admin') }}</option>
+                                    <option {{ isset($data['order_status2']) && $data['order_status2'] == 'opened' ? 'selected' : '' }} value="opened">{{ __('messages.opened') }}</option>
+                                    <option {{ isset($data['order_status2']) && $data['order_status2'] == 'closed' ? 'selected' : '' }} value="closed">{{ __('messages.closed') }}</option>
                                 </select>
                                         
                             </div>
@@ -279,24 +272,10 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                                     @endif
                                 </td>
                                 <td>
-                                    @if ($order->status == 1)
-                                    {{ __('messages.in_progress') }}
-                                    @elseif($order->status == 2)
-                                    {{ __('messages.order_confirmed') }}
-                                    @elseif($order->status == 3)
-                                    {{ __('messages.delivered') }}
-                                    @elseif($order->status == 4)
-                                    {{ __('messages.canceled_from_user') }}
-                                    @elseif($order->status == 5)
-                                    {{ __('messages.refund_request') }}
-                                    @elseif($order->status == 6)
-                                    {{ __('messages.refund_accepted') }}
-                                    @elseif($order->status == 7)
-                                    {{ __('messages.refund_rejected') }}
-                                    @elseif($order->status == 8)
-                                    {{ __('messages.received_refund') }}
-                                    @elseif($order->status == 9)
-                                    {{ __('messages.canceled_from_admin') }}
+                                    @if (in_array($order->status, [1, 2, 5]))
+                                    {{ __('messages.opened') }}
+                                    @else
+                                    {{ __('messages.closed') }}
                                     @endif
                                 </td>
                                 <td>{{ $order->subtotal_price . " " . __('messages.dinar') }}</td>

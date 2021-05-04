@@ -47,6 +47,6 @@ class User extends Authenticatable implements JWTSubject
     }
 
     public function addresses() {
-        return $this->hasMany('App\UserAddress', 'user_id');
+        return $this->hasMany('App\UserAddress', 'user_id')->where('deleted', 0);
     }
 }

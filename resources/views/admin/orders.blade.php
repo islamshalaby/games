@@ -153,10 +153,8 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                             <select required id="orderStatus" name="order_status2" class="form-control">
                                 <option disabled selected>{{ __('messages.select') }}</option>
                                 
-                                <option {{ isset($data['order_status2']) && $data['order_status2'] == 1 ? 'selected' : '' }} value="1">{{ __('messages.in_progress') }}</option>
-                                <option {{ isset($data['order_status2']) && $data['order_status2'] == 3 ? 'selected' : '' }} value="3">{{ __('messages.delivered') }}</option>
-                                <option {{ isset($data['order_status2']) && $data['order_status2'] == 4 ? 'selected' : '' }} value="4">{{ __('messages.canceled_from_user') }}</option>
-                                <option {{ isset($data['order_status2']) && $data['order_status2'] == 9 ? 'selected' : '' }} value="9">{{ __('messages.canceled_from_admin') }}</option>
+                                <option {{ isset($data['order_status2']) && $data['order_status2'] == 'opened' ? 'selected' : '' }} value="opened">{{ __('messages.opened') }}</option>
+                                <option {{ isset($data['order_status2']) && $data['order_status2'] == 'closed' ? 'selected' : '' }} value="closed">{{ __('messages.closed') }}</option>
                             </select>
                         </div>
                     </div>

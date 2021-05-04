@@ -20,7 +20,8 @@ class UserAddress extends Model
         'extra_details', 
         'user_id', 
         'phone', 
-        'piece'
+        'piece',
+        'deleted'
     ];
 
     public function area() {

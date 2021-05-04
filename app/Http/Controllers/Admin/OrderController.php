@@ -28,8 +28,13 @@ class OrderController extends AdminController{
         }else{
             $data['orders'] = MainOrder::join('user_addresses', 'user_addresses.id', '=', 'main_orders.address_id');
             if(isset($request->order_status2)){
+                $statusArray = [1];
+                if ($request->order_status2 == 'closed') {
+                    $statusArray = [3, 4, 9];
+                }
+                
                 $data['order_status2'] = $request->order_status2;
-                $data['orders'] = $data['orders']->where('status', $request->order_status2);
+                $data['orders'] = $data['orders']->whereIn('status', $statusArray);
             }
             if(isset($request->area_id)){
                 $data['area'] = Area::where('id', $request->area_id)->select('id', 'title_en', 'title_ar')->first();
@@ -82,8 +87,12 @@ class OrderController extends AdminController{
                 $data['orders'] = $data['orders']->where('orders.payment_method', $request->method);
             }
             if(isset($request->order_status2)){
+                $statusArray = [1, 2, 5];
+                if ($request->order_status2 == 'closed') {
+                    $statusArray = [3, 4, 6, 7, 8, 9];
+                }
                 $data['order_status2'] = $request->order_status2;
-                $data['orders'] = $data['orders']->where('orders.status', $request->order_status2);
+                $data['orders'] = $data['orders']->whereIn('orders.status', $statusArray);
             }
             if(isset($request->shop)){
                 $data['shop'] = $request->shop;
@@ -646,7 +655,13 @@ class OrderController extends AdminController{
                 'total_price' => '0.000',
                 'status' => 9]);
             }else {
+                $subOrderStatus = $orderItem->order->status;
+                if (count($orderItem->order->deliveredOrders) + count($orderItem->order->canceledItems) 
+                == count($orderItem->order->oItems)) {
+                    $subOrderStatus = 3;
+                } 
                 $orderItem->order->update(['subtotal_price' => $orderItem->order->subtotal_price - $orderItemPrice,
+                'status' => $subOrderStatus,
                 'total_price' => $orderItem->order->total_price - $orderItemPrice]);
             }
 

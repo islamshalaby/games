@@ -80,11 +80,9 @@
                             <td class="label-table" > {{ __('messages.status') }} </td>
                             <td>
                                 @if($data['order']->status == 1)
-                                {{ __('messages.in_progress') }}
-                                @elseif ($data['order']->status == 3)
-                                {{ __('messages.delivered') }}
+                                {{ __('messages.opened') }}
                                 @else
-                                {{ __('messages.canceled') }}
+                                {{ __('messages.closed') }}
                                 @endif
                                 @if (!in_array($data['order']->status, [3, 4, 9]))
                                 <a style="margin-bottom: 5px" href="{{ route('orders.cancel', ['main', $data['order']->id]) }}" onclick='return confirm("{{ __('messages.are_you_sure') }}");' class="btn btn-sm btn-danger hide_col">

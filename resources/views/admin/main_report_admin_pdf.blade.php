@@ -49,24 +49,10 @@
                                     @endif
                                     @if(isset($data['order_status2']))
                                     - 
-                                        @if ($data['order_status2'] == 1)
-                                        {{ __('messages.in_progress') }}
-                                        @elseif($data['order_status2'] == 2)
-                                        {{ __('messages.order_confirmed') }}
-                                        @elseif($data['order_status2'] == 3)
-                                        {{ __('messages.delivered') }}
-                                        @elseif($data['order_status2'] == 4)
-                                        {{ __('messages.canceled_from_user') }}
-                                        @elseif($data['order_status2'] == 5)
-                                        {{ __('messages.refund_request') }}
-                                        @elseif($data['order_status2'] == 6)
-                                        {{ __('messages.refund_accepted') }}
-                                        @elseif($data['order_status2'] == 7)
-                                        {{ __('messages.refund_rejected') }}
-                                        @elseif($data['order_status2'] == 8)
-                                        {{ __('messages.received_refund') }}
-                                        @elseif($data['order_status2'] == 9)
-                                        {{ __('messages.canceled_from_admin') }}
+                                        @if ($data['order_status2'] == 'opened')
+                                        {{ __('messages.opened') }}
+                                        @else
+                                        {{ __('messages.closed') }}
                                         @endif
                                     @endif
                                     

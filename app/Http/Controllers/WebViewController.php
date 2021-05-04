@@ -115,8 +115,12 @@ class WebViewController extends Controller
                 $data['method'] = $request->method;
                 $data['orders'] = $data['orders']->where('orders.payment_method', $request->method);
             }else if(isset($request->order_status) && $request->order_status != 0) {
+                $statusArray = [1, 2, 5];
+                if ($request->order_status == 2) {
+                    $statusArray = [3, 4, 6, 7, 8, 9];
+                }
                 $data['order_status'] = $request->order_status;
-                $data['orders'] = $data['orders']->where('orders.status', $request->order_status);
+                $data['orders'] = $data['orders']->whereIn('orders.status', $statusArray);
             }
         }
         $data['shop'] = Shop::where('id', $request->id)->select('name', 'logo')->first();
@@ -161,8 +165,12 @@ class WebViewController extends Controller
                 $data['orders'] = $data['orders']->where('orders.payment_method', $request->method);
             }
             if(isset($request->order_status2)){
+                $statusArray = [1, 2, 5];
+                if ($request->order_status == 'closed') {
+                    $statusArray = [3, 4, 6, 7, 8, 9];
+                }
                 $data['order_status2'] = $request->order_status2;
-                $data['orders'] = $data['orders']->where('orders.status', $request->order_status2);
+                $data['orders'] = $data['orders']->whereIn('orders.status', $statusArray);
             }
             if(isset($request->shop)){
                 $data['shop'] = $request->shop;
@@ -296,8 +304,12 @@ class WebViewController extends Controller
         }else{
             $data['orders'] = MainOrder::join('user_addresses', 'user_addresses.id', '=', 'main_orders.address_id');
             if(isset($request->order_status2)){
+                $statusArray = [1];
+                if ($request->order_status2 == 'closed') {
+                    $statusArray = [3, 4, 9];
+                }
                 $data['order_status2'] = $request->order_status2;
-                $data['orders'] = $data['orders']->where('status', $request->order_status2);
+                $data['orders'] = $data['orders']->whereIn('status', $statusArray);
             }
             if(isset($request->area_id)){
                 $data['area'] = Area::where('id', $request->area_id)->select('id', 'title_en', 'title_ar')->first();

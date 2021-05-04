@@ -518,6 +518,11 @@ class OrderController extends Controller
         $user_id = auth()->user()->id;
         $orders = MainOrder::where('user_id' , $user_id)->select('id' , 'total_price' , 'main_order_number' , 'created_at', 'status')->orderBy('id' , 'desc')->get();
         for($i = 0; $i < count($orders); $i++){
+            if ($orders[$i]->status == 1) {
+                $orders[$i]->status = 1;
+            }else {
+                $orders[$i]->status = 2;
+            }
             $items = OrderItem::join('orders','orders.id', '=','order_items.order_id')
             ->where('main_orders.id', $orders[$i]['id'])
             ->leftjoin('main_orders', function($join) {
@@ -553,6 +558,7 @@ class OrderController extends Controller
         $order['date'] = $order['created_at']->format('Y-m-d');
         $address = UserAddress::find($order['address_id'])->makeHidden(['area_id', 'area_with_select', 'created_at', 'updated_at']);
         $data['order'] = $order;
+        // dd($order);
         $stores = $order->orders_with_select->makeHidden(['store', 'oItems']);
         
         if (count($stores) > 0) {
@@ -562,6 +568,11 @@ class OrderController extends Controller
                 $address = UserAddress::where('id', $order['address_id'])->first();
                 $deliveryArea = DeliveryArea::where('area_id', $address['area_id'])->where('store_id', $stores[$i]->store->id)->first();
                 $stores[$i]['estimated_arrival_time'] = $deliveryArea['estimated_arrival_time'];
+                if (in_array($stores[$i]['status'], [1, 2, 5])) {
+                    $stores[$i]['status'] = 1;
+                }else {
+                    $stores[$i]['status'] = 2;
+                }
                 $products = [];
                 if (count($stores[$i]->oItems) > 0) {
                     for ($n = 0; $n < count($stores[$i]->oItems); $n ++) {

@@ -22,7 +22,7 @@ class AddressController extends Controller
 
     public function getaddress(Request $request){
         $user = auth()->user();
-        $address = UserAddress::where('user_id' , $user->id)->orderBy('id' , 'desc')->get();
+        $address = UserAddress::where('user_id' , $user->id)->where('deleted', 0)->orderBy('id' , 'desc')->get();
 
         for($i = 0; $i < count($address); $i++){
             if($request->lang == 'en'){
@@ -99,9 +99,9 @@ class AddressController extends Controller
         $address = UserAddress::find($request->address_id);
         if($address){
             if($address->user_id == $user_id){
-                $address->delete();
+                $address->update(['deleted' => 1]);
 
-                $addresses = UserAddress::where('user_id' , $user_id)->get();
+                $addresses = UserAddress::where('user_id' , $user_id)->where('deleted', 0)->get();
 
                 $response = APIHelpers::createApiResponse(false , 200 , '' , '' , $addresses  , $request->lang);
                 return response()->json($response , 200);
@@ -136,7 +136,7 @@ class AddressController extends Controller
         $user->main_address_id = $request->address_id;
         $user->save();
 
-        $address = UserAddress::where('user_id' , $user->id)->orderBy('id' , 'desc')->get();
+        $address = UserAddress::where('user_id' , $user->id)->where('deleted', 0)->orderBy('id' , 'desc')->get();
 
         for($i = 0; $i < count($address); $i++){
             if($user->main_address_id == $address[$i]['id']){
@@ -229,7 +229,7 @@ class AddressController extends Controller
         if (isset($visitor['id'])) {
             $address = Address::where('visitor_id', $visitor['id'])->first();
         
-            $userAddress = UserAddress::where('user_id', $user->id)->where('area_id', $address['address_id'])->get();
+            $userAddress = UserAddress::where('user_id', $user->id)->where('deleted', 0)->where('area_id', $address['address_id'])->get();
             
             if (count($userAddress) > 0) {
                 for($i = 0; $i < count($userAddress); $i++){

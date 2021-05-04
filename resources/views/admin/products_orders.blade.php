@@ -242,6 +242,7 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                             <th>{{ __('messages.payment_method') }}</th>
                             <th>{{ __('messages.status') }}</th>
                             <th class="text-center hide_col">{{ __('messages.details') }}</th>
+                            <th class="text-center hide_col">{{ __('messages.invoice') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -308,6 +309,7 @@ $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
                                 </td>
                                 
                                 <td class="text-center blue-color hide_col"><a href="{{ route('orders.sub_order.details', $order->order_id) }}" ><i class="far fa-eye"></i></a></td>
+                                <td class="text-center blue-color hide_col"><a target="_blank" href="{{ route('webview.store.invoice', $order->order_id) }}" ><i class="far fa-eye"></i></a></td>
                             </tr>
                             <?php $i ++ ?>
                         @endforeach
