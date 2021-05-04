@@ -485,21 +485,9 @@ chart1.render();
                                 <td>
                                     <div class="td-content">
                                     @if($recent_order->status == 1)
-                                    <span class="badge outline-badge-primary">{{ __('messages.in_progress') }}</span>
-                                    @elseif ($recent_order->status == 2)
-                                    <span class="badge outline-badge-info">{{ __('messages.order_confirmed') }}</span>
-                                    @elseif ($recent_order->status == 3)
-                                    <span class="badge outline-badge-success">{{ __('messages.delivered') }}</span>
-                                    @elseif ($recent_order->status == 4)
-                                    <span class="badge outline-badge-danger">{{ __('messages.order_canceled') }}</span>
-                                    @elseif ($recent_order->status == 5)
-                                    <span class="badge outline-badge-info">{{ __('messages.refund_request') }}</span>
-                                    @elseif ($recent_order->status == 6)
-                                    <span class="badge outline-badge-danger">{{ __('messages.refund_accepted') }}</span>
-                                    @elseif ($recent_order->status == 7)
-                                    <span class="badge outline-badge-success">{{ __('messages.refund_rejected') }}</span>
+                                    <span class="badge outline-badge-primary">{{ __('messages.opened') }}</span>
                                     @else
-                                    <span class="badge outline-badge-primary">{{ __('messages.received_refund') }}</span>
+                                    <span class="badge outline-badge-primary">{{ __('messages.closed') }}</span>
                                     @endif
                                     </div>
                                 </td>
