@@ -487,7 +487,7 @@ chart1.render();
                                     @if($recent_order->status == 1)
                                     <span class="badge outline-badge-primary">{{ __('messages.opened') }}</span>
                                     @else
-                                    <span class="badge outline-badge-danger">{{ __('messages.received_refund') }}</span>
+                                    <span class="badge outline-badge-danger">{{ __('messages.closed') }}</span>
                                     @endif
                                     </div>
                                 </td>
