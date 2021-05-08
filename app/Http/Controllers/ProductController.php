@@ -72,15 +72,17 @@ class ProductController extends Controller
             ->where('hidden', 0)
             ->where('reviewed', 1)
             ->where('remaining_quantity', '>', 0)
+            ->where('id', '!=', $data['product']['id'])
             ->where('category_id', $data['product']['category_id'])
 			->whereIn('store_id', $areaStores)
-            ->orWhere('type', $data['product']['type'])
+            // ->orWhere('type', $data['product']['type'])
             ->select('id', 'title_en as title', 'final_price', 'price_before_offer', 'offer_percentage')
             ->orderBy('id', 'desc')
 			->inRandomOrder()->limit(5)
             ->get()->makeHidden('mainImage');
         }else {
             $data['product'] = Product::where('id', $id)
+			->whereIn('store_id', $areaStores)
             ->select('id', 'title_ar as title', 'description_ar as description', 'offer', 'final_price', 'price_before_offer', 'offer_percentage', 'remaining_quantity', 'store_id', 'category_id', 'type')
             ->first();
             if ($data['product']) {
@@ -105,9 +107,10 @@ class ProductController extends Controller
             ->where('hidden', 0)
             ->where('reviewed', 1)
             ->where('remaining_quantity', '>', 0)
+            ->where('id', '!=', $data['product']['id'])
             ->where('category_id', $data['product']['category_id'])
             ->whereIn('store_id', $areaStores)
-            ->orWhere('type', $data['product']['type'])
+            // ->orWhere('type', $data['product']['type'])
             ->select('id', 'title_ar as title', 'final_price', 'price_before_offer', 'offer_percentage')
             ->orderBy('id', 'desc')
 			->inRandomOrder()->limit(5)

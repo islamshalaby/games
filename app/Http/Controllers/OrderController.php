@@ -338,8 +338,7 @@ class OrderController extends Controller
                         ]);
                         
                         $count ++;
-                        $cartItem = Cart::find($store_products[$k]['id']);
-                        $cartItem->delete();                       
+                                              
                     }
                     array_push($ordersIds, $order['id']);
                     
@@ -356,6 +355,9 @@ class OrderController extends Controller
                 $response = APIHelpers::createApiResponse(true , 406 , 'Not Enough wallet balance' , 'رصيد المحفظة لا يكفى' , null , $request->lang);
                 return response()->json($response , 406);
             }else {
+                for ($p = 0; $p < count($cart); $p++) {
+                    $cart[$p]->delete();
+                }
                 $toPrice = number_format((float)$total_price, 3, '.', '');
                 $wallet['balance'] = $wallet['balance'] - $toPrice;
                 $wallet->save();
