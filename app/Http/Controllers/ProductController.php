@@ -53,7 +53,10 @@ class ProductController extends Controller
             ->where('reviewed', 1)
             ->where('remaining_quantity', '>', 0)
             ->select('id', 'title_ar as title', 'description_ar as description', 'offer', 'final_price', 'price_before_offer', 'offer_percentage', 'remaining_quantity', 'store_id', 'category_id', 'type')
-            ->first()->makeHidden(['store_id', 'store', 'productProperties', 'category_id', 'type']);
+            ->first();
+            if ($data['product']) {
+                $data['product'] = $data['product']->makeHidden(['store_id', 'store', 'productProperties', 'category_id', 'type']);
+            }
             if (! in_array($data['product']['store_id'], $areaStores)) {
                 $response = APIHelpers::createApiResponse(true , 406 , 'This store is not cover your area' , 'هذا المتجر لا يغطى منطقتك' , null , $request->lang);
                 return response()->json($response , 406);
@@ -88,7 +91,11 @@ class ProductController extends Controller
             ->where('remaining_quantity', '>', 0)
 			->whereIn('store_id', $areaStores)
             ->select('id', 'title_ar as title', 'description_ar as description', 'offer', 'final_price', 'price_before_offer', 'offer_percentage', 'remaining_quantity', 'store_id', 'category_id', 'type')
-            ->first()->makeHidden(['store_id', 'store', 'productProperties', 'category_id', 'type']);
+            ->first();
+            if ($data['product']) {
+                $data['product'] = $data['product']->makeHidden(['store_id', 'store', 'productProperties', 'category_id', 'type']);
+            }
+            
 
             if (! in_array($data['product']['store_id'], $areaStores)) {
                 $response = APIHelpers::createApiResponse(true , 406 , 'This store is not cover your area' , 'هذا المتجر لا يغطى منطقتك' , null , $request->lang);
