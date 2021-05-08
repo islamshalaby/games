@@ -48,10 +48,6 @@ class ProductController extends Controller
 
         if ($request->lang == 'en') {
             $data['product'] = Product::where('id', $id)
-            ->where('deleted', 0)
-            ->where('hidden', 0)
-            ->where('reviewed', 1)
-            ->where('remaining_quantity', '>', 0)
             ->select('id', 'title_ar as title', 'description_ar as description', 'offer', 'final_price', 'price_before_offer', 'offer_percentage', 'remaining_quantity', 'store_id', 'category_id', 'type')
             ->first();
             if ($data['product']) {
@@ -85,11 +81,6 @@ class ProductController extends Controller
             ->get()->makeHidden('mainImage');
         }else {
             $data['product'] = Product::where('id', $id)
-            ->where('deleted', 0)
-            ->where('hidden', 0)
-            ->where('reviewed', 1)
-            ->where('remaining_quantity', '>', 0)
-			->whereIn('store_id', $areaStores)
             ->select('id', 'title_ar as title', 'description_ar as description', 'offer', 'final_price', 'price_before_offer', 'offer_percentage', 'remaining_quantity', 'store_id', 'category_id', 'type')
             ->first();
             if ($data['product']) {
