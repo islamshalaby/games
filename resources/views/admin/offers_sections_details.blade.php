@@ -41,6 +41,7 @@
                 @if(count($data['section']->offers) > 0)
                 <table class="table table-bordered mb-4">
                     <tbody>
+                        @if($data['section']['type'] == 2)
                         @foreach ($data['section']->offers as $offer)
                         <tr>
                             <td>{{ __('messages.product') }}</td>
@@ -48,7 +49,16 @@
                                <a target="_blank" href="{{ route('products.details', $offer->id) }}">{{ App::isLocale('en') ? $offer->title_en : $offer->title_ar }}</a>
                             </td>
                         </tr>
-                        @endforeach          
+                        @endforeach  
+                        @else
+                        @foreach ($data['section']->offersAds as $ad)
+                        <tr>
+                            <td>{{ __('messages.ad') }}</td>
+                            <td>
+                                <img src="https://res.cloudinary.com/dezsm0sg7/image/upload/w_100,q_100/v1581928924/{{ $ad['image'] }}"  />                            </td>
+                        </tr>
+                        @endforeach
+                        @endif
                     </tbody>
                 </table> 
                 @endif    
