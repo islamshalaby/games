@@ -35,6 +35,10 @@
                             <td>{{ $data['refund']->store->name }}</td>
                         </tr> 
                         <tr>
+                            <td class="label-table" > {{ __('messages.reason') }}</td>
+                            <td>{{ $data['refund']['reason'] }}</td>
+                        </tr> 
+                        <tr>
                             <td class="label-table" > {{ __('messages.date') }}</td>
                             <td>{{ $data['refund']['created_at'] }}</td>
                         </tr> 

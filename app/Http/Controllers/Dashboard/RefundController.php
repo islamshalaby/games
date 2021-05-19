@@ -82,11 +82,16 @@ class RefundController extends Controller
                 }
                 $product['image'] = $product->mainImage->image;
                 $product['store_name'] = $product->store->name;
+                $refundReason = "";
+                // var_dump($data['order']->orders[$i]->oItemsRefunded[$n]['id']);
+                if ($data['order']->orders[$i]->oItemsRefunded[$n]->refund) {
+                    $refundReason = $data['order']->orders[$i]->oItemsRefunded[$n]->refund;
+                }
                 $item = (object)[
                     'created_at' => $data['order']->orders[$i]->oItemsRefunded[$n]->created_at,
                     'received_at' => $data['order']->orders[$i]->oItemsRefunded[$n]->refunded_at,
                     'refund_products_count' => $data['order']->orders[$i]->oItemsRefunded->sum('count'),
-                    'refund_reason' => $data['order']->orders[$i]->oItemsRefunded[$n]->refund->reason,
+                    'refund_reason' => $refundReason,
                     'status' => $data['order']->orders[$i]->oItemsRefunded[$n]->status,
                     'product' => $product
                 ];

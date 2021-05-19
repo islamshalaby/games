@@ -186,6 +186,15 @@ class UserController extends Controller
         return response()->json($response , 200);
     }
 
+    // delete delivery area
+    public function deleteDeliveryArea(Request $request) {
+        $deliveryArea = DeliveryArea::where('store_id', Auth::guard('dashboard')->user()->id)->where('area_id', $request->area_id)->first();
+        $deliveryArea->delete();
+
+        $response = APIHelpers::createApiResponse(false , 200 , '' , '', (object)[] , $request->lang);
+        return response()->json($response , 200);
+    }
+
     // get notifications
     public function getNotifications(Request $request) {
         $data = StoreNotification::find(Auth::guard('dashboard')->user()->id);

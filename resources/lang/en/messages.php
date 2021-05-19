@@ -547,6 +547,7 @@
         "on_submit" => "On click submit the entered delivery cost and estimated arrival time will set in all governorate areas for selected store",
         "values_number_should" => "Values in english count must equal values in arabic count",
         "governorate_has_areas" => "Governorate Has areas",
-        "area_delivery_added" => "Area has a dlivery cost added"
+        "area_delivery_added" => "Area has a dlivery cost added",
+        "reason" => "Reason"
     ];
 ?>

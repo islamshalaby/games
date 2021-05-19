@@ -49,6 +49,9 @@ Route::group([
     // update delivery areas
     Route::post('deliverytime/{lang}/{v}' , 'UserController@updateDeliveryAreas');
 
+    // delete delivery area
+    Route::delete('deliverytime/{area_id}/{lang}/{v}' , 'UserController@deleteDeliveryArea');
+
     // get notifications
     Route::get('notifications/{lang}/{v}' , 'UserController@getNotifications');
 });
