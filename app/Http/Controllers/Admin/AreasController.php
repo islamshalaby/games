@@ -71,8 +71,15 @@ class AreasController extends AdminController{
     // details
     public function details(Area $area) {
         $data['area'] = $area;
-
+        // dd($data['area']->stores);
         return view('admin.area_details', ['data' => $data]);
+    }
+
+    // delete delivery area
+    public function deleteDeliveryArea(DeliveryArea $cost) {
+        $cost->delete();
+
+        return redirect()->back()->with('success', __('messages.deleted_successfully'));
     }
 
     // get add delivery by area

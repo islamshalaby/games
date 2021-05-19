@@ -50,7 +50,13 @@
                                     <td class="text-center blue-color" ><a href="{{ route('areas.edit', $area->id) }}" ><i class="far fa-edit"></i></a></td>
                                 @endif
                                 @if(Auth::user()->delete_data) 
-                                    <td class="text-center blue-color" ><a onclick='return confirm("{{ __('messages.are_you_sure') }}");' href="{{ route('areas.delete', $area->id) }}" ><i class="far fa-trash-alt"></i></a></td>
+                                    <td class="text-center blue-color" >
+                                        @if(count($area->stores) > 0)
+                                        {{ __('messages.area_delivery_added') }}
+                                        @else
+                                        <a onclick='return confirm("{{ __('messages.are_you_sure') }}");' href="{{ route('areas.delete', $area->id) }}" ><i class="far fa-trash-alt"></i></a>
+                                        @endif
+                                    </td>
                                 @endif                                
                                 <?php $i++; ?>
                             </tr>

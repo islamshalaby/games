@@ -231,6 +231,7 @@ Route::group([
          Route::get('delete/{area}' , 'AreasController@delete')->name('areas.delete');
          Route::get('delete-governorates/{governorate}' , 'AreasController@getDeleteGovernorate')->name('areas.governorates.delete');
          Route::get('details/{area}' , 'AreasController@details')->name('areas.details');
+         Route::get('delete-delivery-area/{cost}' , 'AreasController@deleteDeliveryArea')->name('areas.delivery.delete');
          Route::get('details-governorates/{governorate}' , 'AreasController@getGovernorateDetails')->name('areas.governorates.details');
     });
 

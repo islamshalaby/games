@@ -56,6 +56,9 @@
                                     <th>Id</th>
                                     <th>{{ __('messages.store') }}</th>
                                     <th class="text-center">{{ __('messages.delivery_cost') }}</th>
+                                    @if(Auth::user()->delete_data) 
+                                    <th class="text-center">{{ __('messages.delete') }}</th>
+                                    @endif
                                 </tr>
                             </thead>
                             <tbody>
@@ -64,7 +67,12 @@
                                     <tr>
                                         <td><?=$i;?></td>
                                         <td>{{ $store['name'] }}</td>      
-                                        <td  class="text-center">{{ $store['delivery_cost'] . " " . __('messages.dinar') }}</td>                         
+                                        <td  class="text-center">{{ $store['delivery_cost'] . " " . __('messages.dinar') }}</td>
+                                        @if(Auth::user()->delete_data) 
+                                        <td  class="text-center">
+                                            <a onclick='return confirm("{{ __('messages.are_you_sure') }}");' href="{{ route('areas.delivery.delete', $store->d_areas_id) }}" ><i class="far fa-trash-alt"></i></a>
+                                        </td>
+                                        @endif
                                         <?php $i++; ?>
                                     </tr>
                                 @endforeach

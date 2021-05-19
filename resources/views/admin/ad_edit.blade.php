@@ -12,6 +12,8 @@
             if(this.value == 2) {
                 $(".outside").show()
                 $('.productsParent').hide()
+                $(".storesParent").hide()
+                $("#storeselect").prop("disabled", true)
                 $('select#products').prop("disabled", true)
                 $(".outside input").prop("disabled", false)
                 $(".inside").hide()
