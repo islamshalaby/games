@@ -16,6 +16,7 @@ use App\DeliveryArea;
 use App\Ad;
 use App\Slider;
 use App\Shop;
+use App\Cart;
 
 
 class HomeController extends Controller
@@ -42,6 +43,16 @@ class HomeController extends Controller
    
         $visitor = Visitor::where('unique_id' , $request->unique_id)->first();
         $current_area = Area::where('id', $request->area_id)->first();
+        $stillInAddress = Address::where('visitor_id', $visitor['id'])->where('address_id', $current_area['id'])->first();
+        
+        if (!$stillInAddress) {
+            $userCart = Cart::where('visitor_id', $visitor['id'])->get();
+            if (count($userCart) > 0) {
+                for ($s = 0; $s < count($userCart); $s ++) {
+                    $userCart[$s]->delete();
+                }
+            }
+        }
         if (isset($visitor['id'])) {
             $address = Address::where('visitor_id', $visitor['id'])->first();
             if (isset($current_area['id']) && isset($address['id'])) {
