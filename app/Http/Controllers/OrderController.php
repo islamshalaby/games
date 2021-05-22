@@ -565,6 +565,9 @@ class OrderController extends Controller
                 $stores[$i]['store_logo'] = $stores[$i]->store->logo;
                 $address = UserAddress::where('id', $order['address_id'])->first();
                 $deliveryArea = DeliveryArea::where('area_id', $address['area_id'])->where('store_id', $stores[$i]->store->id)->first();
+                if (!$deliveryArea) {
+                    $deliveryArea['estimated_arrival_time'] = "0";
+                }
                 $stores[$i]['estimated_arrival_time'] = $deliveryArea['estimated_arrival_time'];
                 
                 $products = [];
