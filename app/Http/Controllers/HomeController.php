@@ -65,7 +65,7 @@ class HomeController extends Controller
             }
             $stores = DeliveryArea::where('area_id', $current_area['id'])->whereHas('store', function($q) {
                 $q->where('status', 1)->where('show_home', 1);
-            })->pluck('store_id')->toArray();
+            })->has('products', '>', 0)->pluck('store_id')->toArray();
             // dd($stores);
             if ($request->lang == 'en') {
                 $data['area'] = $current_area['title_en'];
