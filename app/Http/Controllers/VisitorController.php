@@ -295,10 +295,13 @@ class VisitorController extends Controller
             
             $stores = [];
             for($i = 0; $i < count($cart); $i++){
-                if (!$cart[$i]->product->store->deliveryByarea($selectedAddress['address_id'])) {
+				$deliveryA = DeliveryArea::where('area_id', $address['area_id'])->where('store_id', $cart[$i]->product->store_id)->first();
+                if (!$deliveryA) {
                     $cart[$i]->delete();
-                }
-                array_push($stores, $cart[$i]->product->store_id);
+                }else {
+					array_push($stores, $cart[$i]->product->store_id);
+				}
+                
             }
             $data['address'] = $address;
             $data['shipments'] = [];

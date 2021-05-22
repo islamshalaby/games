@@ -91,6 +91,9 @@ class OrderController extends Controller
         $data['order']['time'] = $data['order']['created_at']->format('g:i A');
 
         $data['order']['address'] = $order->address;
+        $area = Area::where('id', $order->address->area_id)->select('title_' . $request->lang . ' as title')->first();
+        // dd($area);
+        $data['order']['address']['area_name'] = $area['title'];
         $items = $order->oItems;
         $allItems = [];
         for ($i = 0; $i < count($items); $i ++) {
