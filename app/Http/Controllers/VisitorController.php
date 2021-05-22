@@ -15,6 +15,7 @@ use App\Shop;
 use App\UserAddress;
 use App\DeliveryArea;
 use App\Setting;
+use App\Address;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
@@ -286,12 +287,17 @@ class VisitorController extends Controller
         $address = UserAddress::find($request->address_id)->makeHidden(['created_at', 'updated_at']);
         
         $visitor = Visitor::where('unique_id' , $request->unique_id)->first();
+        $selectedAddress = Address::where('visitor_id', $visitor['id'])->first();
+
         if($visitor){
             $visitor_id =  $visitor['id'];
             $cart = Cart::where('visitor_id' , $visitor_id)->select('product_id' , 'count', 'option_id')->get();
             
             $stores = [];
             for($i = 0; $i < count($cart); $i++){
+                if (!$cart[$i]->product->store->deliveryByarea($selectedAddress['address_id'])) {
+                    $cart[$i]->delete();
+                }
                 array_push($stores, $cart[$i]->product->store_id);
             }
             $data['address'] = $address;
