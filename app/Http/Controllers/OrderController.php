@@ -153,7 +153,7 @@ class OrderController extends Controller
                                 'final_price' => number_format((float)$product_data['final_price'], 3, '.', ''),
                                 'count' => $store_products[$k]['count']
                             ]);
-                            $count ++;
+                            $count = $count + $store_products[$k]['count'];
                             
                             $cartItem = Cart::find($store_products[$k]['id']);
                             $cartItem->delete();                       
@@ -337,7 +337,7 @@ class OrderController extends Controller
                             'count' => $store_products[$k]['count']
                         ]);
                         
-                        $count ++;
+                        $count = $count + $store_products[$k]['count'];
                                               
                     }
                     array_push($ordersIds, $order['id']);
