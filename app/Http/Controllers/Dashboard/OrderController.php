@@ -211,6 +211,9 @@ class OrderController extends Controller
     // order address details
     public function orderAddressDetails(Request $request, UserAddress $address) {
         $data['address'] = $address;
+        $area = Area::where('id', $data['address']['area_id'])->select('title_' . $request->lang . ' as title')->first();
+        // dd($area);
+        $data['address']['area_name'] = $area['title'];
         $data['address']['user'] = User::select('id', 'name', 'phone')->find($address->user_id);
 
         $response = APIHelpers::createApiResponse(false , 200 , '' , '' , $data , $request->lang);
