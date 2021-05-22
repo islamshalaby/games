@@ -320,6 +320,7 @@ class VisitorController extends Controller
                         $product = Product::select('title_en as title', 'final_price', 'price_before_offer', 'offer_percentage', 'id', 'offer', 'store_id')->where('id', $cart[$n]['product_id'])->first()->makeHidden('mainImage');
                     }
                     $product['final_price'] = number_format((float)$product['final_price'], 3, '.', '');
+                    $product['count'] = $cart[$n]['count'];
                     $product['price_before_offer'] = number_format((float)$product['price_before_offer'], 3, '.', '');
                     if ($get_stores[$i]['id'] == $product['store_id']) {
                         $product['store_name'] = $store['name'];

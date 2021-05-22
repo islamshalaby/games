@@ -183,7 +183,7 @@ class AddressController extends Controller
     }
 
     public function getGovernorates(Request $request) {
-        $governorates = Governorate::where('deleted', 0)->select('id', 'title_' . $request->lang . ' as title')->orderBy('id', 'asc')->get();
+        $governorates = Governorate::where('deleted', 0)->has('areas', '>', 0)->select('id', 'title_' . $request->lang . ' as title')->orderBy('id', 'asc')->get();
 
         $response = APIHelpers::createApiResponse(false , 200 , '' , '' , $governorates , $request->lang);
         return response()->json($response , 200);
