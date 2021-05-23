@@ -146,42 +146,50 @@ class VisitorController extends Controller
         }
 
         $visitor = Visitor::where('unique_id' , $request->unique_id)->first();
+        $selectedAddress = Address::where('visitor_id', $visitor['id'])->first();
         if($visitor){
             $visitor_id =  $visitor['id'];
             $cart = Cart::where('visitor_id' , $visitor_id)->select('product_id as id' , 'count')->get();
             $data['subtotal_price'] = "0";
             for($i = 0; $i < count($cart); $i++){
-                if($request->lang == 'en'){
-                    $product = Product::with('store')->select('title_en as title' , 'final_price' , 'price_before_offer', 'id', 'store_id', 'offer_percentage', 'offer')->where('id', $cart[$i]['id'])->first();
-                }else{
-                    $product = Product::with('store')->select('title_ar as title' , 'final_price' , 'price_before_offer', 'id', 'store_id', 'offer_percentage', 'offer')->where('id', $cart[$i]['id'])->first();
-                }
-                
-                if(auth()->user()){
-                    $user_id = auth()->user()->id;
-                    $prevfavorite = Favorite::where('product_id' , $cart[$i]['id'])->where('user_id' , $user_id)->first();
-                    if($prevfavorite){
-                        $cart[$i]['favorite'] = true;
+                $cartProduct = Product::where('id', $cart[$i]->id)->select("store_id")->first();
+                $deliveryA = DeliveryArea::where('area_id', $selectedAddress['address_id'])->where('store_id', $cartProduct->store_id)->first();
+                if ($deliveryA == null) {
+                    $cart[$i]->delete();
+                }else {
+                    if($request->lang == 'en'){
+                        $product = Product::with('store')->select('title_en as title' , 'final_price' , 'price_before_offer', 'id', 'store_id', 'offer_percentage', 'offer')->where('id', $cart[$i]['id'])->first();
+                    }else{
+                        $product = Product::with('store')->select('title_ar as title' , 'final_price' , 'price_before_offer', 'id', 'store_id', 'offer_percentage', 'offer')->where('id', $cart[$i]['id'])->first();
+                    }
+                    
+                    if(auth()->user()){
+                        $user_id = auth()->user()->id;
+                        $prevfavorite = Favorite::where('product_id' , $cart[$i]['id'])->where('user_id' , $user_id)->first();
+                        if($prevfavorite){
+                            $cart[$i]['favorite'] = true;
+                        }else{
+                            $cart[$i]['favorite'] = false;
+                        }
+        
                     }else{
                         $cart[$i]['favorite'] = false;
                     }
     
-                }else{
-                    $cart[$i]['favorite'] = false;
+                    $cart[$i]['final_price'] = number_format((float)$product['final_price'], 3, '.', '');
+                    $cart[$i]['price_before_offer'] = number_format((float)$product['price_before_offer'], 3, '.', '');
+                    $cart[$i]['offer_percentage'] = $product['offer_percentage'];
+                    $cart[$i]['offer'] = $product['offer'];
+                    $sBPrice = $data['subtotal_price'] + ($product['final_price'] * $cart[$i]['count']);
+                    $data['subtotal_price'] = number_format((float)$sBPrice, 3, '.', '');
+                    
+                    $cart[$i]['title'] = $product['title'];
+                    $cart[$i]['type'] = $product['type'];
+                    $cart[$i]['store_name'] = $product->store->name;
+                    $cart[$i]['store_id'] = $product->store->id;
+                    $cart[$i]['image'] = ProductImage::select('image')->where('product_id' , $cart[$i]['id'])->first()['image'];
                 }
-
-                $cart[$i]['final_price'] = number_format((float)$product['final_price'], 3, '.', '');
-                $cart[$i]['price_before_offer'] = number_format((float)$product['price_before_offer'], 3, '.', '');
-                $cart[$i]['offer_percentage'] = $product['offer_percentage'];
-                $cart[$i]['offer'] = $product['offer'];
-                $sBPrice = $data['subtotal_price'] + ($product['final_price'] * $cart[$i]['count']);
-                $data['subtotal_price'] = number_format((float)$sBPrice, 3, '.', '');
                 
-                $cart[$i]['title'] = $product['title'];
-                $cart[$i]['type'] = $product['type'];
-                $cart[$i]['store_name'] = $product->store->name;
-                $cart[$i]['store_id'] = $product->store->id;
-                $cart[$i]['image'] = ProductImage::select('image')->where('product_id' , $cart[$i]['id'])->first()['image'];
             }
             
             $data['cart'] = $cart;
@@ -291,12 +299,13 @@ class VisitorController extends Controller
 
         if($visitor){
             $visitor_id =  $visitor['id'];
-            $cart = Cart::where('visitor_id' , $visitor_id)->select('product_id' , 'count', 'option_id')->get();
+            $cart = Cart::where('visitor_id' , $visitor_id)->select('id', 'product_id' , 'count', 'option_id')->get();
+			//dd($visitor_id);
             
             $stores = [];
             for($i = 0; $i < count($cart); $i++){
 				$deliveryA = DeliveryArea::where('area_id', $address['area_id'])->where('store_id', $cart[$i]->product->store_id)->first();
-                if (!$deliveryA) {
+                if ($deliveryA == null) {
                     $cart[$i]->delete();
                 }else {
 					array_push($stores, $cart[$i]->product->store_id);
@@ -308,7 +317,7 @@ class VisitorController extends Controller
             $get_stores = Shop::select('name', 'id')->whereIn('id', $stores)->get();
             $data['subtotal_price'] = "0";
             $data['delivery_cost'] = "0";
-            // dd($address['area_id']);
+            //dd($get_stores);
             for ($i = 0; $i < count($get_stores); $i ++) {
                 
                 $data['shipments'][$i]['shipment_number'] = $i + 1;
