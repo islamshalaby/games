@@ -224,8 +224,17 @@ class AddressController extends Controller
     
 
     public function selectAddressBelongsToArea(Request $request) {
+		$validator = Validator::make($request->all(), [
+            'unique_id' => 'required',           
+        ]);
+
+        if ($validator->fails()) {
+            $response = APIHelpers::createApiResponse(true , 406 , 'Missing Required Fields' , 'بعض الحقول مفقودة'  , null , $request->lang);
+            return response()->json($response , 406);
+        }
         $user = auth()->user();
-        $visitor = Visitor::where('user_id', $user->id)->first();
+        $visitor = Visitor::where('user_id', $user->id)->where('unique_id', $request->unique_id)->first();
+		//dd($visitor);
         if (isset($visitor['id'])) {
             $address = Address::where('visitor_id', $visitor['id'])->first();
         

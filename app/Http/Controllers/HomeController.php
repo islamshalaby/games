@@ -41,18 +41,29 @@ class HomeController extends Controller
         $slider = Slider::where('type', 1)->first();
         $data['slider'] = $slider->ads;
    
-        $visitor = Visitor::where('unique_id' , $request->unique_id)->first();
-        $current_area = Area::where('id', $request->area_id)->first();
-        $stillInAddress = Address::where('visitor_id', $visitor['id'])->where('address_id', $current_area['id'])->first();
-        
-        if (!$stillInAddress) {
-            $userCart = Cart::where('visitor_id', $visitor['id'])->get();
-            if (count($userCart) > 0) {
-                for ($s = 0; $s < count($userCart); $s ++) {
-                    $userCart[$s]->delete();
+        if (count($data['slider']) > 0) {
+            for ($s = 0; $s < count($data['slider']); $s ++) {
+                if ($data['slider'][$s]['type'] == 1 && $data['slider'][$s]['content_type'] == 1) {
+                    $prod = Product::where('id', $data['slider'][$s]['content'])->select('title_' . $request->lang . ' as title')->first();
+                    if ($prod) {
+                        $data['slider'][$s]['content_name'] = $prod->title;
+                    }
+                }elseif ($data['slider'][$s]['type'] == 1 && $data['slider'][$s]['content_type'] == 2) {
+                    $cat = Category::where('id', $data['slider'][$s]['content'])->select('title_' . $request->lang . ' as title')->first();
+                    if ($cat) {
+                        $data['slider'][$s]['content_name'] = $cat->title;
+                    }
+                }elseif ($data['slider'][$s]['type'] == 1 && $data['slider'][$s]['content_type'] == 3){
+                    $shop = Shop::where('id', $data['slider'][$s]['content'])->select('name')->first();
+                    if ($shop) {
+                        $data['slider'][$s]['content_name'] = $shop->name;
+                    }
                 }
             }
         }
+        $visitor = Visitor::where('unique_id' , $request->unique_id)->first();
+        $current_area = Area::where('id', $request->area_id)->first();
+        
         if (isset($visitor['id'])) {
             $address = Address::where('visitor_id', $visitor['id'])->first();
             if (isset($current_area['id']) && isset($address['id'])) {

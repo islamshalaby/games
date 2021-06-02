@@ -548,6 +548,7 @@
         "values_number_should" => "Values in english count must equal values in arabic count",
         "governorate_has_areas" => "Governorate Has areas",
         "area_delivery_added" => "Area has a dlivery cost added",
-        "reason" => "Reason"
+        "reason" => "Reason",
+        "created_successfully" => "Created Successfully"
     ];
 ?>
