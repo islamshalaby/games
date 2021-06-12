@@ -50,6 +50,7 @@ class ShopController extends AdminController{
         $seller = Seller::select('shop')->where('id', $request->seller_id)->first();
         $post['name'] = $seller['shop'];
         $post['logo'] = $image_new_name;
+        $post['phone'] = $seller['phone'];
         $post['password'] = Hash::make($request->password);
         $show_home = 0;
         if (isset($request->show_home)) {
