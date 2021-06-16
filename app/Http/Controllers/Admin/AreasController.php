@@ -143,7 +143,12 @@ class AreasController extends AdminController{
         ]);
         $areas = Area::where('deleted', 0)->where('governorate_id', $post['governorate_id'])->pluck('id')->toArray();
         $store = Shop::where('id', $post['store_id'])->first();
-        $store->areas()->delete();
+        
+        $dAreas = DeliveryArea::where('store_id', $post['store_id'])->whereIn('area_id', $areas)->get();
+
+        for ($d = 0; $d < count($dAreas); $d ++) {
+            $dAreas[$d]->delete();
+        }
         
         for ($i = 0; $i < count($areas); $i ++) {
             $post['area_id'] = $areas[$i];
