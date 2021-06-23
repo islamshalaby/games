@@ -47,9 +47,9 @@ class AddressController extends Controller
             'longitude' => 'required',
             'address_type' => 'required', // 1 home , 2 work
             // 'area_id' => 'required',
-            'building' => 'required',
-            'floor' => 'required',
-            'apartment_number' => 'required',
+            // 'building' => 'required',
+            // 'floor' => 'required',
+            // 'apartment_number' => 'required',
             'street' => 'required',
             'phone' => 'required',
             'piece' => 'required',            
@@ -66,12 +66,23 @@ class AddressController extends Controller
         $address->longitude = $request->longitude;
         $address->address_type = $request->address_type;
         $address->area_id = $request->area_id;
-        $address->floor = $request->floor;
-        $address->apartment_number = $request->apartment_number;
+        if ($address->floor) {
+            $address->floor = $request->floor;
+        }
+
+        if ($address->apartment_number) {
+            $address->apartment_number = $request->apartment_number;
+        }
+
+        if ($address->building ) {
+            $address->building = $request->building;
+        }
+        
+        
         $address->street = $request->street;
         $address->phone = $request->phone;
         $address->piece = $request->piece;
-        $address->building = $request->building;
+        
         if($request->title){
             $address->title = $request->title;
         }
