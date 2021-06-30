@@ -66,6 +66,7 @@ class AddressController extends Controller
         $address->longitude = $request->longitude;
         $address->address_type = $request->address_type;
         $address->area_id = $request->area_id;
+        
         if ($address->floor) {
             $address->floor = $request->floor;
         }

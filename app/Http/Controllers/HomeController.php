@@ -225,7 +225,7 @@ class HomeController extends Controller
                 for($i =0; $i < count($data['stores']); $i++){
                     array_push($new_products , $data['stores'][$i]);
                     if(count($data['stores']) > $i+1 ){
-                        if ((($i+1) % 1) == 0) {
+                        if ((($i+1) % 3) == 0) {
                             $ad = Ad::select('id', 'image', 'type', 'content', 'content_type', 'store_id')->where('place', 2)->inRandomOrder()->first();
                             
                             if($ad){
