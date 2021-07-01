@@ -47,7 +47,7 @@ class ShopController extends AdminController{
             $cover_new_name = $cover_id.'.'.$cover_format;
             $post['cover'] = $cover_new_name;
         }
-        $seller = Seller::select('shop')->where('id', $request->seller_id)->first();
+        $seller = Seller::select('shop', 'phone')->where('id', $request->seller_id)->first();
         $post['name'] = $seller['shop'];
         $post['logo'] = $image_new_name;
         $post['phone'] = $seller['phone'];
@@ -75,7 +75,7 @@ class ShopController extends AdminController{
         $request->validate([
             'email' => 'required|unique:shops,email,' . $store->id
         ]);
-
+        $seller = Seller::select('shop', 'phone')->where('id', $store->seller_id)->first();
         if($request->file('logo')){
             $logo = $store->logo;
             $publicId = substr($logo, 0 ,strrpos($logo, "."));    
@@ -111,6 +111,7 @@ class ShopController extends AdminController{
             $show_home = 1;
         }
         $post['show_home'] = $show_home;
+        $post['phone'] = $seller['phone'];
         $store->update($post);
 
         return redirect()->route('shops.index');
