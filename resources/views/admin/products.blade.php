@@ -181,7 +181,7 @@
                         }
                         var rowNode = dTbls.row.add( [
                             `${i}`,
-                            `<img src="https://res.cloudinary.com/dezsm0sg7/image/upload/w_50,q_50/v1581928924/${ (element.main_image) ? element.main_image.image : '' }"  />`,
+                            `<img src="https://res.cloudinary.com/dezsm0sg7/image/upload/w_50,q_50/v1581928924/${ (element.main_image) ? element.main_image.image : element.images[0].image }"  />`,
                             `${elementName}`,
                             `${cat}`,
                             `${element.store.name}`,
