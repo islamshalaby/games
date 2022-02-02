@@ -317,16 +317,15 @@ class ProductController extends Controller
         }
 
         $sub_category_id = $request->sub_category_id;
-
         
         
         if($request->lang == 'en'){
             $data['sub_categories_name'] = SubCategory::where('deleted' , 0)->where('id' , $sub_category_id)->pluck('title_en as title')->first();
-            $products = Product::select('id', 'title_en as title' , 'offer' , 'offer_percentage', 'multi_options' )->where('deleted' , 0)->where('hidden' , 0)->where('sub_category_id' , $request->sub_category_id)->where('sub_category_id' , $request->sub_category_id)->simplePaginate(16);
+            $products = Product::select('id', 'title_en as title' , 'offer' , 'offer_percentage', 'multi_options', 'remaining_quantity' )->where('deleted' , 0)->where('hidden' , 0)->where('remaining_quantity', '>', 0)->where('sub_category_id' , $request->sub_category_id)->where('sub_category_id' , $request->sub_category_id)->simplePaginate(16);
             $products->makeHidden(['multiOptions']);
         }else{
             $data['sub_categories_name'] = SubCategory::where('deleted' , 0)->where('id' , $sub_category_id)->pluck('title_ar as title')->first();
-            $products = Product::select('id', 'title_ar as title' , 'offer' , 'offer_percentage', 'multi_options' )->where('deleted' , 0)->where('hidden' , 0)->where('sub_category_id' , $request->sub_category_id)->where('sub_category_id' , $request->sub_category_id)->simplePaginate(16);
+            $products = Product::select('id', 'title_ar as title' , 'offer' , 'offer_percentage', 'multi_options', 'remaining_quantity' )->where('deleted' , 0)->where('hidden' , 0)->where('remaining_quantity', '>', 0)->where('sub_category_id' , $request->sub_category_id)->where('sub_category_id' , $request->sub_category_id)->simplePaginate(16);
             $products->makeHidden(['multiOptions']);
         }
         
@@ -389,8 +388,9 @@ class ProductController extends Controller
             $address = Address::where('visitor_id', $visitor['id'])->first();
             $deliveryArea = DeliveryArea::where('area_id', $address['address_id'])->where('store_id', $storeId)->first();
             $storeAreas = DeliveryArea::where('store_id', $storeId)->pluck('area_id')->toArray();
-            // dd($storeAreas);
+            
             $data['store'] = Shop::where('id', $storeId)->where('status', 1)->select('id', 'logo', 'name', 'min_order_cost')->first()->makeHidden('custom');
+            
             if (! in_array($address['address_id'], $storeAreas)) {
                 $response = APIHelpers::createApiResponse(true , 406 , 'This store is not cover your area' , 'هذا المتجر لا يغطى منطقتك' , null , $request->lang);
                 return response()->json($response , 406);
@@ -473,9 +473,9 @@ class ProductController extends Controller
                     ->where('hidden', 0)
                     ->where('reviewed', 1)
                     ->where('store_id', $storeId)
-                    // ->where('category_id', $productCategories[0])
+                    ->where('remaining_quantity', '>', 0)
                     ->where('type', $tpe)
-                    ->select('id', 'title_en as title', 'offer', 'final_price', 'price_before_offer', 'offer_percentage')
+                    ->select('id', 'title_en as title', 'offer', 'final_price', 'price_before_offer', 'offer_percentage', 'remaining_quantity')
                     ->orderBy('id', 'desc')
                     ->get()->makeHidden('mainImage');
                 }else {
@@ -483,9 +483,9 @@ class ProductController extends Controller
                     ->where('hidden', 0)
                     ->where('reviewed', 1)
                     ->where('store_id', $storeId)
-                    // ->where('category_id', $productCategories[0])
+                    ->where('remaining_quantity', '>', 0)
                     ->where('type', $tpe)
-                    ->select('id', 'title_ar as title', 'offer', 'final_price', 'price_before_offer', 'offer_percentage')
+                    ->select('id', 'title_ar as title', 'offer', 'final_price', 'price_before_offer', 'offer_percentage', 'remaining_quantity')
                     ->orderBy('id', 'desc')
                     ->get()->makeHidden('mainImage');
                 }
@@ -517,7 +517,7 @@ class ProductController extends Controller
                     ->where('category_id', $request->category_id)
                     ->where('type', $tpe)
                     ->where('remaining_quantity', '>', 0)
-                    ->select('id', 'title_en as title', 'offer', 'final_price', 'price_before_offer', 'offer_percentage')
+                    ->select('id', 'title_en as title', 'offer', 'final_price', 'price_before_offer', 'offer_percentage', 'remaining_quantity')
                     ->orderBy('id', 'desc')
                     ->get()->makeHidden('mainImage');
                 }else {
@@ -528,7 +528,7 @@ class ProductController extends Controller
                     ->where('category_id', $request->category_id)
                     ->where('type', $tpe)
                     ->where('remaining_quantity', '>', 0)
-                    ->select('id', 'title_ar as title', 'offer', 'final_price', 'price_before_offer', 'offer_percentage')
+                    ->select('id', 'title_ar as title', 'offer', 'final_price', 'price_before_offer', 'offer_percentage', 'remaining_quantity')
                     ->orderBy('id', 'desc')
                     ->get()->makeHidden('mainImage');
                 }
