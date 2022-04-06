@@ -85,7 +85,7 @@ class AuthController extends Controller
             'phone' => 'required',
             "email" => 'required',
             "password" => 'required',
-            "fcm_token" => 'required',
+            "fcm_token" => 'nullable',
             "type" => "required", // 1 -> iphone , 2 -> android
             "unique_id" => "required",            
         ]);

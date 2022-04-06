@@ -202,9 +202,7 @@ class OrderController extends Controller
                                 return response()->json($response , 406);
                             }
                             $single_product = Product::select('id', 'remaining_quantity', 'sold_count')->where('id', $store_products[$n]['product_id'])->first();
-                            $single_product->remaining_quantity = $single_product->remaining_quantity - $store_products[$n]['count'];
-                            $single_product->sold_count = $single_product->sold_count + $store_products[$n]['count'];
-                            $single_product->save();
+                            
                             $subtotal_price = $subtotal_price + ($store_products[$n]->product->final_price * $store_products[$n]['count']);
                             
                         }
